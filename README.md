@@ -1,4 +1,4 @@
 # DigitSynth
-The glover's instrument
+The Glover's Instrument
 
-Play music with your gloves !!!!
+A wearable musical instrument that turns hand movements into sound. Wear the gloves, move your hands, create music.
