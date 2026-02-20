@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.23)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
+if (NOT ${RELEASE} EQUAL 1)
+	message(STATUS "Building in debug mode\n")
+	add_compile_options(-O0 -g)
+else()
+	add_compile_options(-O3)
+	message(STATUS "Building in release mode\n") 
+endif()
+
 project(DigitSynth)
 
 add_executable(digitsynth) 

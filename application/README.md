@@ -14,6 +14,14 @@ Build:
 cmake --build build/
 ```
 
+### Release mode
+Run the following to compile with max optimisations and no debug symbols: 
+
+```
+cmake -B build -DRELEASE=1
+cmake --build build/
+```
+
 ## How to Run
 
 ```
