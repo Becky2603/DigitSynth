@@ -15,7 +15,9 @@ project(DigitSynth)
 
 include(CTest)
 add_executable(digitsynth) 
+add_library(digitsynth_static) 
 target_include_directories(digitsynth PRIVATE include)
+target_include_directories(digitsynth_static PUBLIC include)
 set(SOURCE_DIRECTORY src/)
 
 target_sources(digitsynth
@@ -25,4 +27,12 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/foo.cpp
 )
 
+target_sources(digitsynth_static
+	PUBLIC
+		# Add source files here to build them  
+		${SOURCE_DIRECTORY}/foo.cpp
+)
+
 target_link_libraries(digitsynth)
+
+add_subdirectory(test)

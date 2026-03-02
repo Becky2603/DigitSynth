@@ -28,4 +28,13 @@ cmake --build build/
 ./build/digitsynth
 ```
 
+## Running unit test
+
+(After building)
+```
+cmake --build build/ -- test
+```
+
 ## Dependencies
+
+
