@@ -74,27 +74,18 @@ module hinge_block_male(
     radius = jointHeight,
     male_width = jointThickness * 0.4
 ) {
-
+    translate([ male_width/2, 0, 0 ])   // keep in +X
     intersection() {
 
         // Narrow cylinder
         rotate([0,90,0])
-            cylinder(h = male_width, r = jointHeight, center = true);
+            cylinder(h = male_width, r = radius, center = true);
 
-        // Cut bottom half (make semi-cylinder)
-        translate([
-            -male_width,
-            -jointHeight,
-            -jointHeight
-        ])
-            cube([
-                2*male_width,
-                2*jointHeight,
-                jointHeight
-            ]);
+        // Remove BOTTOM half (keep TOP)
+        translate([ -male_width, -radius, 0 ])
+            cube([ 2*male_width, 2*radius, radius ]);
     }
 }
-
 module hinge_base() {
 
     difference() {
@@ -214,5 +205,6 @@ module hingeAssembly_female()
     }
 }
 hingeAssembly_female();
-translate([30,0,0]) 
+              // printing tolerance
+translate([-(hinge_clearance),0,0]) 
 hingeAssembly_male();

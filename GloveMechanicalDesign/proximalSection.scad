@@ -20,7 +20,7 @@ module hinge_connector() {
         linear_extrude(height = connector_profile_height)
         square([
             jointThickness,
-            2 * jointHeight + connector_flat_extra
+            jointHeight 
         ], center = true);
 
         // Bottom profile
@@ -74,4 +74,64 @@ module proximalAssembly() {
         }
     }
 }
-proximalAssembly();
+
+module middleAssembly() {
+
+    // True outer radius of proximal cylinder
+    outerRadius = proximalWidth/2 + wallThickness;
+    union() {
+
+        // Proximal section
+        proximalSection();
+
+        // ================= LEFT HINGE =================
+        translate([
+            -(outerRadius - wallThickness/2),
+            0,
+            proximalLength + hinge_vertical_offset
+        ]) {
+
+            hinge_connector();
+            translate([-(hinge_clearance+0.1),0,0]) 
+            hingeAssembly_male();
+        }
+
+
+        // ================= RIGHT HINGE =================
+        translate([
+            (outerRadius - wallThickness/2  ),
+            0,
+            proximalLength + hinge_vertical_offset
+        ]) {
+            hinge_connector();
+
+            translate([-(hinge_clearance+0.1),0,0]) 
+            hingeAssembly_male();
+        }
+    }
+}
+
+
+// difference(){
+//     proximalAssembly();
+
+//     translate([0,-5,25]) 
+//     sphere(r = 10);
+
+// }
+
+
+hinge_connector();
+translate([-(hinge_clearance+0.1),0,0]) 
+hingeAssembly_male();
+
+translate([0,0,40]){ 
+
+difference() {
+    hinge_connector();
+    rotate([0,90,0])
+    cylinder(h = male_width, r = jointHeight, center = true);
+    }
+hingeAssembly_female();
+
+}
