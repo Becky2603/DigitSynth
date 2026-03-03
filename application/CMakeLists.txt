@@ -25,16 +25,12 @@ target_sources(digitsynth
 		# Add source files here to build them
 		${SOURCE_DIRECTORY}/main.cpp
 		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/publisher.cpp
-		${SOURCE_DIRECTORY}/subscriber.cpp
 )
 
 target_sources(digitsynth_static
 	PUBLIC
 		# Add source files here to build them
 		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/publisher.cpp
-		${SOURCE_DIRECTORY}/subscriber.cpp
 )
 
 target_link_libraries(digitsynth)
