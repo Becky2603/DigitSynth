@@ -1,0 +1,74 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "a8c4a80f-ab66-440e-8015-159daba5f1d8")
+	(paper "A4")
+	(lib_symbols)
+	(hierarchical_label "BTN_2"
+		(shape output)
+		(at 246.38 52.07 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2f62b361-0ac6-4091-b721-fd81572f2ca1")
+	)
+	(hierarchical_label "BTN_3"
+		(shape output)
+		(at 246.38 59.69 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "440fd43b-e5cc-4c29-9875-03f508ed699e")
+	)
+	(hierarchical_label "+3V3_PERIPH"
+		(shape input)
+		(at 246.38 29.21 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "70953d2b-35d7-4068-bfe5-fd260049a243")
+	)
+	(hierarchical_label "BTN_1"
+		(shape output)
+		(at 246.38 44.45 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7daf8a58-b879-45d1-bda6-af64762024b5")
+	)
+	(hierarchical_label "BTN_4"
+		(shape output)
+		(at 246.38 67.31 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a2db7b87-ba9d-422e-be4c-91e1843b88c9")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 246.38 36.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c5d4e885-0e26-4e64-adc6-6104afe2cce8")
+	)
+)

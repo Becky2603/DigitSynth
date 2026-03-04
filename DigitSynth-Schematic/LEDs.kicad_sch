@@ -1,0 +1,63 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "f0b9f8b7-ff23-48d6-8afa-862d69d0b823")
+	(paper "A4")
+	(lib_symbols)
+	(hierarchical_label "SPI0_MOSI"
+		(shape input)
+		(at 255.27 62.23 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0f59be0b-1f6e-4419-910f-7732f7a305f2")
+	)
+	(hierarchical_label "+3V3_PERIPH"
+		(shape input)
+		(at 255.27 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "770a4beb-408f-45fc-a0a3-57058fe99fe1")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 255.27 46.99 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aabb7053-0ddb-4646-88bd-3d6f332b5cc1")
+	)
+	(hierarchical_label "LED_VPLUS"
+		(shape input)
+		(at 255.27 31.75 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ace65271-fc5b-45c2-8353-3f289daa9099")
+	)
+	(hierarchical_label "SPI0_CLK"
+		(shape input)
+		(at 255.27 54.61 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cfd8d0f9-0438-4686-8a5b-929e7342be1f")
+	)
+)

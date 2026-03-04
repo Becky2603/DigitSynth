@@ -1,0 +1,224 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "ad908932-4812-48b1-9c87-6bb086cd45d9")
+	(paper "A4")
+	(lib_symbols)
+	(sheet
+		(at 25.4 22.86)
+		(size 49.53 30.48)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "0d869e58-12a4-4e2e-93f9-a423c2ddcdac")
+		(property "Sheetname" "Power"
+			(at 25.4 22.1484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Power.kicad_sch"
+			(at 25.4 53.9246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "DigitSynth"
+				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 26.67 107.95)
+		(size 53.34 38.1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "62a7dce8-d0c0-4114-8523-fa7c8317d31c")
+		(property "Sheetname" "LEDs"
+			(at 26.67 107.2384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "LEDs.kicad_sch"
+			(at 26.67 146.6346 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "DigitSynth"
+				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 26.67 63.5)
+		(size 50.8 34.29)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "91c7c2d9-e939-40fa-a472-fe4cf5507780")
+		(property "Sheetname" "Raspberry PI Interface"
+			(at 26.67 62.7884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "RPInterface.kicad_sch"
+			(at 26.67 98.3746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "DigitSynth"
+				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 82.55 21.59)
+		(size 45.72 29.21)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "acb3d725-63c6-41be-be16-f983d65601c4")
+		(property "Sheetname" "Buttons"
+			(at 82.55 20.8784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Buttons.kicad_sch"
+			(at 82.55 51.3846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "DigitSynth"
+				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 27.94 158.75)
+		(size 50.8 31.75)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "bdf9e645-3139-455a-8eba-456cb221c14e")
+		(property "Sheetname" "ADC Flex"
+			(at 27.94 158.0384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "ADC_Flex.kicad_sch"
+			(at 27.94 191.0846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "DigitSynth"
+				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
