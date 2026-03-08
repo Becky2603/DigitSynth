@@ -1,40 +1,35 @@
 #ifndef LED_DRIVER_H
 #define LED_DRIVER_H
 
-#include <vector>
-#include <cstdint> // for uint16_t
+#include <array>
+#include <cstdint>
+#include <functional>
 
 class LEDDriver
 {
-private:
-    int numChips; // Number of TLC59711 chips daisy-chained
-    std::vector<uint16_t> ledValues; // store 16-bit values for each LED
-
-    // Convert normalized brightness (0-100) to 16-bit PWM value
-    uint16_t normalize(int value);
-
 public:
-    // Constructor
-    // numChips: number of TLC59711 chips in chain
-    LEDDriver(int numChips = 1);
+    static constexpr int NUM_CHANNELS = 12;
 
-    // Initialise SPI and TLC59711
+    using ErrorCallback = std::function<void(const char* error)>;
+
+    LEDDriver();
+
     void init();
-
-    // Set individual LED brightness using normalized value (0-100)
-    void setLED(int ledIndex, int brightness);
-
-    // Update LEDs: takes 10 normalized values (0-100)
-    void update(const std::vector<int>& brightnessValues);
-
-    // Turn all LEDs on at full brightness
+    void setLED(int ledIndex, int brightness);      // single channel, 0-100
+    void update(const std::array<int, NUM_CHANNELS>& brightnessValues);
     void allOn();
-
-    // Turn all LEDs off
     void allOff();
-
-    // Cleanup SPI
     void cleanup();
+
+    void registerErrorCallback(ErrorCallback cb);
+
+private:
+    int spi_fd;
+    std::array<uint16_t, NUM_CHANNELS> ledValues;
+    ErrorCallback errorCallback;
+
+    uint16_t normalise(int value);  // 0-100 → 16-bit PWM
+    void writeSPI();                // packages and sends TLC59711 frame
 };
 
 #endif
