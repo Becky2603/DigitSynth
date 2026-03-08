@@ -2,29 +2,38 @@
 #define LED_DRIVER_H
 
 #include <vector>
+#include <cstdint> // for uint16_t
 
 class LEDDriver
 {
 private:
-    std::vector<int> pins;
+    int numChips; // Number of TLC59711 chips daisy-chained
+    std::vector<uint16_t> ledValues; // store 16-bit values for each LED
+
+    // Convert normalized brightness (0-100) to 16-bit PWM value
+    uint16_t normalize(int value);
 
 public:
     // Constructor
-    LEDDriver(const std::vector<int>& ledPins);
+    // numChips: number of TLC59711 chips in chain
+    LEDDriver(int numChips = 1);
 
-    // Setup GPIO
+    // Initialise SPI and TLC59711
     void init();
 
-    // Control individual LEDs
-    void turnOn(int index);
-    void turnOff(int index);
-    void toggle(int index);
+    // Set individual LED brightness using normalized value (0-100)
+    void setLED(int ledIndex, int brightness);
 
-    // Control all LEDs
+    // Update LEDs: takes 10 normalized values (0-100)
+    void update(const std::vector<int>& brightnessValues);
+
+    // Turn all LEDs on at full brightness
     void allOn();
+
+    // Turn all LEDs off
     void allOff();
 
-    // Cleanup
+    // Cleanup SPI
     void cleanup();
 };
 
