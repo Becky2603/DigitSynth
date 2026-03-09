@@ -7,30 +7,36 @@ if (NOT ${RELEASE} EQUAL 1)
 	add_compile_options(-O0 -g)
 else()
 	add_compile_options(-O3)
-	message(STATUS "Building in release mode\n") 
+	message(STATUS "Building in release mode\n")
 endif()
 
 
 project(DigitSynth)
 
 include(CTest)
-add_executable(digitsynth) 
-add_library(digitsynth_static) 
+add_executable(digitsynth)
+add_library(digitsynth_static)
 target_include_directories(digitsynth PRIVATE include)
 target_include_directories(digitsynth_static PUBLIC include)
 set(SOURCE_DIRECTORY src/)
 
 target_sources(digitsynth
 	PRIVATE
-		# Add source files here to build them  
-		${SOURCE_DIRECTORY}/main.cpp 
+		# Add source files here to build them
+		${SOURCE_DIRECTORY}/main.cpp
 		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
 )
 
 target_sources(digitsynth_static
 	PUBLIC
-		# Add source files here to build them  
+		# Add source files here to build them
 		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
 )
 
 target_link_libraries(digitsynth)
