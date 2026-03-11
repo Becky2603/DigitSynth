@@ -4,7 +4,6 @@
 #include <condition_variable>
 #include <deque>
 #include <memory>
-#include <shared_mutex>
 #include <thread>
 #include <optional>
 #include <string>
@@ -34,7 +33,7 @@ class Spi {
 public:
 
     void write(std::vector<uint8_t>, SpiDevice);
-    void read(std::vector<uint8_t> *,  SpiDevice);
+    void read(std::vector<uint8_t> *, SpiDevice, SpiCallback);
 
     void updateSettings(SpiSettings);
     
@@ -50,8 +49,8 @@ private:
     int fd;
     uint8_t nDevices;  
     std::string path;
-    std::deque<std::pair<std::unique_ptr<std::vector<uint8_t>>, SpiDevice>> readQueue; 
-    std::deque<std::pair<std::vector<uint8_t>, SpiDevice>> writeQueue; 
+    std::deque<std::tuple<std::unique_ptr<std::vector<uint8_t>>, SpiDevice, SpiCallback>> readQueue; 
+    std::deque<std::tuple<std::vector<uint8_t>, SpiDevice>> writeQueue; 
     std::thread worker; 
     std::mutex mut;
     std::condition_variable cond;

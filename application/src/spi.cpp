@@ -1,4 +1,5 @@
 #include "spi.h"
+#include "types.h"
 
 #include <cerrno>
 #include <cstdint>
@@ -8,11 +9,13 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
+#include <vector>
 
 void checkError(int result) {
     if (result < 0) {
@@ -31,22 +34,27 @@ Spi::Spi(std::string path, SpiSettings settings) {
         this->cond.wait(lock, [this] { return !this->readQueue.empty() || !this->writeQueue.empty(); });
         
         while (!this->readQueue.empty()) {
-            auto pair = &this->readQueue.front();
+            auto tuple = &this->readQueue.front();
             
+            auto vec = *std::get<0>(*tuple);
+            auto buf = vec.data();
+            auto len  = vec.size(); 
             // todo: set cs pin
-            auto buf = pair->first->data();
-            ::read(this->fd, buf, pair->first->size());
-            // todo: notify reader
+            ssize_t bytesRead = ::read(this->fd, buf, len);
+            auto callback = std::get<2>(*tuple);
+            callback(bytesRead);
             
             this->readQueue.pop_front();
         }
         
         while (!this->writeQueue.empty()) {
-            auto pair = &this->writeQueue.front();
+            auto tuple = &this->writeQueue.front();
             
-            // todo: set cs pin 
-            auto buf = pair->first.data();
-            ::write(this->fd, buf, pair->first.size());
+            auto vec = std::get<0>(*tuple);
+            auto buf = vec.data();
+            auto len  = vec.size(); 
+            // todo: set cs pin
+            while ((size_t) ::write(this->fd, buf, len) != len) {}
             
             this->writeQueue.pop_front();
         }
@@ -70,22 +78,20 @@ void Spi::updateSettings(SpiSettings settings) {
     checkError(ioctl(fd, SPI_IOC_WR_LSB_FIRST,     &bitOrder));
 }
 
-void Spi::read(std::vector<uint8_t> *dest, SpiDevice device) {
+void Spi::read(std::vector<uint8_t> *dest, SpiDevice device, SpiCallback callback) {
     this->mut.lock();
-    this->readQueue.push_back(std::pair(std::unique_ptr<std::vector<uint8_t>>(dest), device));
+    this->readQueue.push_back(std::make_tuple(std::unique_ptr<std::vector<uint8_t>>(dest), device, callback));
     this->cond.notify_one();
 }
 
 void Spi::write(std::vector<uint8_t> src, SpiDevice device) {
     this->mut.lock();
-    this->writeQueue.push_back(std::pair(src, device));
+    this->writeQueue.push_back(std::make_tuple(src, device));
     this->cond.notify_one();
 }
 
 std::optional<SpiDevice> Spi::addDevice() {
-    if (this->nDevices >= SPI_MAX_DEVICES) {
-        return {};
-    }
+    if (this->nDevices >= SPI_MAX_DEVICES) { return {}; }
 
     auto spiDevice = (SpiDevice) this->nDevices;
     this->nDevices++;

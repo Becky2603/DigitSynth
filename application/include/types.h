@@ -15,6 +15,7 @@ typedef uint32_t Frequency;
 typedef std::function<void(AdcData)>       AdcCallback;
 typedef std::function<void(ExtensionData)> ExtensionCallback;
 typedef std::function<void(ButtonData)>    ButtonCallback;
+typedef std::function<void(ssize_t)>          SpiCallback;
 
 
 #endif
