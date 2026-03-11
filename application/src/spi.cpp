@@ -9,13 +9,13 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <vector>
 
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/spi/spidev.h>
-#include <vector>
 
 void checkError(int result) {
     if (result < 0) {

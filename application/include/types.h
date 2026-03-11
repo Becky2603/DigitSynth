@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
-#include <stddef.h>
+
+#include <sys/types.h>
 
 typedef std::optional<uint32_t> AdcData;
 typedef std::optional<float>    ExtensionData;

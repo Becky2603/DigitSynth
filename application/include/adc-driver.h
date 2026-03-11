@@ -1,6 +1,8 @@
 #include <vector>
 #include <thread>
 
+#include <stddef.h>
+
 #include "types.h"
 
 class AdcDriver {
