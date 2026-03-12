@@ -4,6 +4,10 @@
 	(generator_version "9.0")
 	(uuid "ad908932-4812-48b1-9c87-6bb086cd45d9")
 	(paper "A4")
+	(title_block
+		(title "DigitSynth Schematic")
+		(rev "2")
+	)
 	(lib_symbols)
 	(junction
 		(at 121.92 73.66)
@@ -16,6 +20,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "274859f3-eb8a-4f2d-878e-f7e22e13c811")
+	)
+	(junction
+		(at 67.31 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "29904c05-bb58-491c-8a7e-1e08721a562f")
 	)
 	(junction
 		(at 34.29 64.77)
@@ -109,13 +119,13 @@
 	)
 	(wire
 		(pts
-			(xy 179.07 41.91) (xy 157.48 41.91)
+			(xy 147.32 109.22) (xy 157.48 109.22)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1be355ed-c51d-445e-b2c0-afe94284db42")
+		(uuid "1a1c5542-fd08-483c-be20-6d79b7bec914")
 	)
 	(wire
 		(pts
@@ -149,13 +159,23 @@
 	)
 	(wire
 		(pts
-			(xy 184.15 83.82) (xy 184.15 38.1)
+			(xy 147.32 106.68) (xy 157.48 106.68)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "22c38880-d9db-4350-b258-755fe016c1f6")
+		(uuid "1f3c2505-1d81-4d33-baba-8e098b64578b")
+	)
+	(wire
+		(pts
+			(xy 147.32 104.14) (xy 157.48 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2785d10b-fc12-41d7-9aac-e589d6578595")
 	)
 	(wire
 		(pts
@@ -199,36 +219,6 @@
 	)
 	(wire
 		(pts
-			(xy 63.5 53.34) (xy 63.5 83.82)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3df61a70-a1fa-4798-9061-847653fb3c8c")
-	)
-	(wire
-		(pts
-			(xy 173.99 45.72) (xy 173.99 83.82)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3e3742a4-b437-47ef-a49c-eba262657b55")
-	)
-	(wire
-		(pts
-			(xy 179.07 83.82) (xy 179.07 41.91)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "431b1e39-37f3-4273-8eda-7ec1171b82fa")
-	)
-	(wire
-		(pts
 			(xy 167.64 83.82) (xy 167.64 64.77)
 		)
 		(stroke
@@ -236,6 +226,16 @@
 			(type default)
 		)
 		(uuid "43cc8ab2-0a5e-4881-a4b8-aef40e3d87f1")
+	)
+	(wire
+		(pts
+			(xy 63.5 83.82) (xy 63.5 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "573c07db-e157-4d25-8fa7-d35a7638a1f4")
 	)
 	(wire
 		(pts
@@ -359,16 +359,6 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 34.29) (xy 157.48 34.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "99db6d3c-cfb4-4d81-a716-d6a4dce789ed")
-	)
-	(wire
-		(pts
 			(xy 34.29 64.77) (xy 34.29 83.82)
 		)
 		(stroke
@@ -376,16 +366,6 @@
 			(type default)
 		)
 		(uuid "9ce39952-82cf-4af3-86e0-78d2f1aa1411")
-	)
-	(wire
-		(pts
-			(xy 184.15 38.1) (xy 157.48 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "9d66c8f0-bbc3-4180-96fb-a0546f52c2ad")
 	)
 	(wire
 		(pts
@@ -459,16 +439,6 @@
 	)
 	(wire
 		(pts
-			(xy 189.23 83.82) (xy 189.23 34.29)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c20ab1da-992c-48f6-8869-2e33a804f9ba")
-	)
-	(wire
-		(pts
 			(xy 39.37 53.34) (xy 39.37 81.28)
 		)
 		(stroke
@@ -509,13 +479,23 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 45.72) (xy 173.99 45.72)
+			(xy 63.5 76.2) (xy 67.31 76.2)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f76b062a-e804-431f-8c4e-77519c249345")
+		(uuid "ed6d1cea-f5b6-418a-b64e-e32933ec72b3")
+	)
+	(wire
+		(pts
+			(xy 147.32 111.76) (xy 157.48 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ed8d7893-e2a3-4155-8a51-5e744074fd57")
 	)
 	(wire
 		(pts
@@ -621,16 +601,6 @@
 				(justify left)
 			)
 		)
-		(pin "LED_VPLUS" output
-			(at 63.5 53.34 270)
-			(uuid "68d96365-2fbf-47b2-b9f5-2235d84aaa01")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
 		(instances
 			(project "DigitSynth"
 				(path "/ad908932-4812-48b1-9c87-6bb086cd45d9"
@@ -693,7 +663,7 @@
 				(justify right)
 			)
 		)
-		(pin "LED_VPLUS" input
+		(pin "+5V_PERIPH" input
 			(at 63.5 83.82 90)
 			(uuid "7b1c2a80-a8f2-448e-af45-76b8c6e802ae")
 			(effects
@@ -825,46 +795,6 @@
 				(justify left)
 			)
 		)
-		(pin "BTN_1" input
-			(at 157.48 45.72 0)
-			(uuid "0d89a511-52c6-4d3b-b995-4bf5db64ef07")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "BTN_2" input
-			(at 157.48 41.91 0)
-			(uuid "a7dfa335-0a08-40ed-96af-118f03a35241")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "BTN_3" input
-			(at 157.48 38.1 0)
-			(uuid "11a463a4-cae2-4625-bede-1afff1fe209f")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(pin "BTN_4" input
-			(at 157.48 34.29 0)
-			(uuid "e27ac72c-3677-497d-9f10-cfbeddd62996")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "GND" output
 			(at 101.6 53.34 270)
 			(uuid "2080b75c-7fe9-4d63-b338-eb712a0df1b7")
@@ -958,43 +888,43 @@
 			)
 		)
 		(pin "BTN_1" output
-			(at 173.99 83.82 90)
+			(at 157.48 104.14 180)
 			(uuid "86a8c442-65a2-478f-87d2-5fda77a47d56")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(pin "BTN_2" output
-			(at 179.07 83.82 90)
+			(at 157.48 106.68 180)
 			(uuid "361d837a-1456-4491-ab53-e903e7e072ba")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(pin "BTN_3" output
-			(at 184.15 83.82 90)
+			(at 157.48 109.22 180)
 			(uuid "25da4a14-e68a-4d02-ae48-1e6e91cdf477")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(pin "BTN_4" output
-			(at 189.23 83.82 90)
+			(at 157.48 111.76 180)
 			(uuid "973de5a5-1670-45ce-a3e1-308a8de6a993")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 			)
 		)
 		(pin "GND" input
@@ -1192,6 +1122,46 @@
 		(pin "SPI0_SCLK" input
 			(at 121.92 83.82 90)
 			(uuid "654845d8-dbee-45b5-939e-c93977340b07")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "BTN_1" input
+			(at 147.32 104.14 0)
+			(uuid "121fd15a-833d-4209-8e36-dbde966f8b6c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "BTN_2" input
+			(at 147.32 106.68 0)
+			(uuid "75334ab4-8923-415b-8a7d-357326e6ef42")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "BTN_3" input
+			(at 147.32 109.22 0)
+			(uuid "4a7fdbc2-5f10-4b4f-8a1f-f0e6b131bce8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "BTN_4" input
+			(at 147.32 111.76 0)
+			(uuid "37880e31-cb95-46a3-83d5-6ce25cb19800")
 			(effects
 				(font
 					(size 1.27 1.27)

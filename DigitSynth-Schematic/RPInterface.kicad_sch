@@ -1452,8 +1452,16 @@
 		(uuid "808665df-6378-4d89-a108-29bb0c0df4d8")
 	)
 	(no_connect
+		(at 198.12 71.12)
+		(uuid "808a05f1-ff07-42c9-a9f7-23ecc4c01152")
+	)
+	(no_connect
 		(at 186.69 40.64)
 		(uuid "8c6c772b-5805-404d-b000-1aada299b15c")
+	)
+	(no_connect
+		(at 198.12 50.8)
+		(uuid "8d63b401-43ab-47f9-bb3e-0a83cd56fbd6")
 	)
 	(no_connect
 		(at 222.25 81.28)
@@ -1470,6 +1478,14 @@
 	(no_connect
 		(at 186.69 68.58)
 		(uuid "b1308fb6-5af0-404e-b3cb-d7aadfb48d5e")
+	)
+	(no_connect
+		(at 198.12 53.34)
+		(uuid "b2cea148-d85e-4609-b94f-332494bcaae1")
+	)
+	(no_connect
+		(at 198.12 48.26)
+		(uuid "bc0f6e78-99c1-4714-a2be-0ecebb759acb")
 	)
 	(no_connect
 		(at 222.25 78.74)
@@ -1661,16 +1677,6 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 71.12) (xy 198.12 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3a49f350-019e-4103-8127-b968eb1d6b84")
-	)
-	(wire
-		(pts
 			(xy 210.82 40.64) (xy 212.09 40.64)
 		)
 		(stroke
@@ -1718,26 +1724,6 @@
 			(type default)
 		)
 		(uuid "5acbaf5b-0071-4526-8012-54bc69ec3805")
-	)
-	(wire
-		(pts
-			(xy 173.99 48.26) (xy 198.12 48.26)
-		)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(uuid "64a05b4d-7071-4d51-afc6-f3e629ab5f5d")
-	)
-	(wire
-		(pts
-			(xy 173.99 53.34) (xy 198.12 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "66fbde7b-9bf4-40de-8ec0-b4db03af9d9f")
 	)
 	(wire
 		(pts
@@ -1941,16 +1927,6 @@
 	)
 	(wire
 		(pts
-			(xy 173.99 50.8) (xy 198.12 50.8)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c7a3e2ca-db9d-4730-b49b-f5fe0cfc0011")
-	)
-	(wire
-		(pts
 			(xy 186.69 76.2) (xy 198.12 76.2)
 		)
 		(stroke
@@ -2119,16 +2095,6 @@
 		)
 		(uuid "9e82985a-0878-4981-a002-eca051dee11b")
 	)
-	(label "GND"
-		(at 173.99 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a6459d46-474a-4f4a-9a08-f35270f1871b")
-	)
 	(label "GPIO2"
 		(at 193.04 38.1 180)
 		(effects
@@ -2189,17 +2155,6 @@
 		)
 		(uuid "fac84105-8a8c-4f72-8797-134cc9843113")
 	)
-	(hierarchical_label "BTN_3"
-		(shape input)
-		(at 173.99 53.34 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "05752dac-6fb8-4715-82ad-2dab174ba666")
-	)
 	(hierarchical_label "SPI0_SCLK"
 		(shape output)
 		(at 173.99 63.5 180)
@@ -2221,17 +2176,6 @@
 			(justify left)
 		)
 		(uuid "15b0d382-f177-4554-91a7-cd6502437368")
-	)
-	(hierarchical_label "BTN_4"
-		(shape input)
-		(at 173.99 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "2a0a95c5-3cd3-4f2f-86fe-5e310c1a2ea0")
 	)
 	(hierarchical_label "ADC_RESET"
 		(shape output)
@@ -2299,16 +2243,16 @@
 		)
 		(uuid "90c309df-d224-4ce9-8bd0-01b3b57421c0")
 	)
-	(hierarchical_label "BTN_1"
-		(shape input)
-		(at 173.99 48.26 180)
+	(hierarchical_label "GND"
+		(shape output)
+		(at 173.99 45.72 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "a3ec242a-f755-405f-b3ce-3158d97877a3")
+		(uuid "acbf442d-5b95-4275-9a0f-f7185fde8783")
 	)
 	(hierarchical_label "+3V3_PI"
 		(shape output)
@@ -2331,17 +2275,6 @@
 			(justify left)
 		)
 		(uuid "f74ef745-ab17-4117-8068-da34d82d2c98")
-	)
-	(hierarchical_label "BTN_2"
-		(shape input)
-		(at 173.99 50.8 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "f9732dba-e5a3-4a89-81cf-5db6bb2cd691")
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x20_Odd_Even")
