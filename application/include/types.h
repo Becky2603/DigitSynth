@@ -6,15 +6,19 @@
 #include <functional>
 #include <optional>
 
+#include <sys/types.h>
+
 typedef std::optional<uint32_t> AdcData;
 typedef std::optional<float>    ExtensionData;
 typedef std::optional<bool>     ButtonData;
 
 typedef uint32_t Frequency;
+typedef uint8_t  AdcChannel;
 
 typedef std::function<void(AdcData)>       AdcCallback;
 typedef std::function<void(ExtensionData)> ExtensionCallback;
 typedef std::function<void(ButtonData)>    ButtonCallback;
+typedef std::function<void(ssize_t)>          SpiCallback;
 
 
 #endif

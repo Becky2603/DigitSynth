@@ -28,6 +28,7 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/adc-driver.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+		${SOURCE_DIRECTORY}/spi.cpp
 )
 
 target_sources(digitsynth_static
@@ -37,8 +38,10 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/adc-driver.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+		${SOURCE_DIRECTORY}/spi.cpp
 )
 
-target_link_libraries(digitsynth)
+target_link_libraries(digitsynth -lwiringPi)
+target_link_libraries(digitsynth_static -lwiringPi)
 
 add_subdirectory(test)

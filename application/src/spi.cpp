@@ -1,11 +1,16 @@
 #include "spi.h"
+#include "types.h"
 
 #include <cerrno>
 #include <cstdint>
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <memory>
+#include <mutex>
 #include <optional>
+#include <vector>
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -22,6 +27,38 @@ void checkError(int result) {
 Spi::Spi(std::string path, SpiSettings settings) {
     this->fd = open(path.c_str(), O_RDWR);
     checkError(this->fd);
+    
+    this->worker = std::thread([this] () {
+        std::unique_lock<std::mutex> lock(this->mut);
+        // Wake if the queues have data 
+        this->cond.wait(lock, [this] { return !this->readQueue.empty() || !this->writeQueue.empty(); });
+        
+        while (!this->readQueue.empty()) {
+            auto tuple = &this->readQueue.front();
+            
+            auto vec = *std::get<0>(*tuple);
+            auto buf = vec.data();
+            auto len  = vec.size(); 
+            // todo: set cs pin
+            ssize_t bytesRead = ::read(this->fd, buf, len);
+            auto callback = std::get<2>(*tuple);
+            callback(bytesRead);
+            
+            this->readQueue.pop_front();
+        }
+        
+        while (!this->writeQueue.empty()) {
+            auto tuple = &this->writeQueue.front();
+            
+            auto vec = std::get<0>(*tuple);
+            auto buf = vec.data();
+            auto len  = vec.size(); 
+            // todo: set cs pin
+            while ((size_t) ::write(this->fd, buf, len) != len) {}
+            
+            this->writeQueue.pop_front();
+        }
+    });
 
     updateSettings(settings);
 }
@@ -41,29 +78,23 @@ void Spi::updateSettings(SpiSettings settings) {
     checkError(ioctl(fd, SPI_IOC_WR_LSB_FIRST,     &bitOrder));
 }
 
-int Spi::read(std::vector<uint8_t> *dest, SpiDevice device) {
-    (void) device; // TODO: add something to handle chip select
-    
-    uint8_t *internalBuf = dest->data();
-
-    return read(fd, internalBuf, dest->size());
+void Spi::read(std::vector<uint8_t> *dest, SpiDevice device, SpiCallback callback) {
+    this->mut.lock();
+    this->readQueue.push_back(std::make_tuple(std::unique_ptr<std::vector<uint8_t>>(dest), device, callback));
+    this->cond.notify_one();
 }
 
-int Spi::write(std::vector<uint8_t> *src, SpiDevice device) {
-    (void) device; // TODO: add something to handle chip select
-    
-    uint8_t *internalBuf = src->data();
-
-    return write(fd, internalBuf, src->size());
+void Spi::write(std::vector<uint8_t> src, SpiDevice device) {
+    this->mut.lock();
+    this->writeQueue.push_back(std::make_tuple(src, device));
+    this->cond.notify_one();
 }
 
 std::optional<SpiDevice> Spi::addDevice() {
-    if (this->nDevices >= SPI_MAX_DEVICES) {
-        return {};
-    }
-    
+    if (this->nDevices >= SPI_MAX_DEVICES) { return {}; }
+
     auto spiDevice = (SpiDevice) this->nDevices;
     this->nDevices++;
-    
+
     return spiDevice;
 }
