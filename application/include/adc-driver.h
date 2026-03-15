@@ -1,3 +1,6 @@
+#ifndef ADC_DRIVER_H_
+#define ADC_DRIVER_H_
+
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -74,12 +77,15 @@ struct AdcSettings {
 class AdcDriver {
 public:
     AdcDriver(std::shared_ptr<Spi>, AdcSettings);
-    bool readChannel(AdcChannel, AdcCallback);
+    void readChannel(AdcChannel, AdcCallback);
 
 private:
     std::shared_ptr<Spi> spi;
     SpiDevice spiDevice; 
+    uint32_t clockPeriod_ms;
     void writeRegister(uint8_t, Ads1256Register); 
-    
+    void writeCommand(Ads1256Command);
     
 };
+
+#endif
