@@ -11,6 +11,7 @@ typedef std::optional<float>    ExtensionData;
 typedef std::optional<bool>     ButtonData;
 
 typedef uint32_t Frequency;
+typedef float    Brightness;
 
 typedef std::function<void(AdcData)>       AdcCallback;
 typedef std::function<void(ExtensionData)> ExtensionCallback;
