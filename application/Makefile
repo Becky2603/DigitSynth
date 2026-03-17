@@ -1,3 +1,4 @@
+GNUMAKEFLAGS := j4
 
 .PHONY: all run clean test
 

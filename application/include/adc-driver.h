@@ -3,8 +3,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
-#include <thread>
 
 #include <stddef.h>
 #include <wiringPi.h>

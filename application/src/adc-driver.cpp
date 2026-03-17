@@ -52,7 +52,8 @@ void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
 }
 
 void AdcDriver::writeCommand(Ads1256Command command) {
-    this->spi.get()->write(std::vector<uint8_t>(command), this->spiDevice);
+    std::vector<uint8_t> buf; buf.push_back(command); 
+    this->spi.get()->write(buf, this->spiDevice);
 }
 
 void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
