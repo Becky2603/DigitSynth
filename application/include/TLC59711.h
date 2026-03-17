@@ -3,7 +3,7 @@
 #include <vector>
 #include <thread>
 #include <atomic>
-#include "callback_types.h"
+#include "types.h"
 
 struct LEDFrame {
     Brightness channels[10];   // 0.0–1.0

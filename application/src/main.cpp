@@ -1,16 +1,25 @@
 #include <iostream>
-#include "foo.h"
+#include <thread>
+#include <chrono>
+#include "TLC59711.h"
 
+#define DATA_PIN  17
+#define CLK_PIN   27
 
-int main(int argc, char **argv) {
-    std::cout << "\nStarting DigitSynth application\nArguments: \n";
+int main() {
+    try {
+        TLC59711 leds(DATA_PIN, CLK_PIN);
+        std::cout << "TLC59711 initialised\n";
+        std::cout << "GPIO claimed — LED 0 toggle test\n";
 
-    for (int i = 0; i < argc; i++) {
-	std::cout << "\t" << argv[i] << "\n"; 
+        // we don't have buildPacket/shiftOut yet so just confirm
+        // construction and destruction work cleanly
+        std::cout << "Press enter to exit...\n";
+        std::cin.get();
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+        return 1;
     }
-
-    auto foo = Foo(10);
-    std::cout << foo.do_something('a') << "\n";
-
     return 0;
 }
