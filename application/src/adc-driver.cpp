@@ -15,7 +15,7 @@
 
 #define DRDY    GPIO15
 
-AdcDriver::AdcDriver(std::shared_ptr<Spi> spi, AdcSettings settings) : spi(spi) {
+AdcDriver::AdcDriver(Spi *spi, AdcSettings settings) : spi(spi) {
     auto device = this->spi->addDevice();
     if (!device.has_value()) { std::cerr << "Not enough SPI devices to instantiate ADC\n"; exit(-1); }
     
@@ -71,6 +71,7 @@ void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
     std::vector<uint8_t> vec(buf.begin(), buf.end());
     
     this->spi.get()->read(&vec, this->spiDevice, [buf, callback] (ssize_t bytesRead) {
+        std::cout << bytesRead << std::endl;
         if (bytesRead != 3) { callback({}); return; }
         
         uint32_t val;

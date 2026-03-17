@@ -74,7 +74,7 @@ struct AdcSettings {
 
 class AdcDriver {
 public:
-    AdcDriver(std::shared_ptr<Spi>, AdcSettings);
+    AdcDriver(Spi *, AdcSettings);
     void readChannel(AdcChannel, AdcCallback);
 
 private:

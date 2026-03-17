@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.23)
 
 # === Compiler options ===
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
-if (NOT ${RELEASE} EQUAL 1)
-	message(STATUS "Building in debug mode\n")
-	add_compile_options(-O0 -g)
+if (NOT ${RELEASE} EQUAL 0)
+    add_compile_options(-O3)
+	message(STATUS "Building in release mode ${RELEASE}\n")
 else()
-	add_compile_options(-O3)
-	message(STATUS "Building in release mode\n")
+    message(STATUS "Building in debug mode ${RELEASE}\n")
+	add_compile_options(-O0 -ggdb)
+   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 

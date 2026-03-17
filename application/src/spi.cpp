@@ -29,34 +29,39 @@ Spi::Spi(std::string path, SpiSettings settings) {
     checkError(this->fd);
     
     this->worker = std::thread([this] () {
-        std::unique_lock<std::mutex> lock(this->mut);
-        // Wake if the queues have data 
-        this->cond.wait(lock, [this] { return !this->readQueue.empty() || !this->writeQueue.empty(); });
         
-        while (!this->readQueue.empty()) {
-            auto tuple = &this->readQueue.front();
+        while (true) {
+            std::unique_lock<std::mutex> lock(this->mut);
+            // Wake if the queues have data 
+            std::cout << "hellow3\n";
+            this->cond.wait(lock, [this] { return !this->readQueue.empty() || !this->writeQueue.empty(); });
             
-            auto vec = *std::get<0>(*tuple);
-            auto buf = vec.data();
-            auto len  = vec.size(); 
-            // todo: set cs pin
-            ssize_t bytesRead = ::read(this->fd, buf, len);
-            auto callback = std::get<2>(*tuple);
-            callback(bytesRead);
+            while (!this->readQueue.empty()) {
+                auto tuple = &this->readQueue.front();
+                
+                std::vector<uint8_t> *vec = std::get<0>(*tuple);
+                auto buf = vec->data();
+                auto len  = vec->size(); 
+                // todo: set cs pin
+                ssize_t bytesRead = ::read(this->fd, buf, len);
+                std::cout << bytesRead << std::endl;
+                auto callback = std::get<2>(*tuple);
+                callback(bytesRead);
+                
+                this->readQueue.pop_front();
+            }
             
-            this->readQueue.pop_front();
-        }
-        
-        while (!this->writeQueue.empty()) {
-            auto tuple = &this->writeQueue.front();
-            
-            auto vec = std::get<0>(*tuple);
-            auto buf = vec.data();
-            auto len  = vec.size(); 
-            // todo: set cs pin
-            while ((size_t) ::write(this->fd, buf, len) != len) {}
-            
-            this->writeQueue.pop_front();
+            while (!this->writeQueue.empty()) {
+                auto tuple = &this->writeQueue.front();
+                
+                auto vec = std::get<0>(*tuple);
+                auto buf = vec.data();
+                auto len  = vec.size(); 
+                // todo: set cs pin
+                while ((size_t) ::write(this->fd, buf, len) != len) {}
+                
+                this->writeQueue.pop_front();
+            }
         }
     });
 
@@ -65,6 +70,7 @@ Spi::Spi(std::string path, SpiSettings settings) {
 
 Spi::~Spi() {
     checkError(close(this->fd));
+    this->worker.join();
 }
 
 void Spi::updateSettings(SpiSettings settings) {
@@ -80,14 +86,16 @@ void Spi::updateSettings(SpiSettings settings) {
 
 void Spi::read(std::vector<uint8_t> *dest, SpiDevice device, SpiCallback callback) {
     this->mut.lock();
-    this->readQueue.push_back(std::make_tuple(std::unique_ptr<std::vector<uint8_t>>(dest), device, callback));
+    this->readQueue.push_back(std::make_tuple(dest, device, callback));
     this->cond.notify_one();
+    this->mut.unlock();
 }
 
 void Spi::write(std::vector<uint8_t> src, SpiDevice device) {
     this->mut.lock();
     this->writeQueue.push_back(std::make_tuple(src, device));
     this->cond.notify_one();
+    this->mut.unlock();
 }
 
 std::optional<SpiDevice> Spi::addDevice() {

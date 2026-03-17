@@ -11,6 +11,7 @@
 #include <cstdint>
 
 #include "types.h"
+#include "pin-map.h"
 
 #define SPI_MAX_DEVICES 4
 
@@ -47,9 +48,9 @@ public:
 
 private:
     int fd;
-    uint8_t nDevices;  
+    uint8_t nDevices = 0;  
     std::string path;
-    std::deque<std::tuple<std::unique_ptr<std::vector<uint8_t>>, SpiDevice, SpiCallback>> readQueue; 
+    std::deque<std::tuple<std::vector<uint8_t> *, SpiDevice, SpiCallback>> readQueue; 
     std::deque<std::tuple<std::vector<uint8_t>, SpiDevice>> writeQueue; 
     std::thread worker; 
     std::mutex mut;
@@ -57,7 +58,7 @@ private:
     
     // TODO: decide on pins
     static const constexpr uint8_t csPins[SPI_MAX_DEVICES] = {
-        18,
+        GPIO22,
         19,
         20, 
         21, 
