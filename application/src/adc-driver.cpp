@@ -79,6 +79,7 @@ void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
     std::vector<uint8_t> vec(3);
 
     int br = ::read(spi.get()->fd, vec.data(), vec.size());
+    std::cerr << br << std::endl;
     (void) br; 
     uint32_t val = 0;
     memcpy(&val, vec.data(), vec.size());

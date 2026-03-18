@@ -25,17 +25,17 @@ int main(int argc, char **argv) {
     AdcSettings adcSettings{};
     adcSettings.analogueInputBuffer = false;
     adcSettings.autoCalibration = false;
-    adcSettings.clockOut = false;
+    adcSettings.clockOut = true;
     adcSettings.clockRate = AdsClockRate::R30000;
-    adcSettings.logGain = 4;
-    adcSettings.lsbFirst = true;
+    adcSettings.logGain = 0;
+    adcSettings.lsbFirst = false;
     AdcDriver adc(&spi, adcSettings);
     
     while (true) {
         std::cout << "_______________________________\n";
         for (int i = 0; i < 8; i++) {
             adc.readChannel(i, [i] (AdcData data) {
-                if (data.has_value()) { std::cout << ((double) data.value() / pow(2.0, 24.0) ) << std::endl; }
+                if (data.has_value()) { std::cout << data.value() << std::endl; }
                 else { 
                     std::cout << i << ": no value: " << std::strerror(errno) << std::endl; 
                 }

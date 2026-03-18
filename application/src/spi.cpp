@@ -82,7 +82,7 @@ void Spi::updateSettings(SpiSettings settings) {
     // uint8_t mode = (settings.clockPolarity << 1) & (settings.clockPhase);
     uint8_t mode = SPI_MODE_1;
     uint8_t bitsPerWord = settings.bitsPerWord;
-    uint8_t bitOrder = settings.bitOrder;
+    // uint8_t bitOrder = settings.bitOrder;
 
     std::cout << "setting mode\n";
     checkError(ioctl(fd, SPI_IOC_WR_MODE,          &mode));
@@ -91,8 +91,8 @@ void Spi::updateSettings(SpiSettings settings) {
     std::cout << "set bits per word\n";
     checkError(ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ,  &settings.clockFrequency));
     std::cout << "set clock\n";
-    checkError(ioctl(fd, SPI_IOC_WR_LSB_FIRST,     &bitOrder));
-    std::cout << "set bit order\n";
+    // checkError(ioctl(fd, SPI_IOC_WR_LSB_FIRST,     &bitOrder));
+    // std::cout << "set bit order\n";
 }
 
 void Spi::read(std::vector<uint8_t> *dest, SpiDevice device, SpiCallback callback) {
