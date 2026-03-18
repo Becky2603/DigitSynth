@@ -3,9 +3,11 @@
 
 #include <cerrno>
 #include <cstdint>
+#include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <iostream>
+#include <linux/spi/spi.h>
 #include <mutex>
 #include <optional>
 #include <vector>
@@ -19,12 +21,15 @@
 void checkError(int result) {
     if (result < 0) {
         std::cerr << strerror(errno) << std::endl;
+        fflush(stdout);
+        fflush(stderr);
         exit(result);
     }
 }
 
 Spi::Spi(std::string path, SpiSettings settings) {
     this->fd = open(path.c_str(), O_RDWR);
+    std::cout << "opened file\n";
     checkError(this->fd);
     
     this->worker = std::thread([this] () {
@@ -74,14 +79,20 @@ Spi::~Spi() {
 }
 
 void Spi::updateSettings(SpiSettings settings) {
-    uint8_t mode = (settings.clockPolarity << 1) & (settings.clockPhase);
+    // uint8_t mode = (settings.clockPolarity << 1) & (settings.clockPhase);
+    uint8_t mode = SPI_MODE_1;
     uint8_t bitsPerWord = settings.bitsPerWord;
     uint8_t bitOrder = settings.bitOrder;
 
+    std::cout << "setting mode\n";
     checkError(ioctl(fd, SPI_IOC_WR_MODE,          &mode));
+    std::cout << "set mode\n";
     checkError(ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bitsPerWord));
+    std::cout << "set bits per word\n";
     checkError(ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ,  &settings.clockFrequency));
+    std::cout << "set clock\n";
     checkError(ioctl(fd, SPI_IOC_WR_LSB_FIRST,     &bitOrder));
+    std::cout << "set bit order\n";
 }
 
 void Spi::read(std::vector<uint8_t> *dest, SpiDevice device, SpiCallback callback) {

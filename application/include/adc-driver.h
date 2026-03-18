@@ -83,7 +83,7 @@ private:
     uint32_t clockPeriod_ms;
     void writeRegister(uint8_t, Ads1256Register); 
     void writeCommand(Ads1256Command);
-    
+    uint32_t adsClockToFrequency(AdsClockRate);
 };
 
 #endif

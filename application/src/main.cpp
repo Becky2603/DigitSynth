@@ -9,13 +9,10 @@
 
 
 int main(int argc, char **argv) {
-    std::cout << "\nStarting DigitSynth application\nArguments: \n";
+    (void) argc;
+    (void) argv; 
     
     wiringPiSetupGpio();
-
-    for (int i = 0; i < argc; i++) {
-    	std::cout << "\t" << argv[i] << "\n"; 
-    }
 
     SpiSettings spiSettings{};
     spiSettings.bitOrder = 0;
@@ -30,17 +27,15 @@ int main(int argc, char **argv) {
     adcSettings.autoCalibration = false;
     adcSettings.clockOut = false;
     adcSettings.clockRate = AdsClockRate::R30000;
-    adcSettings.logGain = 0;
+    adcSettings.logGain = 4;
     adcSettings.lsbFirst = true;
     AdcDriver adc(&spi, adcSettings);
-    
-    std::this_thread::sleep_for(std::chrono::seconds(2));
     
     while (true) {
         std::cout << "_______________________________\n";
         for (int i = 0; i < 8; i++) {
             adc.readChannel(i, [i] (AdcData data) {
-                if (data.has_value()) { std::cout << i << ": val: " << ((double) data.value() / pow(2.0, 24.0) ) << std::endl; }
+                if (data.has_value()) { std::cout << ((double) data.value() / pow(2.0, 24.0) ) << std::endl; }
                 else { 
                     std::cout << i << ": no value: " << std::strerror(errno) << std::endl; 
                 }
