@@ -1,9 +1,47 @@
-cmake_minimum_required(VERSION 3.16)
-project(tlc59711)
-set(CMAKE_CXX_STANDARD 17)
+cmake_minimum_required(VERSION 3.23)
 
-add_executable(tlc59711_hello
-    main.cpp
-    tlc59711.cpp
+# === Compiler options ===
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+if (NOT ${RELEASE} EQUAL 0)
+    add_compile_options(-O3)
+	message(STATUS "Building in release mode ${RELEASE}\n")
+else()
+    message(STATUS "Building in debug mode ${RELEASE}\n")
+	add_compile_options(-O0 -ggdb)
+   set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+
+project(DigitSynth)
+
+include(CTest)
+add_executable(digitsynth)
+add_library(digitsynth_static)
+target_include_directories(digitsynth PRIVATE include)
+target_include_directories(digitsynth_static PUBLIC include)
+set(SOURCE_DIRECTORY src/)
+
+target_sources(digitsynth
+	PRIVATE
+		# Add source files here to build them
+		${SOURCE_DIRECTORY}/main.cpp
+		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+		${SOURCE_DIRECTORY}/TLC59711.cpp
 )
-target_link_libraries(tlc59711_hello lgpio)
+
+target_sources(digitsynth_static
+	PUBLIC
+		# Add source files here to build them
+		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+)
+
+target_link_libraries(digitsynth -lwiringPi -llgpio)
+target_link_libraries(digitsynth_static -lwiringPi)
+
+add_subdirectory(test)

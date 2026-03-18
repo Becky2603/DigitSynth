@@ -1,4 +1,4 @@
-#include "TLC59711.hpp"
+#include "TLC59711.h"
 #include <lgpio.h>
 #include <stdexcept>
 
