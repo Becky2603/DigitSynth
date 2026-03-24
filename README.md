@@ -1,4 +1,4 @@
 # DigitSynth
 The Glover's Instrument
 
-A wearable musical instrument that turns hand movements into sound. Wear the gloves, move your hands, create music.
+Gloves that send midi control messages to a synth to actively change parameters based on hand gestures.
