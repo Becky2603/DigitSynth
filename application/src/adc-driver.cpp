@@ -12,7 +12,6 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include <wiringPi.h>
 
 #define DRDY    GPIO15
 
@@ -40,7 +39,6 @@ AdcDriver::AdcDriver(Spi *spi, AdcSettings settings) : spi(spi) {
     
     this->writeCommand(SELFCAL);
     
-    pinMode(DRDY, INPUT);
 }
 
 void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
@@ -51,7 +49,8 @@ void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
     buf[3] = value;
     
     std::vector<uint8_t> vec(buf.begin(), buf.end()); 
-    ::write(this->spi->fd, buf.data(), buf.size());
+    int bw = ::write(this->spi->fd, buf.data(), buf.size());
+    (void) bw; 
     
     if (reg == Ads1256Register::MUX) {
         writeCommand(Ads1256Command::SYNC);
@@ -61,7 +60,8 @@ void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
 
 void AdcDriver::writeCommand(Ads1256Command command) {
     std::vector<uint8_t> buf; buf.push_back(command); 
-    ::write(this->spi->fd, buf.data(), buf.size());
+    int bw = ::write(this->spi->fd, buf.data(), buf.size());
+    (void) bw; 
     // this->spi.get()->write(buf, this->spiDevice);
 }
 
@@ -71,7 +71,7 @@ void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
     uint8_t muxVal = (channel << 4) | 0x08;
     this->writeRegister(muxVal, Ads1256Register::MUX);
     
-    while (digitalRead(DRDY)) { waitForInterrupt2(DRDY, INT_EDGE_FALLING, -1, 0); }
+    // while (digitalRead(DRDY)) { waitForInterrupt2(DRDY, INT_EDGE_FALLING, -1, 0); }
     
     this->writeCommand(RDATA);
     std::this_thread::sleep_for(std::chrono::microseconds(50 * this->clockPeriod_ms));

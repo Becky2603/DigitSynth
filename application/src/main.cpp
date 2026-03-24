@@ -2,7 +2,6 @@
 #include <cstring>
 #include <iostream>
 #include <thread>
-#include <wiringPi.h>
 #include "adc-driver.h"
 #include "foo.h"
 #include "spi.h"
@@ -12,8 +11,6 @@ int main(int argc, char **argv) {
     (void) argc;
     (void) argv; 
     
-    wiringPiSetupGpio();
-
     SpiSettings spiSettings{};
     spiSettings.bitOrder = 0;
     spiSettings.bitsPerWord = 8;

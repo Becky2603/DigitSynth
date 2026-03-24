@@ -42,7 +42,7 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/spi.cpp
 )
 
-target_link_libraries(digitsynth -lwiringPi)
-target_link_libraries(digitsynth_static -lwiringPi)
+target_link_libraries(digitsynth)
+target_link_libraries(digitsynth_static)
 
 add_subdirectory(test)

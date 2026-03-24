@@ -5,7 +5,6 @@
 #include <memory>
 
 #include <stddef.h>
-#include <wiringPi.h>
 
 #include "spi.h"
 #include "types.h"
