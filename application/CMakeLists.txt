@@ -1,47 +1,50 @@
 cmake_minimum_required(VERSION 3.23)
 
-# === Compiler options ===
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 if (NOT ${RELEASE} EQUAL 0)
     add_compile_options(-O3)
-	message(STATUS "Building in release mode ${RELEASE}\n")
+    message(STATUS "Building in release mode ${RELEASE}\n")
 else()
     message(STATUS "Building in debug mode ${RELEASE}\n")
-	add_compile_options(-O0 -ggdb)
-   set(CMAKE_BUILD_TYPE Debug)
+    add_compile_options(-O0 -ggdb)
+    set(CMAKE_BUILD_TYPE Debug)
 endif()
-
 
 project(DigitSynth)
 
 include(CTest)
-add_executable(digitsynth)
-add_library(digitsynth_static)
-target_include_directories(digitsynth PRIVATE include)
-target_include_directories(digitsynth_static PUBLIC include)
+
 set(SOURCE_DIRECTORY src/)
 
-target_sources(digitsynth
-	PRIVATE
-		# Add source files here to build them
-		${SOURCE_DIRECTORY}/main.cpp
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-		${SOURCE_DIRECTORY}/TLC59711.cpp
-)
+# ── Static library — shared by main binary and tests ────────────────────────
+add_library(digitsynth_static STATIC)
+
+target_include_directories(digitsynth_static PUBLIC include)
 
 target_sources(digitsynth_static
-	PUBLIC
-		# Add source files here to build them
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+    PUBLIC
+        ${SOURCE_DIRECTORY}/foo.cpp
+        ${SOURCE_DIRECTORY}/adc-driver.cpp
+        ${SOURCE_DIRECTORY}/button-driver.cpp
+        ${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp      # ← added
 )
 
-target_link_libraries(digitsynth -lwiringPi -llgpio)
-target_link_libraries(digitsynth_static -lwiringPi)
+target_link_libraries(digitsynth_static -lwiringPi -llgpio -lm)
 
-add_subdirectory(test)
+# ── Main executable ──────────────────────────────────────────────────────────
+add_executable(digitsynth)
+
+target_include_directories(digitsynth PRIVATE include)
+
+target_sources(digitsynth
+    PRIVATE
+        ${SOURCE_DIRECTORY}/main.cpp
+)
+
+target_link_libraries(digitsynth digitsynth_static)
+
+add_subdirectory(test)cd application
+cmake -B build -DRELEASE=0
+cmake --build build
+cd build && ctest --output-on-failure
