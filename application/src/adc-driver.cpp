@@ -16,10 +16,7 @@
 #define DRDY    GPIO15
 
 AdcDriver::AdcDriver(Spi *spi, AdcSettings settings) : spi(spi) {
-    auto device = this->spi->addDevice();
-    if (!device.has_value()) { std::cerr << "Not enough SPI devices to instantiate ADC\n"; exit(-1); }
     
-    this->spiDevice = device.value();
     this->clockPeriod_ms = 1000000 / adsClockToFrequency(settings.clockRate);
     
     // The AND 0x01 here is to ensure that higher-level bits that may have been accidentally set are not included.

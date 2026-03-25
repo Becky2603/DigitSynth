@@ -33,37 +33,17 @@ struct SpiSettings {
 class Spi {
 public:
 
-    void write(std::vector<uint8_t>, SpiDevice);
-    void read(std::vector<uint8_t> *, SpiDevice, SpiCallback);
+    void write(std::vector<uint8_t>);
+    void read(std::vector<uint8_t>);
 
     void updateSettings(SpiSettings);
-    
-    /**
-     * @return none if there are already SPI_MAX_DEVICES devices in use, an SpiDevice otherwise 
-     */
-    std::optional<SpiDevice> addDevice();
     
     Spi(std::string, SpiSettings);
     ~Spi();
 
     int fd;
 private:
-    uint8_t nDevices = 0;  
     std::string path;
-    std::deque<std::tuple<std::vector<uint8_t> *, SpiDevice, SpiCallback>> readQueue; 
-    std::deque<std::tuple<std::vector<uint8_t>, SpiDevice>> writeQueue; 
-    std::thread worker; 
-    std::mutex mut;
-    std::condition_variable cond;
-    
-    // TODO: decide on pins
-    static const constexpr uint8_t csPins[SPI_MAX_DEVICES] = {
-        GPIO22,
-        19,
-        20, 
-        21, 
-    };
-
 };
 
 #endif
