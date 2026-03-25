@@ -75,13 +75,13 @@ class AdcDriver {
 public:
     AdcDriver(Spi *, AdcSettings);
     void readChannel(AdcChannel, AdcCallback);
+    void writeCommand(Ads1256Command);
 
 private:
     std::shared_ptr<Spi> spi;
     SpiDevice spiDevice; 
     uint32_t clockPeriod_ms;
     void writeRegister(uint8_t, Ads1256Register); 
-    void writeCommand(Ads1256Command);
     uint32_t adsClockToFrequency(AdsClockRate);
 };
 

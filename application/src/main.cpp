@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -7,9 +8,11 @@
 #include <iostream>
 #include "adc-driver.h"
 #include "foo.h"
+#include "gpio.h"
 #include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>
+#include <thread>
 #include <unistd.h>
 
 void checkError_l(int result) {
@@ -46,15 +49,25 @@ int main(int argc, char **argv) {
     ::write(fd, data, 1);
     */
    
+    gpio::setupGpio();
     
     SpiSettings spiSettings;
     spiSettings.bitsPerWord = 8;
     spiSettings.clockFrequency = 1;
     Spi spi("/dev/spidev0.0", spiSettings); 
     
-    std::vector<uint8_t> buf;
-    buf.push_back(0b01010011);
-    spi.write(buf);
+    AdcSettings adcSettings;
+    adcSettings.analogueInputBuffer = false;
+    adcSettings.autoCalibration = false;
+    adcSettings.clockOut = false;
+    adcSettings.clockRate = AdsClockRate::R30000;
+    adcSettings.logGain = 1;
+    adcSettings.lsbFirst = true;
+    AdcDriver adc(&spi, adcSettings);
+    adc.readChannel(0, [] (AdcData data) {
+        if (data.has_value()) { std::cout << "value: " << data.value() << std::endl;}
+        else { std::cout << "no data\n"; }
+    });
     
     return 0;
 }

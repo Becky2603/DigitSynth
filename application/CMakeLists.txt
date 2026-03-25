@@ -41,6 +41,7 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
 		${SOURCE_DIRECTORY}/spi.cpp
+		${SOURCE_DIRECTORY}/gpio.cpp
 )
 
 target_link_libraries(digitsynth -lgpiodcxx)

@@ -26,7 +26,6 @@ void checkError(int result) {
 
 Spi::Spi(std::string path, SpiSettings settings) {
     this->fd = open(path.c_str(), O_RDWR);
-    std::cout << "opened file\n";
     checkError(this->fd);
     updateSettings(settings);
 }
