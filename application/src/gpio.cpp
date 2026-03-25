@@ -1,12 +1,17 @@
 #include "gpio.h"
+#include "types.h"
+#include <chrono>
 #include <cstring>
 #include <gpiod.hpp>
 #include <iostream>
+#include <optional>
 #include <thread>
 
 static gpiod::chip *chip;
 
 static std::thread t; 
+static std::optional<GpioCallback> callback = {};
+static std::optional<gpiod::line_request *> callbackRequest = {};
 
 void gpio::setupGpio() {
     chip = new gpiod::chip("/dev/gpiochip0");
@@ -14,6 +19,23 @@ void gpio::setupGpio() {
         std::cerr << "Could not open GPIO device\n";
         exit(-1);
     }
+    
+    t = std::thread([] () {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            
+            while (::callbackRequest.has_value()) {
+                bool r = ::callbackRequest.value()->wait_edge_events(std::chrono::milliseconds(200));
+                if (r && ::callback.has_value()) {
+                    gpiod::edge_event_buffer buf;
+                    ::callbackRequest.value()->read_edge_events(buf, 1);
+                    ::callback.value()();
+                    
+                    ::callback = {};
+                }
+            }
+        }
+    });
 }
 
 void gpio::setPin(int pin, bool value) {
@@ -53,6 +75,7 @@ bool gpio::getPin(int pin) {
 }
 
 void gpio::registerCallback(int pin, gpiod::line::edge edge, GpioCallback callback) {
+    (void) callback;
     if (chip == nullptr) {
         std::cerr << "GPIO chip not set up\n";
         exit(-1);
@@ -65,5 +88,7 @@ void gpio::registerCallback(int pin, gpiod::line::edge edge, GpioCallback callba
         .set_consumer("digitsynth callback")
         .set_line_config(line_config);
     
-    auto request = gpiod::line_request(builder.do_request());
+    auto request = new gpiod::line_request(builder.do_request());
+    ::callback = callback;
+    ::callbackRequest = request;
 }
