@@ -78,8 +78,7 @@ public:
     void writeCommand(Ads1256Command);
 
 private:
-    std::shared_ptr<Spi> spi;
-    SpiDevice spiDevice; 
+    Spi *spi;
     uint32_t clockPeriod_ms;
     void writeRegister(uint8_t, Ads1256Register); 
     uint32_t adsClockToFrequency(AdsClockRate);

@@ -37,7 +37,8 @@ AdcDriver::AdcDriver(Spi *spi, AdcSettings settings) : spi(spi) {
     this->writeRegister(adconVal,  Ads1256Register::ADCON);
     this->writeRegister(ioVal,     Ads1256Register::IO);
     
-    this->writeCommand(SELFCAL);
+    this->writeCommand(Ads1256Command::SELFCAL);
+    this->writeCommand(Ads1256Command::STANDBY);
 }
 
 void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
@@ -59,7 +60,7 @@ void AdcDriver::writeRegister(uint8_t value, Ads1256Register reg) {
 
 void AdcDriver::writeCommand(Ads1256Command command) {
     std::vector<uint8_t> buf; buf.push_back(command); 
-    this->spi.get()->write(buf);
+    this->spi->write(buf);
 }
 
 void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
@@ -77,13 +78,11 @@ void AdcDriver::readChannel(AdcChannel channel, AdcCallback callback) {
     
     std::vector<uint8_t> vec(3);
 
-    int br = ::read(spi.get()->fd, vec.data(), vec.size());
-    std::cerr << br << std::endl;
-    (void) br; 
+    this->spi->read(vec);
     uint32_t val = 0;
     memcpy(&val, vec.data(), vec.size());
     // val >>= 8; 
-
+    
     callback(val);
     
     /*
