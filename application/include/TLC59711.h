@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <array>
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -8,21 +9,21 @@
 #include <gpiod.hpp>
 #include "types.h"
 
-struct LEDFrame {
-    Brightness channels[10];
-};
-
 class TLC59711 {
     friend class TLC59711Test;
 public:
+    static constexpr int NUM_LEDS = 10;
+
+    using Channels = std::array<Brightness, NUM_LEDS>;
+
     TLC59711(int data_pin, int clk_pin, int num_drivers = 1);
     ~TLC59711();
 
     void start();
     void stop();
 
-    // Non-blocking — copies frame into shared buffer and wakes worker thread.
-    void update(const LEDFrame& frame);
+    // Non-blocking — copies channels into shared buffer and wakes worker thread.
+    void update(const Channels& channels);
 
     void setBrightness(uint8_t brightness);
 
@@ -35,7 +36,7 @@ private:
                   gpiod::line_request& request) const;
     static uint16_t toGS(Brightness b);
 
-    static constexpr int FRAME_TO_GS[10] = {
+    static constexpr int FRAME_TO_GS[NUM_LEDS] = {
         0, 1, 2,
         3, 4, 5,
         6, 7, 8,
@@ -43,7 +44,6 @@ private:
     };
 
     static constexpr int  CHANNELS_PER_DRIVER = 12;
-    static constexpr int  NUM_LEDS            = 10;
     static constexpr long HALF_PERIOD_NS      = 5000L;
 
     std::thread              _thread;
@@ -52,7 +52,7 @@ private:
     // Shared state between calling thread and worker thread.
     std::mutex               _mutex;
     std::condition_variable  _cv;
-    LEDFrame                 _pendingFrame{};
+    Channels                 _pending{};
     bool                     _dirty{false};
 
     int      _data_pin{0};

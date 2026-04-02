@@ -39,11 +39,11 @@ void TLC59711::stop() {
         _thread.join();
 }
 
-void TLC59711::update(const LEDFrame& frame) {
+void TLC59711::update(const Channels& channels) {
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _pendingFrame = frame;
-        _dirty        = true;
+        _pending = channels;
+        _dirty   = true;
     }
     _cv.notify_one();
 }
@@ -70,24 +70,23 @@ void TLC59711::worker() {
         .set_line_config(line_config)
         .do_request();
 
-    LEDFrame frame{};
+    Channels channels{};
 
     while (true) {
         {
             std::unique_lock<std::mutex> lock(_mutex);
-            // Sleep until there is a frame to send or we are asked to stop.
             _cv.wait(lock, [this] { return _dirty || !_running; });
 
             if (!_running) break;
 
-            frame  = _pendingFrame;
-            _dirty = false;
+            channels = _pending;
+            _dirty   = false;
         }
         // Lock is released here — calling thread is free immediately.
 
         std::fill(_pwm.begin(), _pwm.end(), 0);
         for (int i = 0; i < NUM_LEDS; ++i)
-            _pwm[FRAME_TO_GS[i]] = toGS(frame.channels[i]);
+            _pwm[FRAME_TO_GS[i]] = toGS(channels[i]);
 
         std::vector<uint8_t> buf;
         buf.reserve(static_cast<size_t>(_num_drivers) * 28);
