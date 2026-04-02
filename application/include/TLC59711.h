@@ -2,7 +2,10 @@
 #include <cstdint>
 #include <vector>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 #include <atomic>
+#include <gpiod.hpp>
 #include "types.h"
 
 struct LEDFrame {
@@ -18,18 +21,18 @@ public:
     void start();
     void stop();
 
-    // Setter — writes frame into pipe and returns immediately.
-    // Worker thread wakes, builds packet and shifts out.
+    // Non-blocking — copies frame into shared buffer and wakes worker thread.
     void update(const LEDFrame& frame);
 
     void setBrightness(uint8_t brightness);
 
 private:
-    // Blocking I/O loop — woken by update(), owns all GPIO access
+    // Blocking I/O loop — woken by update(), owns all GPIO access.
     void worker();
 
     void buildPacket(std::vector<uint8_t>& buf) const;
-    void shiftOut(const std::vector<uint8_t>& buf) const;
+    void shiftOut(const std::vector<uint8_t>& buf,
+                  gpiod::line_request& request) const;
     static uint16_t toGS(Brightness b);
 
     static constexpr int FRAME_TO_GS[10] = {
@@ -43,18 +46,21 @@ private:
     static constexpr int  NUM_LEDS            = 10;
     static constexpr long HALF_PERIOD_NS      = 5000L;
 
-    std::thread       _thread;
-    std::atomic<bool> _running{false};
+    std::thread              _thread;
+    std::atomic<bool>        _running{false};
 
-    int _gpio_handle{-1};
-    int _data_pin{0};
-    int _clk_pin{0};
-    int _num_drivers{1};
+    // Shared state between calling thread and worker thread.
+    std::mutex               _mutex;
+    std::condition_variable  _cv;
+    LEDFrame                 _pendingFrame{};
+    bool                     _dirty{false};
 
-    int _pipe_fd[2]{-1, -1};
+    int      _data_pin{0};
+    int      _clk_pin{0};
+    int      _num_drivers{1};
 
-    uint8_t _brightness{127};
+    std::atomic<uint8_t> _brightness{127};
 
-    // Owned exclusively by worker thread — no mutex needed
+    // Owned exclusively by worker thread — no mutex needed.
     std::vector<uint16_t> _pwm;
 };
