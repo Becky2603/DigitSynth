@@ -44,7 +44,14 @@ target_sources(digitsynth
 
 target_link_libraries(digitsynth digitsynth_static)
 
-add_subdirectory(test)cd application
-cmake -B build -DRELEASE=0
-cmake --build build
-cd build && ctest --output-on-failure
+target_sources(digitsynth_static
+    PUBLIC
+        ${SOURCE_DIRECTORY}/foo.cpp
+        ${SOURCE_DIRECTORY}/adc-driver.cpp
+        ${SOURCE_DIRECTORY}/button-driver.cpp
+        ${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp    # ← add this
+)
+
+add_subdirectory(test)

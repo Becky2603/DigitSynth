@@ -2,6 +2,7 @@
 #include <lgpio.h>
 #include <stdexcept>
 #include <cmath>
+#include <unistd.h>
 #include <iostream>
 
 constexpr int TLC59711::FRAME_TO_GS[10];
@@ -12,40 +13,95 @@ TLC59711::TLC59711(int data_pin, int clk_pin, int num_drivers)
       _num_drivers(num_drivers),
       _pwm(num_drivers * CHANNELS_PER_DRIVER, 0)
 {
+    // Open chip only — pins are claimed in worker() on the worker thread
     _gpio_handle = lgGpiochipOpen(0);
     if (_gpio_handle < 0)
         throw std::runtime_error("TLC59711: cannot open gpiochip0");
-
-    if (lgGpioClaimOutput(_gpio_handle, 0, _data_pin, 0) < 0)
-        throw std::runtime_error("TLC59711: cannot claim data pin");
-
-    if (lgGpioClaimOutput(_gpio_handle, 0, _clk_pin, 0) < 0)
-        throw std::runtime_error("TLC59711: cannot claim clock pin");
 }
 
 TLC59711::~TLC59711() {
-    if (_gpio_handle >= 0) {
-        lgGpioWrite(_gpio_handle, _data_pin, 0);
-        lgGpioWrite(_gpio_handle, _clk_pin,  0);
-        lgGpioFree(_gpio_handle, _data_pin);
-        lgGpioFree(_gpio_handle, _clk_pin);
+    stop();
+    if (_gpio_handle >= 0)
         lgGpiochipClose(_gpio_handle);
+}
+
+void TLC59711::start() {
+    if (_running) return;
+
+    if (pipe(_pipe_fd) < 0)
+        throw std::runtime_error("TLC59711: pipe() failed");
+
+    _running = true;
+    _thread  = std::thread(&TLC59711::worker, this);
+}
+
+void TLC59711::stop() {
+    if (!_running) return;
+    _running = false;
+
+    // Closing write end unblocks worker's read() with EOF
+    if (_pipe_fd[1] >= 0) {
+        close(_pipe_fd[1]);
+        _pipe_fd[1] = -1;
+    }
+
+    if (_thread.joinable())
+        _thread.join();
+
+    if (_pipe_fd[0] >= 0) {
+        close(_pipe_fd[0]);
+        _pipe_fd[0] = -1;
     }
 }
 
 void TLC59711::update(const LEDFrame& frame) {
-    std::fill(_pwm.begin(), _pwm.end(), 0);
-    for (int i = 0; i < NUM_LEDS; ++i)
-        _pwm[FRAME_TO_GS[i]] = toGS(frame.channels[i]);
-
-    std::vector<uint8_t> buf;
-    buf.reserve(static_cast<size_t>(_num_drivers) * 28);
-    buildPacket(buf);
-    shiftOut(buf);
+    if (_pipe_fd[1] < 0) return;
+    const ssize_t n = ::write(_pipe_fd[1], &frame, sizeof(LEDFrame));
+    if (n < 0)
+        std::cerr << "TLC59711::update: pipe write failed\n";
 }
 
 void TLC59711::setBrightness(uint8_t brightness) {
     _brightness = brightness;
+}
+
+void TLC59711::worker() {
+    // Claim pins on this thread — lgpio ties GPIO access to the claiming thread
+    if (lgGpioClaimOutput(_gpio_handle, 0, _data_pin, 0) < 0) {
+        std::cerr << "TLC59711: worker cannot claim data pin\n";
+        return;
+    }
+    if (lgGpioClaimOutput(_gpio_handle, 0, _clk_pin, 0) < 0) {
+        std::cerr << "TLC59711: worker cannot claim clock pin\n";
+        lgGpioFree(_gpio_handle, _data_pin);
+        return;
+    }
+
+    LEDFrame frame{};
+
+    while (_running) {
+        // Blocking read — thread sleeps here until update() writes a frame
+        // or stop() closes the write end (EOF)
+        const ssize_t n = ::read(_pipe_fd[0], &frame, sizeof(LEDFrame));
+
+        if (n <= 0) break;
+        if (n != sizeof(LEDFrame)) continue;
+
+        std::fill(_pwm.begin(), _pwm.end(), 0);
+        for (int i = 0; i < NUM_LEDS; ++i)
+            _pwm[FRAME_TO_GS[i]] = toGS(frame.channels[i]);
+
+        std::vector<uint8_t> buf;
+        buf.reserve(static_cast<size_t>(_num_drivers) * 28);
+        buildPacket(buf);
+        shiftOut(buf);
+    }
+
+    // Release pins before thread exits
+    lgGpioWrite(_gpio_handle, _data_pin, 0);
+    lgGpioWrite(_gpio_handle, _clk_pin,  0);
+    lgGpioFree(_gpio_handle, _data_pin);
+    lgGpioFree(_gpio_handle, _clk_pin);
 }
 
 void TLC59711::buildPacket(std::vector<uint8_t>& buf) const {

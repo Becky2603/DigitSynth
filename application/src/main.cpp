@@ -10,8 +10,16 @@
 int main() {
     try {
         TLC59711 tlc(DATA_PIN, CLK_PIN);
+        tlc.start();
         std::cout << "Ripple running for 30 seconds...\n";
-        pattern_ripple(tlc);
+
+        std::thread pattern_thread([&]() {
+            pattern_ripple(tlc);
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds(30));
+        tlc.stop();
+        pattern_thread.detach();
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
