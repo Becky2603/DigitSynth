@@ -2,8 +2,6 @@
 #define ADC_DRIVER_H_
 
 #include <ads1115rpi.h>
-#include <optional>
-#include <thread>
 
 class AdcDriver {
 public: 

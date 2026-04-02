@@ -1,12 +1,9 @@
-#include <chrono>
 #include <cmath>
-#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <gpiod.hpp>
 #include <iostream>
-#include "adc-driver.h"
 #include "flex-sensor.h"
 #include "foo.h"
 #include "gpio.h"
@@ -14,7 +11,6 @@
 #include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>
-#include <thread>
 #include <unistd.h>
 #include <ads1115rpi.h>
 
