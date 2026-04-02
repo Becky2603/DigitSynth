@@ -8,11 +8,6 @@ else()
     message(STATUS "Building in debug mode ${RELEASE}\n")
     add_compile_options(-O0 -ggdb)
     set(CMAKE_BUILD_TYPE Debug)
-	message(STATUS "Building in release mode ${RELEASE}\n")
-else()
-    message(STATUS "Building in debug mode ${RELEASE}\n")
-	add_compile_options(-O0 -ggdb)
-   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 project(DigitSynth)
@@ -32,10 +27,13 @@ target_sources(digitsynth_static
         ${SOURCE_DIRECTORY}/adc-driver.cpp
         ${SOURCE_DIRECTORY}/button-driver.cpp
         ${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp      # ← added
+        ${SOURCE_DIRECTORY}/spi.cpp
+        ${SOURCE_DIRECTORY}/gpio.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
 )
 
-target_link_libraries(digitsynth_static -lwiringPi -llgpio -lm)
+target_link_libraries(digitsynth_static -lwiringPi -lgpiodcxx -lm)
 
 # ── Main executable ──────────────────────────────────────────────────────────
 add_executable(digitsynth)
@@ -48,39 +46,5 @@ target_sources(digitsynth
 )
 
 target_link_libraries(digitsynth digitsynth_static)
-
-target_sources(digitsynth_static
-    PUBLIC
-        ${SOURCE_DIRECTORY}/foo.cpp
-        ${SOURCE_DIRECTORY}/adc-driver.cpp
-        ${SOURCE_DIRECTORY}/button-driver.cpp
-        ${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp
-        ${SOURCE_DIRECTORY}/patterns.cpp    # ← add this
-)
-target_sources(digitsynth
-	PRIVATE
-		# Add source files here to build them
-		${SOURCE_DIRECTORY}/main.cpp
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-		${SOURCE_DIRECTORY}/spi.cpp
-		${SOURCE_DIRECTORY}/gpio.cpp
-)
-
-target_sources(digitsynth_static
-	PUBLIC
-		# Add source files here to build them
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-		${SOURCE_DIRECTORY}/spi.cpp
-)
-
-target_link_libraries(digitsynth -lgpiodcxx)
-target_link_libraries(digitsynth_static -lgpiodcxx)
 
 add_subdirectory(test)
