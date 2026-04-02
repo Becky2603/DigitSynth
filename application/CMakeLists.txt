@@ -32,6 +32,7 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/spi.cpp
 		${SOURCE_DIRECTORY}/gpio.cpp
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
 )
 
 target_sources(digitsynth_static
