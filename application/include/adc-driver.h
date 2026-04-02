@@ -12,7 +12,7 @@ public:
     ~AdcDriver(); 
     
     
-    void readChannel(ADS1115settings::Input, ADS1115rpi::ADSCallbackInterface);
+    void readChannel(ADS1115settings::Input, ADS1115rpi::ADSCallbackInterface *);
 
 private: 
     ADS1115rpi ads; 

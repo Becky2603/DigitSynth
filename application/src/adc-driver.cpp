@@ -10,7 +10,7 @@ AdcDriver::~AdcDriver() {
     this->ads.stop();
 }
 
-void AdcDriver::readChannel(ADS1115settings::Input channel, ADS1115rpi::ADSCallbackInterface callback) {
+void AdcDriver::readChannel(ADS1115settings::Input channel, ADS1115rpi::ADSCallbackInterface *callback) {
     if (this->ads.getADS1115settings().channel != channel) {
         this->samplesSinceChannelChange = 0;
     } else {
@@ -20,6 +20,6 @@ void AdcDriver::readChannel(ADS1115settings::Input channel, ADS1115rpi::ADSCallb
     this->ads.setChannel(channel);
     this->ads.registerCallback([&, callback] (float f) {
         this->samplesSinceChannelChange++;
-        if (this->samplesSinceChannelChange >= 2) { callback(f); }
+        if (this->samplesSinceChannelChange >= 2) { (*callback)(f); }
     });
 }

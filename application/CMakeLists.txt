@@ -31,6 +31,7 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
 		${SOURCE_DIRECTORY}/spi.cpp
 		${SOURCE_DIRECTORY}/gpio.cpp
+		${SOURCE_DIRECTORY}/flex-sensor.cpp
 )
 
 target_sources(digitsynth_static
