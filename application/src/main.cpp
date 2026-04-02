@@ -14,6 +14,12 @@
 #include <sys/ioctl.h>
 #include <thread>
 #include <unistd.h>
+#include <ads1115rpi.h>
+
+void callback(float f) {
+    std::cout << f << std::endl;
+    fflush(stdout);
+} 
 
 int main(int argc, char **argv) {
     (void) argc;
@@ -41,64 +47,15 @@ int main(int argc, char **argv) {
     */
    
     gpio::setupGpio();
+   
+    auto ads = ADS1115rpi();
+    ads.registerCallback(callback);
     
-    SpiSettings spiSettings;
-    spiSettings.bitsPerWord = 8;
-    spiSettings.clockFrequency = 2000000;
-    Spi spi("/dev/spidev0.0", spiSettings); 
+    auto settings = ADS1115settings();
     
-    AdcSettings adcSettings;
-    adcSettings.analogueInputBuffer = false;
-    adcSettings.autoCalibration = false;
-    adcSettings.clockOut = false;
-    adcSettings.clockRate = AdsClockRate::R1000;
-    adcSettings.logGain = 1;
-    adcSettings.lsbFirst = true;
-    AdcDriver adc(&spi, adcSettings);
+    ads.start(settings);
     
-    
-    
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    
-    int period = 1000000000 / 7680000;
-    
-    gpio::setPin(11, 0);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    gpio::setPin(11, 1);
-    std::this_thread::sleep_for(std::chrono::nanoseconds(400 * period));
-    gpio::setPin(11, 0);
-    std::this_thread::sleep_for(std::chrono::nanoseconds(10 * period));
-    gpio::setPin(11, 1);
-    std::this_thread::sleep_for(std::chrono::nanoseconds(650 * period));
-    gpio::setPin(11, 0);
-    std::this_thread::sleep_for(std::chrono::nanoseconds(10 * period));
-    gpio::setPin(11, 1);
-    std::this_thread::sleep_for(std::chrono::nanoseconds(1150 * period));
-    gpio::setPin(11, 0);
-    
-    adc.writeCommand(Ads1256Command::STANDBY);
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    
-    adc.writeCommand(Ads1256Command::WAKEUP);
-    std::this_thread::sleep_for(std::chrono::microseconds(100));
-    adc.writeCommand(Ads1256Command::RDATA);
-    
-    std::vector<uint8_t> vec(3);
-    spi.read(vec);
-    adc.writeCommand(Ads1256Command::STANDBY);
-    uint32_t val = 0;
-    memcpy(&val, vec.data(), vec.size());
-    std::cout << val << std::endl;
-    
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    
-    return 0; 
-    
-    adc.readChannel(0, [] (AdcData data) {
-        if (data.has_value()) { std::cout << "value: " << data.value() << std::endl;}
-        else { std::cout << "no data\n"; }
-    });
-    
+    getchar();
     
     return 0;
 }

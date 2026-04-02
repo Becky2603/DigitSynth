@@ -44,7 +44,9 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/gpio.cpp
 )
 
-target_link_libraries(digitsynth -lgpiodcxx)
-target_link_libraries(digitsynth_static -lgpiodcxx)
+link_directories("/usr/local/lib/")
+
+target_link_libraries(digitsynth -lgpiodcxx libads1115rpi_static.a)
+target_link_libraries(digitsynth_static -lgpiodcxx -lads1115rpi)
 
 add_subdirectory(test)

@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
-#include <memory>
 #include <sys/types.h>
 #include <thread>
 #include <unistd.h>
