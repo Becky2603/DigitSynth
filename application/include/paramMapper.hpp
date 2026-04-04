@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <cstdint>
+#include "MidiTypes.hpp"
 
 class ParamMapper {
 public:
