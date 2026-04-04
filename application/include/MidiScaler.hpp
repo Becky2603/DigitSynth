@@ -1,14 +1,9 @@
-//
-//  MidiScaler.hpp
-//  digitSynth
-//
-//  Created by Finn McConville on 30/03/2026.
-//
-
 #ifndef MidiScaler_hpp
 #define MidiScaler_hpp
 
 #include <stdio.h>
+#include <cstdint>
+#include <cassert>
 
 class MidiScaler {
 public:
