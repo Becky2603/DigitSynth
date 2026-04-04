@@ -1,14 +1,8 @@
-//
-//  paramMapper.hpp
-//  digitSynth
-//
-//  Created by Finn McConville on 30/03/2026.
-//
-
 #ifndef paramMapper_hpp
 #define paramMapper_hpp
 
 #include <stdio.h>
+#include <cstdint>
 
 class ParamMapper {
 public:
