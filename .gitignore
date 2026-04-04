@@ -6,6 +6,12 @@ _autosave-*
 # KiCad project local settings
 *.kicad_prl
 
+test_scaler
+mode_manager_test
+
+# macOS
+.DS_Store
+
 # Temporary files
 *~
 *.tmp
