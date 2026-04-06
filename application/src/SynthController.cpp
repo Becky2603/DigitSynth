@@ -49,6 +49,22 @@ void SynthController::onAllButtonsPressed(){
     }
     else { // in chord mode: exit chord mode and return to what we were doing before
         currentMode = modeManager.getPreviousMode();
+        int mode_index;
+        switch(currentMode){
+            case EQ:
+                mode_index = 0;
+                break;
+            case SOURCE_EQ:
+                mode_index = 1;
+                break;
+            case DETUNE:
+                mode_index = 2;
+                break;
+            case CHORD:
+                mode_index = 3;
+                break;
+        }
+        modeManager.updateMode(mode_index);
     }
 }
 
@@ -60,6 +76,6 @@ uint8_t SynthController::getCurrentChord(){
     return chordManager.getCurrentChord();
 }
 
-MidiMessage getLastCC(){
+midi_message SynthController::getLastCC(){
     return lastCC;
 }
