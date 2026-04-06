@@ -24,7 +24,21 @@ void SynthController::onButtonEvent(int index){
 }
 
 void SynthController::onFlexEvent(int index, float value){
-    
+    uint8_t scaled_value = midiScaler.scaleValue(value);
+    ControlMode currentMode = modeManager.getCurrentMode();
+    ControlMode prevMode = modeManager.getPreviousMode();
+    uint8_t cc_number;
+    if (currentMode == CHORD){
+        cc_number = paramMapper.getCC(index, prevMode);
+    }
+    else {
+        cc_number = paramMapper.getCC(index, currentMode);
+    }
+    midi_message msg;
+    msg.status = 0xB0; // Control Change
+    msg.data_1 = cc_number;
+    msg.data_2 = scaled_value;
+    //midiDriver.ccCalback(msg);
 }
 
 void SynthController::onAllButtonsPressed(){
