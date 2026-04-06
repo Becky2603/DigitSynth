@@ -38,11 +38,34 @@ void SynthController::onFlexEvent(int index, float value){
     msg.status = 0xB0; // Control Change
     msg.data_1 = cc_number;
     msg.data_2 = scaled_value;
+    lastCC = msg; // for testing
     //midiDriver.ccCalback(msg);
 }
 
 void SynthController::onAllButtonsPressed(){
-    
+    ControlMode currentMode = modeManager.getCurrentMode();
+    if (currentMode != CHORD){ // under normal operation, do nothing
+        return;
+    }
+    else { // in chord mode: exit chord mode and return to what we were doing before
+        currentMode = modeManager.getPreviousMode();
+        int mode_index;
+        switch(currentMode){
+            case EQ:
+                mode_index = 0;
+                break;
+            case SOURCE_EQ:
+                mode_index = 1;
+                break;
+            case DETUNE:
+                mode_index = 2;
+                break;
+            case CHORD:
+                mode_index = 3;
+                break;
+        }
+        modeManager.updateMode(mode_index);
+    }
 }
 
 ControlMode SynthController::getCurrentMode(){
@@ -51,4 +74,8 @@ ControlMode SynthController::getCurrentMode(){
 
 uint8_t SynthController::getCurrentChord(){
     return chordManager.getCurrentChord();
+}
+
+midi_message SynthController::getLastCC(){
+    return lastCC;
 }
