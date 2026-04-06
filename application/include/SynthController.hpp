@@ -15,11 +15,14 @@ public:
     
     ControlMode getCurrentMode(); // for testing
     uint8_t getCurrentChord(); // for testing
+    MidiMessage getLastCC(); // for testing
 private:
     ModeManager modeManager;
     ChordManager chordManager;
     ParamMapper paramMapper;
     MidiScaler midiScaler;
+    
+    MidiMessage lastCC; // for testing
 };
 
 #endif /* SynthController_hpp */
