@@ -1,5 +1,5 @@
-INPUT = src/main.cpp include/
+INPUT = ../src/main.cpp ../include/
 
 PROJECT_NAME = "DigitSynth"
 
-EXTRACT_ALL = NO
+EXTRACT_ALL = YES
