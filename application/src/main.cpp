@@ -1,10 +1,6 @@
 #include <chrono>
-#include <cmath>
-#include <cstring>
-#include <gpiod.hpp>
 #include <iostream>
 #include <thread>
-#include <chrono>
 #include "TLC59711.h"
 #include "patterns.h"
 
@@ -15,15 +11,14 @@ int main() {
     try {
         TLC59711 tlc(DATA_PIN, CLK_PIN);
         tlc.start();
-        std::cout << "Ripple running for 30 seconds...\n";
 
-        std::thread pattern_thread([&]() {
-            pattern_ripple(tlc);
-        });
+        // std::cout << "Fading in...\n";
+        // pattern_fade(tlc);
 
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::cout << "Ripple running...\n";
+        pattern_ripple(tlc);
+
         tlc.stop();
-        pattern_thread.detach();
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << "\n";
