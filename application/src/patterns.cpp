@@ -1,43 +1,142 @@
 #include "patterns.h"
 #include <cmath>
-#include <chrono>
-#include <thread>
+#include <stdexcept>
+#include <sys/timerfd.h>
+#include <unistd.h>
 
-void pattern_fade(TLC59711& tlc) {
-    static constexpr int FADE_DELAY_MS = 40;
+// ---------------------------------------------------------------------------
+// helpers
+// ---------------------------------------------------------------------------
 
-    TLC59711::Channels channels{};
+/**
+ * Creates a timerfd that fires at the given interval in milliseconds.
+ * Returns the file descriptor (caller must close it).
+ * Follows course Ch. 3.4: reliable timing via blocking I/O on a timerfd,
+ * not sleep_for / usleep.
+ */
+static int makeTimerFd(long period_ms) {
+    int fd = timerfd_create(CLOCK_MONOTONIC, 0);
+    if (fd < 0)
+        throw std::runtime_error("timerfd_create failed");
 
-    // Fade in
-    for (int i = 0; i <= 100; i++) {
-        float brightness = i / 100.0f;
-        for (int j = 0; j < 10; j++) channels[j] = brightness;
-        tlc.update(channels);
-        std::this_thread::sleep_for(std::chrono::milliseconds(FADE_DELAY_MS));
+    struct itimerspec its{};
+    its.it_value.tv_sec     = period_ms / 1000;
+    its.it_value.tv_nsec    = (period_ms % 1000) * 1000000L;
+    its.it_interval.tv_sec  = its.it_value.tv_sec;
+    its.it_interval.tv_nsec = its.it_value.tv_nsec;
+
+    if (timerfd_settime(fd, 0, &its, nullptr) < 0) {
+        close(fd);
+        throw std::runtime_error("timerfd_settime failed");
     }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    // Fade out
-    for (int i = 100; i >= 0; i--) {
-        float brightness = i / 100.0f;
-        for (int j = 0; j < 10; j++) channels[j] = brightness;
-        tlc.update(channels);
-        std::this_thread::sleep_for(std::chrono::milliseconds(FADE_DELAY_MS));
-    }
+    return fd;
 }
 
-void pattern_ripple(TLC59711& tlc) {
+/**
+ * Block until the next timer tick.
+ * Returns false if _running has been cleared (caller should exit its loop).
+ */
+static bool waitTick(int fd, const std::atomic<bool>& running) {
+    uint64_t exp = 0;
+    // Blocking read — the course-approved way to create event timing (Ch. 3.4).
+    if (read(fd, &exp, sizeof(exp)) < 0)
+        return false;
+    return running.load();
+}
+
+// ---------------------------------------------------------------------------
+// Pattern base
+// ---------------------------------------------------------------------------
+
+void Pattern::start(DoneCallback onDone) {
+    _onDone  = std::move(onDone);
+    _running = true;
+    // Each pattern runs in its own thread (Ch. 3.3.1).
+    _thread  = std::thread([this]{ run(); });
+}
+
+void Pattern::stop() {
+    // Set the flag so the worker exits its blocking loop (Ch. 3.3.3).
+    _running = false;
+    if (_thread.joinable())
+        _thread.join();  // wait for clean exit (Ch. 3.3.2)
+}
+
+// ---------------------------------------------------------------------------
+// PatternFade
+// ---------------------------------------------------------------------------
+
+void PatternFade::run() {
+    static constexpr long STEP_MS  = 40;   // ~25 fps
+    static constexpr int  HOLD_MS  = 500;
+    static constexpr int  N_STEPS  = 100;
+
+    // timerfd gives us blocking I/O timing — no sleep_for (Ch. 3.4).
+    int fd = makeTimerFd(STEP_MS);
+
+    auto applyBrightness = [&](float b) {
+        TLC59711::Channels ch{};
+        for (auto& v : ch) v = b;
+        _tlc.update(ch);
+    };
+
+    // --- Fade in ---
+    for (int i = 0; i <= N_STEPS && _running; ++i) {
+        applyBrightness(i / static_cast<float>(N_STEPS));
+        if (!waitTick(fd, _running)) break;
+    }
+
+    // --- Hold ---
+    // Re-arm timer for the hold period with a single one-shot tick.
+    if (_running) {
+        struct itimerspec hold{};
+        hold.it_value.tv_sec     = HOLD_MS / 1000;
+        hold.it_value.tv_nsec    = (HOLD_MS % 1000) * 1000000L;
+        // interval stays zero — one shot
+        timerfd_settime(fd, 0, &hold, nullptr);
+        waitTick(fd, _running);
+
+        // Restore periodic interval for fade-out.
+        struct itimerspec periodic{};
+        periodic.it_value.tv_sec     = STEP_MS / 1000;
+        periodic.it_value.tv_nsec    = (STEP_MS % 1000) * 1000000L;
+        periodic.it_interval         = periodic.it_value;
+        timerfd_settime(fd, 0, &periodic, nullptr);
+    }
+
+    // --- Fade out ---
+    for (int i = N_STEPS; i >= 0 && _running; --i) {
+        applyBrightness(i / static_cast<float>(N_STEPS));
+        if (!waitTick(fd, _running)) break;
+    }
+
+    close(fd);
+
+    // Signal completion via callback — course Ch. 2.2.1 / 3.3.2.
+    if (_running && _onDone)
+        _onDone();
+
+    _running = false;
+}
+
+// ---------------------------------------------------------------------------
+// PatternRipple
+// ---------------------------------------------------------------------------
+
+void PatternRipple::run() {
     static constexpr float TWO_PI      = 6.28318f;
     static constexpr int   N_FINGERS   = 10;
-    static constexpr float SPEED       = 1;
-    static constexpr int   SLEEP_TIME_MS = 40;
+    static constexpr float SPEED       = 1.0f;
+    static constexpr long  STEP_MS     = 40;
+
+    int fd = makeTimerFd(STEP_MS);
 
     const float phase_step = (TWO_PI / 3.0f) / N_FINGERS;
 
     const auto t_start = std::chrono::steady_clock::now();
 
-    while (true) {
+    // Loop runs until stop() sets _running = false (Ch. 3.3.3).
+    while (_running) {
         const float t_secs = std::chrono::duration<float>(
             std::chrono::steady_clock::now() - t_start).count();
 
@@ -46,8 +145,17 @@ void pattern_ripple(TLC59711& tlc) {
             const float raw = std::sin(TWO_PI * SPEED * t_secs + f * phase_step);
             channels[f] = (raw + 1.0f) / 2.0f;
         }
+        _tlc.update(channels);
 
-        tlc.update(channels);
-        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+        // Blocking timerfd read provides the frame timing (Ch. 3.4).
+        if (!waitTick(fd, _running)) break;
     }
+
+    close(fd);
+
+    // Callback fires whether stop() was called externally or loop exited.
+    if (_onDone)
+        _onDone();
+
+    _running = false;
 }
