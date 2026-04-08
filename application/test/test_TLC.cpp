@@ -1,6 +1,8 @@
 #include "TLC59711.h"
 #include <cstdio>
 #include <mutex>
+#include <thread>
+#include <atomic>
 
 // ============================================================================
 // TLC59711Test — friend class declared in TLC59711.h, giving access to all
@@ -68,7 +70,6 @@ public:
 
     // -----------------------------------------------------------------------
     // update() — non-blocking, stores pending state
-    // Constructs TLC59711 but never calls start(), so no GPIO is opened.
     // -----------------------------------------------------------------------
 
     static int test_update_returns_immediately() {
@@ -149,6 +150,46 @@ public:
         if (tlc._pending[0] != 0.1f) return -1;
         if (tlc._pending[4] != 0.4f) return -1;
         if (tlc._pending[9] != 0.9f) return -1;
+        return 0;
+    }
+
+    // -----------------------------------------------------------------------
+    // update() — concurrent writers must not corrupt _pending
+    //
+    // Two threads each call update() 1000 times with a consistent all-same-
+    // value Channels array. After both finish, _pending must still contain
+    // an all-same-value snapshot — no partial write from a torn copy.
+    // If _mutex were missing, this would regularly produce mixed arrays.
+    // -----------------------------------------------------------------------
+
+    static int test_update_thread_safe() {
+        TLC59711 tlc(0, 0);
+
+        std::atomic<bool> go{false};
+
+        auto writer = [&](float val) {
+            while (!go) {}   // spin until both threads are ready
+            TLC59711::Channels ch{};
+            for (int rep = 0; rep < 1000; ++rep) {
+                for (auto& v : ch) v = val;
+                tlc.update(ch);
+            }
+        };
+
+        std::thread t1(writer, 0.2f);
+        std::thread t2(writer, 0.8f);
+        go = true;
+        t1.join();
+        t2.join();
+
+        std::lock_guard<std::mutex> lock(tlc._mutex);
+        if (!tlc._dirty) return -1;
+
+        // Every entry must match the first — no torn write across channels
+        const float expected = tlc._pending[0];
+        for (int i = 1; i < TLC59711::NUM_LEDS; ++i)
+            if (tlc._pending[i] != expected) return -1;
+
         return 0;
     }
 
@@ -299,6 +340,9 @@ int main(int argc, char** argv) {
     status |= run("update_overwrites_previous",  TLC59711Test::test_update_overwrites_previous_pending);
     status |= run("update_dirty_flag_set",       TLC59711Test::test_update_dirty_flag_set);
     status |= run("update_all_channels_stored",  TLC59711Test::test_update_all_channels_stored);
+
+    printf("\n--- update(): concurrent writers ---\n");
+    status |= run("update_thread_safe",          TLC59711Test::test_update_thread_safe);
 
     printf("\n--- setBrightness() ---\n");
     status |= run("setBrightness_default",       TLC59711Test::test_setBrightness_default);
