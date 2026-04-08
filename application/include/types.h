@@ -14,7 +14,6 @@ typedef float                   ExtensionData;
 typedef std::optional<bool>     ButtonData;
 
 typedef uint32_t Frequency;
-typedef float    FingerExtension; 
 
 typedef std::function<void(AdcData)>       AdcCallback;
 typedef std::function<void(std::array<ExtensionData, 4>)> ExtensionCallback;
