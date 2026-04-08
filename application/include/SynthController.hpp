@@ -9,6 +9,7 @@
 #include "patterns.h"
 #include <cstdint>
 #include <memory>
+#include <optional>
 
 class SynthController {
 public:
@@ -31,8 +32,8 @@ private:
     void stopFade();
     
     TLC59711&                    _tlc;
-    std::unique_ptr<PatternRipple> _ripple;  // null when not in chord mode
-    std::unique_ptr<PatternFade> _fade;
+    PatternRipple _ripple;  // null when not in chord mode
+    PatternFade _fade;
 
     ModeManager  modeManager;
     ChordManager chordManager;

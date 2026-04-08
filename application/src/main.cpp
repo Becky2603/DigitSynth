@@ -1,7 +1,17 @@
 #include "SynthController.hpp"
 #include "TLC59711.h"
+#include <array>
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <fcntl.h>
+#include <gpiod.hpp>
+#include <iostream>
 #include "button-driver.h"
 #include "gpio.h"
+#include "patterns.h"
 #include "types.h"
 #include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
@@ -35,6 +45,8 @@ int main() {
         TLC59711 tlc(DATA_PIN, CLK_PIN);
         tlc.start();
 
+        PatternFade fade(tlc);
+        
         SynthController synth(tlc);
 
         std::cout << "Starting LED integration test...\n";

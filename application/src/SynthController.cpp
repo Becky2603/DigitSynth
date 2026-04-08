@@ -1,7 +1,7 @@
 #include "SynthController.hpp"
 
 SynthController::SynthController(TLC59711& tlc)
-    : _tlc(tlc)
+    : _tlc(tlc), _ripple(tlc), _fade(_tlc)
 {
 
 }
@@ -30,6 +30,22 @@ void SynthController::onButtonEvent(int index){
     }
     else {
         modeManager.updateMode(index);
+        
+        switch (index) {
+            case 0: 
+                stopFade();
+                startRipple();
+                break;
+            case 1: 
+                stopRipple();
+                startFade();
+                break;
+            default:
+                break;
+            
+        }
+        
+        /* 
         switch(modeManager.getCurrentMode()){
             case EQ:
                 switch (modeManager.getPreviousMode()) {
@@ -88,6 +104,7 @@ void SynthController::onButtonEvent(int index){
             case CHORD:
                 break;
         }
+        }*/
     }
 }
 
@@ -153,31 +170,18 @@ void SynthController::startRipple() {
     // PatternRipple runs in its own thread (course Ch. 3) and calls
     // tlc.update() internally on each frame — SynthController just
     // starts and stops it as mode changes dictate.
-    if (!_ripple) {
-        _ripple = std::make_unique<PatternRipple>(_tlc);
-        _ripple->start();
-    }
+    _ripple.start();
 }
 
 void SynthController::stopRipple() {
-    if (_ripple) {
-        // stop() sets _running=false and joins the thread (course Ch. 3.3.3).
-        _ripple->stop();
-        _ripple.reset();
-    }
+    _ripple.stop();
 }
 
 void SynthController::startFade() {
     std::cout << "fade\n";
-    if (!_fade) {
-        _fade = std::make_unique<PatternFade>(_tlc);
-        _fade->start();
-    }
+    _fade.start();
 }
 
 void SynthController::stopFade() {
-    if (_fade) {
-        _fade->stop();
-        _fade.reset();
-    }
+    _fade.stop();
 }
