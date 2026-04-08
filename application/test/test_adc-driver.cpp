@@ -1,5 +1,4 @@
 #include "adc-driver.h"
-#include "callback-types.h"
 
 #include <thread>
 

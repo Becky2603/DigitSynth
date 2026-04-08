@@ -27,21 +27,7 @@ void callback(float f) {
 int main(int argc, char **argv) {
     (void) argc;
     (void) argv; 
-  
-    gpio::setupGpio();
-    
-    ButtonDriver bd {};
-    
-    bd.registerSingleButtonCallback([] (uint32_t idx) {
-        std::cout << "single button pressed: " << idx << std::endl;
-    });
-    
-    bd.registerAllButtonsCallback([] () {
-        std::cout << "all buttons pressed\n";
-    });
-    
-    getchar();
-    
+
     
     return 0;
 }

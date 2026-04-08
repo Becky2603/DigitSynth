@@ -29,8 +29,6 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/foo.cpp
 		${SOURCE_DIRECTORY}/adc-driver.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-		${SOURCE_DIRECTORY}/spi.cpp
 		${SOURCE_DIRECTORY}/gpio.cpp
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
@@ -42,8 +40,6 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/foo.cpp
 		${SOURCE_DIRECTORY}/adc-driver.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/extension-sensor-driver.cpp
-		${SOURCE_DIRECTORY}/spi.cpp
 		${SOURCE_DIRECTORY}/gpio.cpp
 )
 
