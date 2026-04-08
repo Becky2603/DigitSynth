@@ -3,6 +3,7 @@
 
 AdcDriver::AdcDriver() : samplesSinceChannelChange{0} {
     this->settings.samplingRate = ADS1115settings::FS860HZ;
+    this->settings.drdy_gpio = 22;
     this->ads.start(this->settings);
 }
 

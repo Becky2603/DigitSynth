@@ -30,8 +30,8 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/gpio.cpp
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
-    ${SOURCE_DIRECTORY}/patterns.cpp
-    ${SOURCE_DIRECTORY}/TLC59711.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
 )
 
 target_sources(digitsynth_static
@@ -41,8 +41,8 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/adc-driver.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/gpio.cpp
-    ${SOURCE_DIRECTORY}/patterns.cpp
-    ${SOURCE_DIRECTORY}/TLC59711.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
 )
 
 link_directories("/usr/local/lib/")

@@ -1,10 +1,9 @@
+#include <array>
 #include <cmath>
-#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <gpiod.hpp>
-#include <iostream>
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "foo.h"
@@ -15,19 +14,26 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <ads1115rpi.h>
+#include <TLC59711.h>
 
-void callback(float f) {
-    std::cout << f << std::endl;
-    fflush(stdout);
-} 
-
-/**
- * @returns woohoo
- */
 int main(int argc, char **argv) {
     (void) argc;
     (void) argv; 
+    
+    gpio::setupGpio();
 
+    ButtonDriver bd;
+    TLC59711 leds(17, 27);
+    FlexSensor flexSensor;
+    TLC59711::Channels channels;
+    
+    flexSensor.registerCallback([&channels, &leds] (std::array<ExtensionData, 4> data) {
+        channels[0] = data[0];
+        leds.update(channels);
+    });
+    
+    flexSensor.begin();
+    getchar();
     
     return 0;
 }
