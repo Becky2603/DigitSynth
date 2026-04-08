@@ -1,9 +1,11 @@
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
 #include <gpiod.hpp>
 #include <iostream>
+#include "button-driver.h"
 #include "flex-sensor.h"
 #include "foo.h"
 #include "gpio.h"
@@ -19,25 +21,27 @@ void callback(float f) {
     fflush(stdout);
 } 
 
+/**
+ * @returns woohoo
+ */
 int main(int argc, char **argv) {
     (void) argc;
     (void) argv; 
   
     gpio::setupGpio();
-    FlexSensor sensor;
     
-    sensor.begin();
-    sensor.registerCallback([] (std::array<ExtensionData, 4> data) {
-        std::cout << data[0] << std::endl;
-        std::cout << data[1] << std::endl;
-        std::cout << data[2] << std::endl;
-        std::cout << data[3] << std::endl;
-        std::cout << std::endl;
+    ButtonDriver bd {};
+    
+    bd.registerSingleButtonCallback([] (uint32_t idx) {
+        std::cout << "single button pressed: " << idx << std::endl;
     });
-   
+    
+    bd.registerAllButtonsCallback([] () {
+        std::cout << "all buttons pressed\n";
+    });
+    
     getchar();
     
-    (void) sensor;
     
     return 0;
 }
