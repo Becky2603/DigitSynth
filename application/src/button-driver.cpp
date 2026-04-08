@@ -1,13 +1,15 @@
 #include "button-driver.h"
 #include "gpio.h"
 #include "types.h"
+#include <gpiod.hpp>
+#include <thread>
 
 ButtonDriver::ButtonDriver() {
     for (size_t i = 0; i < workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
             while (running) {
-                gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
-                bool val = gpio::getPin(ButtonDriver::BUTTON_PINS[i]);
+                auto edge = gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
+                bool val = edge == gpiod::edge_event::event_type::RISING_EDGE;
                 this->buttonStatuses[i] = val;
                 
                 
@@ -19,7 +21,7 @@ ButtonDriver::ButtonDriver() {
                 if (!this->allButtonsCallback.has_value()) { continue; }
                 bool allPressed = false;
                 for (auto status : buttonStatuses) {
-                    if (!status) { break; }
+                    if (!status) { allPressed = false; break; }
                     allPressed = true;
                 }
                 

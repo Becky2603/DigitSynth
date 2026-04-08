@@ -18,8 +18,8 @@ private:
     static constexpr int N_BUTTONS = 4;
     static constexpr int BUTTON_PINS[N_BUTTONS] = { 14, 15, 18, 23 };
 
-    std::array<std::thread, 4> workers; 
-    std::array<bool, 4> buttonStatuses; 
+    std::array<std::thread, N_BUTTONS> workers; 
+    std::array<bool, N_BUTTONS> buttonStatuses; 
     
     std::optional<ButtonCallback> singleButtonCallback;  
     std::optional<std::function<void(void)>> allButtonsCallback;  

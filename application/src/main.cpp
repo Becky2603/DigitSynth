@@ -2,6 +2,13 @@
 #include "TLC59711.h"
 #include "button-driver.h"
 #include "gpio.h"
+#include "types.h"
+#include <linux/spi/spi.h>
+#include <linux/spi/spidev.h>
+#include <sys/ioctl.h>
+#include <thread>
+#include <unistd.h>
+#include <ads1115rpi.h>
 
 #include <chrono>
 #include <csignal>
