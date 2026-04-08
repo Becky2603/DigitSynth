@@ -1,5 +1,6 @@
 #include "TLC59711.h"
 #include <cstdio>
+#include <mutex>
 
 // ============================================================================
 // TLC59711Test — friend class declared in TLC59711.h, giving access to all
@@ -65,6 +66,202 @@ public:
         return 0;
     }
 
+    // -----------------------------------------------------------------------
+    // update() — non-blocking, stores pending state
+    // Constructs TLC59711 but never calls start(), so no GPIO is opened.
+    // -----------------------------------------------------------------------
+
+    static int test_update_returns_immediately() {
+        TLC59711 tlc(0, 0);
+
+        TLC59711::Channels ch{};
+        for (int i = 0; i < TLC59711::NUM_LEDS; ++i) ch[i] = 0.5f;
+
+        const auto t0 = std::chrono::steady_clock::now();
+        tlc.update(ch);
+        const auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::steady_clock::now() - t0).count();
+
+        return (elapsed_us < 10000) ? 0 : -1;
+    }
+
+    static int test_update_stores_pending() {
+        TLC59711 tlc(0, 0);
+
+        TLC59711::Channels ch{};
+        for (int i = 0; i < TLC59711::NUM_LEDS; ++i)
+            ch[i] = static_cast<float>(i) / TLC59711::NUM_LEDS;
+
+        tlc.update(ch);
+
+        std::lock_guard<std::mutex> lock(tlc._mutex);
+        if (!tlc._dirty) return -1;
+        for (int i = 0; i < TLC59711::NUM_LEDS; ++i)
+            if (tlc._pending[i] != ch[i]) return -1;
+
+        return 0;
+    }
+
+    static int test_update_overwrites_previous_pending() {
+        TLC59711 tlc(0, 0);
+
+        TLC59711::Channels first{};
+        TLC59711::Channels second{};
+        for (int i = 0; i < TLC59711::NUM_LEDS; ++i) {
+            first[i]  = 0.25f;
+            second[i] = 0.75f;
+        }
+
+        tlc.update(first);
+        tlc.update(second);
+
+        std::lock_guard<std::mutex> lock(tlc._mutex);
+        for (int i = 0; i < TLC59711::NUM_LEDS; ++i)
+            if (tlc._pending[i] != 0.75f) return -1;
+
+        return 0;
+    }
+
+    static int test_update_dirty_flag_set() {
+        TLC59711 tlc(0, 0);
+        {
+            std::lock_guard<std::mutex> lock(tlc._mutex);
+            tlc._dirty = false;
+        }
+        TLC59711::Channels ch{};
+        tlc.update(ch);
+
+        std::lock_guard<std::mutex> lock(tlc._mutex);
+        return tlc._dirty ? 0 : -1;
+    }
+
+    static int test_update_all_channels_stored() {
+        TLC59711 tlc(0, 0);
+
+        TLC59711::Channels ch{};
+        ch[0] = 0.1f;
+        ch[4] = 0.4f;
+        ch[9] = 0.9f;
+
+        tlc.update(ch);
+
+        std::lock_guard<std::mutex> lock(tlc._mutex);
+        if (tlc._pending[0] != 0.1f) return -1;
+        if (tlc._pending[4] != 0.4f) return -1;
+        if (tlc._pending[9] != 0.9f) return -1;
+        return 0;
+    }
+
+    // -----------------------------------------------------------------------
+    // setBrightness()
+    // -----------------------------------------------------------------------
+
+    static int test_setBrightness_default() {
+        TLC59711 tlc(0, 0);
+        return (tlc._brightness == 127) ? 0 : -1;
+    }
+
+    static int test_setBrightness_stores_value() {
+        TLC59711 tlc(0, 0);
+        tlc.setBrightness(200);
+        return (tlc._brightness == 200) ? 0 : -1;
+    }
+
+    static int test_setBrightness_zero() {
+        TLC59711 tlc(0, 0);
+        tlc.setBrightness(0);
+        return (tlc._brightness == 0) ? 0 : -1;
+    }
+
+    static int test_setBrightness_max() {
+        TLC59711 tlc(0, 0);
+        tlc.setBrightness(255);
+        return (tlc._brightness == 255) ? 0 : -1;
+    }
+
+    // -----------------------------------------------------------------------
+    // buildPacket() — SPI packet structure
+    // -----------------------------------------------------------------------
+
+    static int test_buildPacket_size_one_driver() {
+        TLC59711 tlc(0, 0, 1);
+        std::vector<uint8_t> buf;
+        tlc.buildPacket(buf);
+        return (buf.size() == 28) ? 0 : -1;
+    }
+
+    static int test_buildPacket_size_two_drivers() {
+        TLC59711 tlc(0, 0, 2);
+        std::vector<uint8_t> buf;
+        tlc.buildPacket(buf);
+        return (buf.size() == 56) ? 0 : -1;
+    }
+
+    static int test_buildPacket_magic_bits() {
+        TLC59711 tlc(0, 0, 1);
+        std::vector<uint8_t> buf;
+        tlc.buildPacket(buf);
+        const uint8_t top6 = buf[0] >> 2;
+        return (top6 == 0x25) ? 0 : -1;
+    }
+
+    static int test_buildPacket_all_zero_gs_when_dark() {
+        TLC59711 tlc(0, 0, 1);
+        std::vector<uint8_t> buf;
+        tlc.buildPacket(buf);
+        for (size_t i = 4; i < buf.size(); ++i)
+            if (buf[i] != 0x00) return -1;
+        return 0;
+    }
+
+    static int test_buildPacket_brightness_in_cmd() {
+        TLC59711 tlc(0, 0, 1);
+        tlc.setBrightness(0x3F);
+
+        std::vector<uint8_t> buf;
+        tlc.buildPacket(buf);
+
+        const uint32_t cmd = (uint32_t(buf[0]) << 24) |
+                             (uint32_t(buf[1]) << 16) |
+                             (uint32_t(buf[2]) <<  8) |
+                              uint32_t(buf[3]);
+
+        const uint8_t bcr = (cmd >>  0) & 0x7F;
+        const uint8_t bcg = (cmd >>  7) & 0x7F;
+        const uint8_t bcb = (cmd >> 14) & 0x7F;
+        const uint8_t bc  = 0x3F & 0x7F;
+
+        return (bcr == bc && bcg == bc && bcb == bc) ? 0 : -1;
+    }
+
+    // -----------------------------------------------------------------------
+    // Thread lifecycle
+    // -----------------------------------------------------------------------
+
+    static int test_initial_running_false() {
+        TLC59711 tlc(0, 0);
+        return (!tlc._running) ? 0 : -1;
+    }
+
+    static int test_stop_without_start_safe() {
+        TLC59711 tlc(0, 0);
+        tlc.stop();
+        return 0;
+    }
+
+    static int test_destructor_without_start_safe() {
+        { TLC59711 tlc(0, 0); }
+        return 0;
+    }
+
+    static int test_num_leds_constant() {
+        return (TLC59711::NUM_LEDS == 10) ? 0 : -1;
+    }
+
+    static int test_channels_per_driver_constant() {
+        return (TLC59711::CHANNELS_PER_DRIVER == 12) ? 0 : -1;
+    }
+
 };
 
 
@@ -95,6 +292,33 @@ int main(int argc, char** argv) {
     printf("\n--- FRAME_TO_GS: LED-to-channel mapping ---\n");
     status |= run("channel_map_unique",   TLC59711Test::test_channel_map_unique);
     status |= run("channel_map_in_range", TLC59711Test::test_channel_map_in_range);
+
+    printf("\n--- update(): non-blocking, stores pending state ---\n");
+    status |= run("update_returns_immediately",  TLC59711Test::test_update_returns_immediately);
+    status |= run("update_stores_pending",       TLC59711Test::test_update_stores_pending);
+    status |= run("update_overwrites_previous",  TLC59711Test::test_update_overwrites_previous_pending);
+    status |= run("update_dirty_flag_set",       TLC59711Test::test_update_dirty_flag_set);
+    status |= run("update_all_channels_stored",  TLC59711Test::test_update_all_channels_stored);
+
+    printf("\n--- setBrightness() ---\n");
+    status |= run("setBrightness_default",       TLC59711Test::test_setBrightness_default);
+    status |= run("setBrightness_stores_value",  TLC59711Test::test_setBrightness_stores_value);
+    status |= run("setBrightness_zero",          TLC59711Test::test_setBrightness_zero);
+    status |= run("setBrightness_max",           TLC59711Test::test_setBrightness_max);
+
+    printf("\n--- buildPacket(): SPI packet structure ---\n");
+    status |= run("buildPacket_size_one_driver",  TLC59711Test::test_buildPacket_size_one_driver);
+    status |= run("buildPacket_size_two_drivers", TLC59711Test::test_buildPacket_size_two_drivers);
+    status |= run("buildPacket_magic_bits",       TLC59711Test::test_buildPacket_magic_bits);
+    status |= run("buildPacket_all_zero_gs_dark", TLC59711Test::test_buildPacket_all_zero_gs_when_dark);
+    status |= run("buildPacket_brightness_in_cmd",TLC59711Test::test_buildPacket_brightness_in_cmd);
+
+    printf("\n--- Thread lifecycle ---\n");
+    status |= run("initial_running_false",        TLC59711Test::test_initial_running_false);
+    status |= run("stop_without_start_safe",      TLC59711Test::test_stop_without_start_safe);
+    status |= run("destructor_without_start_safe",TLC59711Test::test_destructor_without_start_safe);
+    status |= run("num_leds_constant",            TLC59711Test::test_num_leds_constant);
+    status |= run("channels_per_driver_constant", TLC59711Test::test_channels_per_driver_constant);
 
     printf("\n%s\n", status == 0 ? "All tests passed." : "SOME TESTS FAILED.");
     return status == 0 ? 0 : -1;
