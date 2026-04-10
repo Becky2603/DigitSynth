@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04-arm
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: libgpiod
       run: |
@@ -43,13 +43,13 @@ jobs:
         make deb
 
     - name: archive-binary
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: digitsynth-binary
         path: ./application/build/digitsynth
 
     - name: archive-package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: digitsynth-package
         path: ./application/build/digitsynth-aarch64.deb
