@@ -21,13 +21,13 @@ jobs:
         cd libgpiod-2.2
         ./configure --enable-bindings-cxx
         make
-        make install
+        sudo make install
     
     - name: ads-1115-driver
       run: |
         git clone https://github.com/berndporr/rpi_ads1115.git
         make
-        make install
+        sudo make install
       
     
     - name: make
