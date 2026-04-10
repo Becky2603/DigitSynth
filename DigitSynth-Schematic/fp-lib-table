@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "footprints")(type "KiCad")(uri "/Users/finn/Documents/KiCad/9.0/footprints")(options "")(descr ""))
+)
