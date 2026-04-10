@@ -1,0 +1,8 @@
+Package: test-deb
+Version: 1.0-1
+Section: embedded
+Priority: optional
+Architecture: all 
+Maintainer: DigitSynth
+Description: This is a test application
+ for packaging
