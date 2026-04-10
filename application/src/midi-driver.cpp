@@ -34,7 +34,7 @@ void MidiDriver::openPort(unsigned int portIndex) {
 
 void MidiDriver::sendMessage(const midi_message& msg) {
     if (!portOpen_) {
-        throw std::runtime_error("MIDI output port is not open")
+        throw std::runtime_error("MIDI output port is not open");
     }
     
     std::vector<unsigned char> bytes = {
@@ -47,9 +47,9 @@ void MidiDriver::sendMessage(const midi_message& msg) {
 }
 
 void MidiDriver::noteOnCallback(const midi_message& msg) {
-    sendMessage();
+    sendMessage(msg);
 }
 
 void MidiDriver::ccCallback(const midi_message& msg) {
-    sendMessage();
+    sendMessage(msg);
 }
