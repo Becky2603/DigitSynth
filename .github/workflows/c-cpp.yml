@@ -48,7 +48,7 @@ jobs:
         name: digitsynth-binary
         path: ./application/build/digitsynth
 
-     - name: archive-pacakge
+    - name: archive-pacakge
       uses: actions/upload-artifact@v4
       with:
         name: digitsynth-package
