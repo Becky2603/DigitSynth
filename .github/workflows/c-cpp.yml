@@ -16,8 +16,9 @@ jobs:
 
     - name: libgpiod
       run: |
-        git clone https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
-        cd libgpiod
+        curl -S https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-2.2.tar.gz -o libgpiod.tar.gz
+        tar -xf libgpiod.tar.gz
+        cd libgpiod-2.2
         ./configure --enable-cxx-bindings
         make
         make install
