@@ -13,6 +13,7 @@
 #include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>
+#include <thread>
 #include <unistd.h>
 #include <ads1115rpi.h>
 
