@@ -1,5 +1,5 @@
 Package: digitsynth
-Version: 1.0-1
+Version: VERSION
 Section: embedded
 Priority: optional
 Architecture: arm64
