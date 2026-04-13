@@ -41,8 +41,14 @@ jobs:
       run: | 
         cd application/ 
         make test 
-        cat build/Testing/Temporary/LastTest.log
-      
+    
+    - name: archive-test-log
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-log 
+        path: ./application/build/Testing/Temporary/LastTest.log
+    
     - name: package
       run: | 
         cd application/
