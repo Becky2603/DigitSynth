@@ -16,7 +16,8 @@ typedef int                     ButtonIndex;
 
 typedef std::function<void(AdcData)>                      AdcCallback;
 typedef std::function<void(std::array<ExtensionData, 4>)> ExtensionCallback;
-typedef std::function<void(ButtonIndex)>                  ButtonCallback;
+typedef std::function<void(ButtonIndex)>                  SingleButtonCallback;
+typedef std::function<void(void)>                         AllButtonsCallback;
 typedef std::function<void(void)>                         GpioCallback;
 
 

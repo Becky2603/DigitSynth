@@ -15,7 +15,7 @@ public:
      * @param callback --- the callback to be registered. If a callback is currently
      * registered, this will replace it. 
      */
-    void registerSingleButtonCallback(ButtonCallback callback);
+    void registerSingleButtonCallback(SingleButtonCallback callback);
     
     /**
      * Clear the current single-button callback. 
@@ -27,7 +27,7 @@ public:
      * @param callback --- the callback to be registered. If a callback is currently registered,
      * this will replace it. 
      */
-    void registerAllButtonsCallback(std::function<void(void)> callback);
+    void registerAllButtonsCallback(AllButtonsCallback callback);
     
     /**
      * Clear the current all-button callback. 
@@ -41,8 +41,8 @@ private:
     std::array<std::thread, N_BUTTONS> workers; 
     std::array<bool, N_BUTTONS> buttonStatuses; 
     
-    std::optional<ButtonCallback> singleButtonCallback;  
-    std::optional<std::function<void(void)>> allButtonsCallback;  
+    std::optional<SingleButtonCallback> singleButtonCallback;  
+    std::optional<AllButtonsCallback> allButtonsCallback;  
     
     bool running = true; 
 };
