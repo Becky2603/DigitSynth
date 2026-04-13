@@ -118,5 +118,6 @@ int main(){
     assert(midi[3].data_1 == 26);
     assert(midi[3].data_2 == 127);
     
+    std::cout<<"finished";
     return(0);
 }
