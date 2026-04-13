@@ -24,6 +24,8 @@ public:
     ControlMode getCurrentMode(); // for testing
     uint8_t getCurrentChord();   // for testing
     midi_message getLastCC(int i);    // for testing
+    
+    void registerMidiCallback(MidiCallback callback);
 
 private:
     void startRipple();
@@ -39,6 +41,8 @@ private:
     ChordManager chordManager;
     ParamMapper  paramMapper;
     MidiScaler   midiScaler;
+    
+    std::optional<MidiCallback> midiCallback = {};
 
     midi_message lastCC[4];
 };
