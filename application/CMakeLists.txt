@@ -30,21 +30,26 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/gpio.cpp
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/midi-driver.cpp
+    ${SOURCE_DIRECTORY}/TLC59711.cpp
 		${SOURCE_DIRECTORY}/SynthController.cpp
 		${SOURCE_DIRECTORY}/ModeManager.cpp
 		${SOURCE_DIRECTORY}/ChordManager.cpp
 		${SOURCE_DIRECTORY}/MidiScaler.cpp
 		${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp
 )
 
 target_sources(digitsynth_static
 	PUBLIC
-    	${SOURCE_DIRECTORY}/foo.cpp
-    	${SOURCE_DIRECTORY}/adc-driver.cpp
-    	${SOURCE_DIRECTORY}/button-driver.cpp
-    	${SOURCE_DIRECTORY}/gpio.cpp
+		# Add source files here to build them
+		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/gpio.cpp
+		${SOURCE_DIRECTORY}/midi-driver.cpp
+    ${SOURCE_DIRECTORY}/patterns.cpp
+    ${SOURCE_DIRECTORY}/TLC59711.cpp
     	${SOURCE_DIRECTORY}/flex-sensor.cpp
     	${SOURCE_DIRECTORY}/button-driver.cpp
     	${SOURCE_DIRECTORY}/SynthController.cpp
@@ -52,13 +57,22 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/ChordManager.cpp
     	${SOURCE_DIRECTORY}/MidiScaler.cpp
     	${SOURCE_DIRECTORY}/paramMapper.cpp
-        ${SOURCE_DIRECTORY}/patterns.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp
 )
 
 link_directories("/usr/local/lib/")
 
-target_link_libraries(digitsynth -lgpiodcxx libads1115rpi_static.a)
-target_link_libraries(digitsynth_static -lgpiodcxx -lads1115rpi)
+target_link_libraries(digitsynth -lgpiodcxx libads1115rpi_static.a rtmidi)
+target_link_libraries(digitsynth_static -lgpiodcxx -lads1115rpi rtmidi)
+
+add_executable(midi_test
+	tools/midi_test.cpp
+	src/midi-driver.cpp
+)
+
+target_include_directories(midi_test PRIVATE include)
+
+target_link_libraries(midi_test
+	rtmidi
+)
 
 add_subdirectory(test)

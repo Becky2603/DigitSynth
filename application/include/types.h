@@ -8,7 +8,6 @@
 #include <optional>
 
 #include <sys/types.h>
-#include <tuple>
 
 typedef std::optional<uint32_t> AdcData;
 typedef float                   ExtensionData;

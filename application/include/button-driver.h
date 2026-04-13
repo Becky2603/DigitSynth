@@ -9,17 +9,37 @@ class ButtonDriver {
 public:
     ButtonDriver();
     
-    void registerSingleButtonCallback(ButtonCallback);
+    /**
+     * Register a callback to be called when a button is pressed. The index of the 
+     * pressed button will be passed to the callback on call. 
+     * @param callback --- the callback to be registered. If a callback is currently
+     * registered, this will replace it. 
+     */
+    void registerSingleButtonCallback(ButtonCallback callback);
+    
+    /**
+     * Clear the current single-button callback. 
+     */
     void deregisterSingleButtonCallback();
-    void registerAllButtonsCallback(std::function<void(void)>);
+    
+    /**
+     * Register a callback to be called when all buttons are pressed simultaneously.
+     * @param callback --- the callback to be registered. If a callback is currently registered,
+     * this will replace it. 
+     */
+    void registerAllButtonsCallback(std::function<void(void)> callback);
+    
+    /**
+     * Clear the current all-button callback. 
+     */
     void deregisterAllButtonsCallback();
 
 private: 
     static constexpr int N_BUTTONS = 4;
     static constexpr int BUTTON_PINS[N_BUTTONS] = { 14, 15, 18, 23 };
 
-    std::array<std::thread, 4> workers; 
-    std::array<bool, 4> buttonStatuses; 
+    std::array<std::thread, N_BUTTONS> workers; 
+    std::array<bool, N_BUTTONS> buttonStatuses; 
     
     std::optional<ButtonCallback> singleButtonCallback;  
     std::optional<std::function<void(void)>> allButtonsCallback;  
