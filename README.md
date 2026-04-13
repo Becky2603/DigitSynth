@@ -5,7 +5,7 @@
 ---
 ##  Features
 
--  Real-time EQ and filtering of live audio input
+-  Real-time EQ and filtering control for a MIDI synthesizer
 -  Low-latency digital signal processing on Raspberry Pi
 -  Hardware controls for intuitive parameter adjustment
 -  MIDI CC output with adjustable filter parameters
