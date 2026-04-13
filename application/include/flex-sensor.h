@@ -25,8 +25,9 @@ public:
     
     /**
      * Register the function that will be called when data is ready. 
+     * @param callback --- the callback to be registered. 
      */
-    void registerCallback(ExtensionCallback);
+    void registerCallback(ExtensionCallback callback);
     
 private: 
     /**
