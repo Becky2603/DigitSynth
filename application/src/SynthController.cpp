@@ -115,10 +115,10 @@ void SynthController::onFlexEvent(std::array<ExtensionData, 4>& values){
         uint8_t scaled_value = midiScaler.scaleValue(values[i]);
         uint8_t cc_num;
         if (currentMode == CHORD){
-            cc_num = paramMapper.getCC(index, prevMode);
+            cc_num = paramMapper.getCC(i, prevMode);
         }
         else {
-            cc_num = paramMapper.getCC(index, currentMode);
+            cc_num = paramMapper.getCC(i, currentMode);
         }
         midi_message msg;
         msg.status = 0xB0; // Control Change
