@@ -12,6 +12,12 @@
 -  Open source and fully reproducible
 
 ---
+## License
+
+This project is licensed under the **MIT License** — see the [`LICENSE`](LICENSE) file for details.
+ 
+You are free to use, modify, and distribute this project. We just ask that you credit the original authors.
+
 ## Authors & Acknowledgements
 
 Developed by:
