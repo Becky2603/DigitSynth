@@ -14,7 +14,6 @@ typedef float                   ExtensionData;
 typedef float                   Brightness;
 typedef int                     ButtonIndex;
 
-typedef std::function<void(AdcData)>                      AdcCallback;
 typedef std::function<void(std::array<ExtensionData, 4>)> ExtensionCallback;
 typedef std::function<void(ButtonIndex)>                  SingleButtonCallback;
 typedef std::function<void(void)>                         AllButtonsCallback;
