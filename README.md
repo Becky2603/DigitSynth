@@ -21,7 +21,7 @@ Developed by:
 - **Dougal Harris** — [GitHub](https://github.com/DougalH1)
 - **Finn McConville** — [GitHub](https://github.com/finnmcco)
 - **Jamie Wedlinscky** — [GitHub](https://github.com/jwedlinscky)
-- 
+  
 As part of the **Real-Time Embedded Systems** module at **University of Glasgow**, *2026*.
 
 
