@@ -16,7 +16,7 @@
 
 Developed by:
 
-- **Logan Brown** — [GitHub](https://github.com/LoganBrownGU))
+- **Logan Brown** — [GitHub](https://github.com/LoganBrownGU)
 - **Becky Clarke** — [GitHub](https://github.com/Becky2603)
 - **Dougal Harris** — [GitHub](https://github.com/DougalH1)
 - **Finn McConville** — [GitHub](https://github.com/finnmcco)
