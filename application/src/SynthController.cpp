@@ -124,7 +124,7 @@ void SynthController::onFlexEvent(std::array<ExtensionData, 4>& values){
         msg.status = 0xB0; // Control Change
         msg.data_1 = cc_number;
         msg.data_2 = scaled_value;
-        lastCC = msg; // for testing
+        lastCC[i] = msg; // for testing
         //midiDriver.ccCalback(msg);
     }
 }
@@ -163,8 +163,8 @@ uint8_t SynthController::getCurrentChord(){
     return chordManager.getCurrentChord();
 }
 
-midi_message SynthController::getLastCC(){
-    return lastCC;
+midi_message SynthController::getLastCC(int i){
+    return lastCC[i];
 }
 
 void SynthController::startRipple() {
