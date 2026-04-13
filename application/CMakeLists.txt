@@ -13,7 +13,7 @@ endif()
 project(DigitSynth)
 
 include(CTest)
-include(docs/Docs.cmake)
+#include(docs/Docs.cmake)
 add_executable(digitsynth)
 add_library(digitsynth_static)
 target_include_directories(digitsynth PRIVATE include)
@@ -31,8 +31,13 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/midi-driver.cpp
-    ${SOURCE_DIRECTORY}/patterns.cpp
     ${SOURCE_DIRECTORY}/TLC59711.cpp
+		${SOURCE_DIRECTORY}/SynthController.cpp
+		${SOURCE_DIRECTORY}/ModeManager.cpp
+		${SOURCE_DIRECTORY}/ChordManager.cpp
+		${SOURCE_DIRECTORY}/MidiScaler.cpp
+		${SOURCE_DIRECTORY}/paramMapper.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
 )
 
 target_sources(digitsynth_static
@@ -45,6 +50,13 @@ target_sources(digitsynth_static
 		${SOURCE_DIRECTORY}/midi-driver.cpp
     ${SOURCE_DIRECTORY}/patterns.cpp
     ${SOURCE_DIRECTORY}/TLC59711.cpp
+    	${SOURCE_DIRECTORY}/flex-sensor.cpp
+    	${SOURCE_DIRECTORY}/button-driver.cpp
+    	${SOURCE_DIRECTORY}/SynthController.cpp
+    	${SOURCE_DIRECTORY}/ModeManager.cpp
+    	${SOURCE_DIRECTORY}/ChordManager.cpp
+    	${SOURCE_DIRECTORY}/MidiScaler.cpp
+    	${SOURCE_DIRECTORY}/paramMapper.cpp
 )
 
 link_directories("/usr/local/lib/")
