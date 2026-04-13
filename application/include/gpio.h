@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include <gpiod.hpp>
-#include <vector>
+
 namespace gpio {
     void setupGpio();
     void teardownGpio();

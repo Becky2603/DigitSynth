@@ -58,26 +58,28 @@ bool gpio::getPin(int pin) {
     return value;
 }
 
-void gpio::blockUntilEdge(int pin, gpiod::line::edge edge) {
+gpiod::edge_event::event_type gpio::blockUntilEdge(int pin, gpiod::line::edge edge) {
     if (chip == nullptr) {
         std::cerr << "GPIO chip not set up\n";
         exit(-1);
     }   
     
     gpiod::line_config line_config; 
-    line_config.add_line_settings(pin, gpiod::line_settings().set_direction(gpiod::line::direction::INPUT).set_edge_detection(edge));
+    line_config.add_line_settings(pin, gpiod::line_settings().set_direction(gpiod::line::direction::INPUT).set_edge_detection(edge).set_bias(gpiod::line::bias::PULL_DOWN));
     auto builder = chip->prepare_request();
     builder
         .set_consumer("digitsynth callback")
         .set_line_config(line_config);
     
-    auto request = new gpiod::line_request(builder.do_request());
+    auto request = gpiod::line_request(builder.do_request());
     
     bool r = false;
     
     while (!r) {
-        r = request->wait_edge_events(std::chrono::milliseconds(500));
+        r = request.wait_edge_events(std::chrono::milliseconds(5000));
     }
     gpiod::edge_event_buffer buf; 
-    request->read_edge_events(buf, 1);
+    request.read_edge_events(buf, 1);
+    auto e = buf.get_event(0);
+    return e.type();
 }
