@@ -1,6 +1,6 @@
 #include "midi-driver.hpp"
 
-#include <RtMidi.h>
+#include <rtmidi/RtMidi.h>
 #include <stdexcept>
 
 MidiDriver::MidiDriver()
