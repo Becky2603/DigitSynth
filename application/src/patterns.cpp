@@ -63,6 +63,9 @@ static void rearmTimerFd(int fd, long period_ms, bool repeat) {
 // ---------------------------------------------------------------------------
 
 void Pattern::start(DoneCallback onDone) {
+    if(this->_running){
+        return;
+    }
     _onDone  = std::move(onDone);
     _running = true;
     // Each pattern runs in its own thread (Ch. 3.3.1).
