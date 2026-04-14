@@ -8,20 +8,16 @@
 #include <optional>
 
 #include <sys/types.h>
-#include <tuple>
 
 typedef std::optional<uint32_t> AdcData;
 typedef float                   ExtensionData;
 typedef float                   Brightness;
-typedef std::optional<bool>     ButtonData;
+typedef int                     ButtonIndex;
 
-typedef uint32_t Frequency;
-
-typedef std::function<void(AdcData)>       AdcCallback;
 typedef std::function<void(std::array<ExtensionData, 4>)> ExtensionCallback;
-typedef std::function<void(int)>           ButtonCallback;
-typedef std::function<void(ssize_t)>       SpiCallback;
-typedef std::function<void(void)>          GpioCallback;
+typedef std::function<void(ButtonIndex)>                  SingleButtonCallback;
+typedef std::function<void(void)>                         AllButtonsCallback;
+typedef std::function<void(void)>                         GpioCallback;
 
 
 #endif

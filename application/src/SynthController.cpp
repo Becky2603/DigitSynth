@@ -15,13 +15,13 @@ void SynthController::onButtonEvent(int index){
         int currentChord = chordManager.getCurrentChord();
         if (currentChord != previousChord){ // i.e. we are switching to a new chord
             for (int i = 0; i < 4; i++){
-		    /*
+                /*
                 midi_message msg;
                 msg.status = 0x90; // Note On message
                 msg.data_1 = chordManager.getNote(i);
                 msg.data_2 = 127;
-		*/
                 //midiDriver.noteOnCallback(msg);
+                */
             }
         }
         else{ //same chord -> do nothing
@@ -108,23 +108,25 @@ void SynthController::onButtonEvent(int index){
     }
 }
 
-void SynthController::onFlexEvent(int index, float value){
-    uint8_t scaled_value = midiScaler.scaleValue(value);
+void SynthController::onFlexEvent(std::array<ExtensionData, 4>& values){
     ControlMode currentMode = modeManager.getCurrentMode();
     ControlMode prevMode = modeManager.getPreviousMode();
-    uint8_t cc_number;
-    if (currentMode == CHORD){
-        cc_number = paramMapper.getCC(index, prevMode);
+    for (int i = 0; i < 4; i++){
+        uint8_t scaled_value = midiScaler.scaleValue(values[i]);
+        uint8_t cc_num;
+        if (currentMode == CHORD){
+            cc_num = paramMapper.getCC(i, prevMode);
+        }
+        else {
+            cc_num = paramMapper.getCC(i, currentMode);
+        }
+        midi_message msg;
+        msg.status = 0xB0; // Control Change
+        msg.data_1 = cc_num;
+        msg.data_2 = scaled_value;
+        lastCC[i] = msg; // for testing
+        //midiDriver.ccCalback(msg);
     }
-    else {
-        cc_number = paramMapper.getCC(index, currentMode);
-    }
-    midi_message msg;
-    msg.status = 0xB0; // Control Change
-    msg.data_1 = cc_number;
-    msg.data_2 = scaled_value;
-    lastCC = msg; // for testing
-    //midiDriver.ccCalback(msg);
 }
 
 void SynthController::onAllButtonsPressed(){
@@ -161,8 +163,8 @@ uint8_t SynthController::getCurrentChord(){
     return chordManager.getCurrentChord();
 }
 
-midi_message SynthController::getLastCC(){
-    return lastCC;
+midi_message SynthController::getLastCC(int i){
+    return lastCC[i];
 }
 
 void SynthController::startRipple() {

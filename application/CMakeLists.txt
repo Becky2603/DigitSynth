@@ -41,11 +41,17 @@ target_sources(digitsynth
 
 target_sources(digitsynth_static
 	PUBLIC
-		# Add source files here to build them
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/gpio.cpp
+    	${SOURCE_DIRECTORY}/foo.cpp
+    	${SOURCE_DIRECTORY}/adc-driver.cpp
+    	${SOURCE_DIRECTORY}/button-driver.cpp
+    	${SOURCE_DIRECTORY}/gpio.cpp
+    	${SOURCE_DIRECTORY}/flex-sensor.cpp
+    	${SOURCE_DIRECTORY}/button-driver.cpp
+    	${SOURCE_DIRECTORY}/SynthController.cpp
+    	${SOURCE_DIRECTORY}/ModeManager.cpp
+    	${SOURCE_DIRECTORY}/ChordManager.cpp
+    	${SOURCE_DIRECTORY}/MidiScaler.cpp
+    	${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
         ${SOURCE_DIRECTORY}/TLC59711.cpp
 )

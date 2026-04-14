@@ -1,10 +1,11 @@
-GNUMAKEFLAGS := j4
 
-.PHONY: all run clean test docs
+PACKAGENAME=digitsynth-arm64
+
+.PHONY: all run clean test docs deb
 
 all: 
 	cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=On 
-	cmake --build build/
+	cmake --build build/  --parallel 8
 
 run: all
 	./build/digitsynth
@@ -16,6 +17,9 @@ docs: all
 	sudo cp -r build/html/* /data/www/
 	sudo nginx -s reload
 	
+deb: all
+	./create-package.sh
+
 
 clean: 
 	cmake --build build/ -- clean

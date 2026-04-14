@@ -5,11 +5,11 @@
 #include "paramMapper.hpp"
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
-#include "TLC59711.h"
-#include "patterns.h"
 #include <cstdint>
 #include <memory>
-#include <optional>
+#include "types.h"
+#include "TLC59711.h"
+#include "patterns.h"
 
 class SynthController {
 public:
@@ -18,12 +18,12 @@ public:
     explicit SynthController(TLC59711& tlc);
 
     void onButtonEvent(int index);
-    void onFlexEvent(int index, float value);
+    void onFlexEvent(std::array<ExtensionData, 4>& values);
     void onAllButtonsPressed();
 
     ControlMode getCurrentMode(); // for testing
     uint8_t getCurrentChord();   // for testing
-    midi_message getLastCC();    // for testing
+    midi_message getLastCC(int i);    // for testing
 
 private:
     void startRipple();
@@ -40,7 +40,7 @@ private:
     ParamMapper  paramMapper;
     MidiScaler   midiScaler;
 
-    midi_message lastCC;
+    midi_message lastCC[4];
 };
 
 #endif /* SynthController_hpp */

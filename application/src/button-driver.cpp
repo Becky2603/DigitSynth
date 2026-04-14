@@ -5,11 +5,14 @@
 #include <thread>
 
 ButtonDriver::ButtonDriver() {
-    for (size_t i = 0; i < workers.size(); i++) {
+    for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
-            while (running) {
+            while (this->running) {
                 auto edge = gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
-                bool val = edge == gpiod::edge_event::event_type::RISING_EDGE;
+                
+                if (!edge.has_value()) { continue; }
+                
+                bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
                 this->buttonStatuses[i] = val;
                 
                 
@@ -31,7 +34,15 @@ ButtonDriver::ButtonDriver() {
     }
 }
 
-void ButtonDriver::registerAllButtonsCallback(std::function<void(void)> callback) {
+ButtonDriver::~ButtonDriver() {
+    this->running = false;
+    gpio::cancelLineRequests();
+    for (std::thread &t: this->workers) {
+        if (t.joinable()) { t.join(); }
+    }
+}
+
+void ButtonDriver::registerAllButtonsCallback(AllButtonsCallback callback) {
     this->allButtonsCallback = callback;
 }
 
@@ -40,7 +51,7 @@ void ButtonDriver::deregisterSingleButtonCallback() {
 }
 
 
-void ButtonDriver::registerSingleButtonCallback(ButtonCallback callback) {
+void ButtonDriver::registerSingleButtonCallback(SingleButtonCallback callback) {
     this->singleButtonCallback = callback;
 }
 
