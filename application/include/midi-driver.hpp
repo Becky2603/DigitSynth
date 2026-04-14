@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "MidiTypes.hpp"
+#include "types.h"
 
 class RtMidiOut;
 
@@ -20,8 +21,10 @@ class MidiDriver {
         void openPort(unsigned int portIndex);
 
         void sendMessage(const midi_message& msg);
-        void noteOnCallback(const midi_message& msg);
-        void ccCallback(const midi_message& msg);
+
+        // Returns a callback you can hand directly to
+        // SynthController::registerMidiCallback()
+        MidiCallback makeCallback();
 
     private:
         RtMidiOut* midiOut_;

@@ -1,4 +1,5 @@
 #include "midi-driver.hpp"
+#include "types.h"
 
 #include <rtmidi/RtMidi.h>
 #include <stdexcept>
@@ -46,10 +47,8 @@ void MidiDriver::sendMessage(const midi_message& msg) {
     midiOut_->sendMessage(&bytes);
 }
 
-void MidiDriver::noteOnCallback(const midi_message& msg) {
-    sendMessage(msg);
-}
-
-void MidiDriver::ccCallback(const midi_message& msg) {
-    sendMessage(msg);
+MidiCallback MidiDriver::makeCallback() {
+    return [this](midi_message msg) {  
+        sendMessage(msg);
+    };
 }
