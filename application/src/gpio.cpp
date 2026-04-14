@@ -10,6 +10,9 @@ static gpiod::chip *chip;
 
 static std::optional<GpioCallback> callback = {};
 
+static gpiod::line_request *rq; 
+static bool r; 
+
 void gpio::setupGpio() {
     chip = new gpiod::chip("/dev/gpiochip0");
     if (chip == nullptr) {
@@ -71,15 +74,29 @@ gpiod::edge_event::event_type gpio::blockUntilEdge(int pin, gpiod::line::edge ed
         .set_consumer("digitsynth callback")
         .set_line_config(line_config);
     
-    auto request = gpiod::line_request(builder.do_request());
+    rq = new gpiod::line_request(builder.do_request());
     
-    bool r = false;
+    r = false;
     
     while (!r) {
-        r = request.wait_edge_events(std::chrono::milliseconds(5000));
+        r = rq->wait_edge_events(std::chrono::milliseconds(5000));
     }
+    
+    if (rq == nullptr) {
+        return gpiod::edge_event::event_type::FALLING_EDGE;
+    }
+    
     gpiod::edge_event_buffer buf; 
-    request.read_edge_events(buf, 1);
+    rq->read_edge_events(buf, 1);
     auto e = buf.get_event(0);
+    
+    delete rq;
+    rq = nullptr;
     return e.type();
+}
+
+void gpio::cancelLineRequest() {
+    r = true;
+    delete rq; 
+    rq = nullptr;
 }

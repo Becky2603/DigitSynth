@@ -35,6 +35,8 @@ namespace gpio {
      *          to determine whether the edge was rising or falling. 
      */
     gpiod::edge_event::event_type blockUntilEdge(int pin, gpiod::line::edge edge);
+    
+    void cancelLineRequest();
 }
 
 #endif
