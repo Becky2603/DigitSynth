@@ -27,39 +27,29 @@ SynthController::SynthController(TLC59711& tlc)
             }
         }
         else {
+            ControlMode previousPattern = modeManager.getActiveLedPattern();
             modeManager.updateMode(index);
-            
-            switch (modeManager.getCurrentMode()) {
+            ControlMode newMode = modeManager.getCurrentMode();
+
+            switch (newMode) {
                 case EQ:
-                    if (modeManager.getActiveLedPattern() == SOURCE_EQ) stopFade();
-                    else if (modeManager.getActiveLedPattern() == DETUNE) stopRipple();
-                    // spectral update handled by flex callback
+                    if (previousPattern == SOURCE_EQ) stopFade();
+                    else if (previousPattern == DETUNE) stopRipple();
                     break;
+
                 case SOURCE_EQ:
-                    // LEDs should fade
-                    if (modeManager.getActiveLedPattern() == DETUNE){
-                        stopRipple();
-                        startFade();
-                    }
-                    else if (modeManager.getActiveLedPattern() == EQ){
-                        startFade();
-                    }
+                    if (previousPattern == DETUNE) stopRipple();
+                    startFade();
                     break;
+
                 case DETUNE:
-                    // LEDs should ripple
-                    if (modeManager.getActiveLedPattern() == SOURCE_EQ){
-                        stopFade();
-                        startRipple();
-                    }
-                    else if (modeManager.getActiveLedPattern() == EQ){
-                        startRipple();
-                    }
+                    if (previousPattern == SOURCE_EQ) stopFade();
+                    startRipple();
                     break;
+
                 case CHORD:
-                    // don't stop current LED pattern
                     break;
             }
-            
         }
     });
     
