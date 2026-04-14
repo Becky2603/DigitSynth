@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
+#include "MidiTypes.hpp"
 
 #include <sys/types.h>
 
@@ -18,6 +19,7 @@ typedef std::function<void(std::array<ExtensionData, 4>)> ExtensionCallback;
 typedef std::function<void(ButtonIndex)>                  SingleButtonCallback;
 typedef std::function<void(void)>                         AllButtonsCallback;
 typedef std::function<void(void)>                         GpioCallback;
+typedef std::function<void(midi_message)>                 MidiCallback;
 
 
 #endif

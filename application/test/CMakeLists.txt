@@ -19,3 +19,8 @@ add_executable(test_combined synth_logic/combined_test.cpp)
 target_include_directories(test_TLC PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_combined digitsynth_static)
 add_test(NAME TestCombined COMMAND test_combined)
+
+add_executable(test_midi_flex synth_logic/midi_flex_test.cpp)
+target_include_directories(test_midi_flex PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_midi_flex digitsynth_static)
+add_test(NAME TestMidiFlex COMMAND test_midi_flex)
