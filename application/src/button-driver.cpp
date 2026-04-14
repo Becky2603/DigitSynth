@@ -7,9 +7,12 @@
 ButtonDriver::ButtonDriver() {
     for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
-            while (running) {
+            while (this->running) {
                 auto edge = gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
-                bool val = edge == gpiod::edge_event::event_type::RISING_EDGE;
+                
+                if (!edge.has_value()) { continue; }
+                
+                bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
                 this->buttonStatuses[i] = val;
                 
                 
@@ -28,6 +31,14 @@ ButtonDriver::ButtonDriver() {
                 if (allPressed) { this->allButtonsCallback.value()(); }
             }
         });  
+    }
+}
+
+ButtonDriver::~ButtonDriver() {
+    this->running = false;
+    gpio::cancelLineRequests();
+    for (std::thread &t: this->workers) {
+        if (t.joinable()) { t.join(); }
     }
 }
 

@@ -8,6 +8,7 @@
 class ButtonDriver {
 public:
     ButtonDriver();
+    ~ButtonDriver();
     
     /**
      * Register a callback to be called when a button is pressed. The index of the 

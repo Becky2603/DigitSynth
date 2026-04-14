@@ -11,12 +11,15 @@ ControlMode ModeManager::getPreviousMode(){
 void ModeManager::updateMode(int index){
     switch (index){
         case 0:
+            previous_controlMode = current_controlMode;
             current_controlMode = EQ;
             break;
         case 1:
+            previous_controlMode = current_controlMode;
             current_controlMode = SOURCE_EQ;
             break;
         case 2:
+            previous_controlMode = current_controlMode;
             current_controlMode = DETUNE;
             break;
         case 3:

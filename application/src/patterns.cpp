@@ -44,6 +44,20 @@ static bool waitTick(int fd, const std::atomic<bool>& running) {
     return running.load();
 }
 
+/**
+ * Re-arm an existing timerfd with a new period.
+ * Used to switch between the step rate and the hold duration mid-run.
+ */
+static void rearmTimerFd(int fd, long period_ms, bool repeat) {
+    struct itimerspec its{};
+    its.it_value.tv_sec     = period_ms / 1000;
+    its.it_value.tv_nsec    = (period_ms % 1000) * 1000000L;
+    if (repeat) {
+        its.it_interval = its.it_value;
+    }
+    timerfd_settime(fd, 0, &its, nullptr);
+}
+
 // ---------------------------------------------------------------------------
 // Pattern base
 // ---------------------------------------------------------------------------
@@ -67,11 +81,10 @@ void Pattern::stop() {
 // ---------------------------------------------------------------------------
 
 void PatternFade::run() {
-    static constexpr long STEP_MS  = 40;   // ~25 fps
-    static constexpr int  HOLD_MS  = 500;
-    static constexpr int  N_STEPS  = 100;
+    static constexpr long STEP_MS = 40;   // ~25 fps
+    static constexpr long HOLD_MS = 500;
+    static constexpr int  N_STEPS = 20;
 
-    // timerfd gives us blocking I/O timing — no sleep_for (Ch. 3.4).
     int fd = makeTimerFd(STEP_MS);
 
     auto applyBrightness = [&](float b) {
@@ -80,40 +93,34 @@ void PatternFade::run() {
         _tlc.update(ch);
     };
 
-    // --- Fade in ---
-    for (int i = 0; i <= N_STEPS && _running; ++i) {
-        applyBrightness(i / static_cast<float>(N_STEPS));
-        if (!waitTick(fd, _running)) break;
+    // Loop runs until stop() sets _running = false (Ch. 3.3.3),
+    // repeating fade-in → hold → fade-out indefinitely.
+    while (_running) {
+
+        // --- Fade in ---
+        for (int i = 0; i <= N_STEPS && _running; ++i) {
+            applyBrightness(i / static_cast<float>(N_STEPS));
+            if (!waitTick(fd, _running)) goto done;
+        }
+
+        // --- Hold ---
+        if (_running) {
+            rearmTimerFd(fd, HOLD_MS, /*repeat=*/false);
+            if (!waitTick(fd, _running)) goto done;
+            rearmTimerFd(fd, STEP_MS,  /*repeat=*/true);
+        }
+
+        // --- Fade out ---
+        for (int i = N_STEPS; i >= 0 && _running; --i) {
+            applyBrightness(i / static_cast<float>(N_STEPS));
+            if (!waitTick(fd, _running)) goto done;
+        }
     }
 
-    // --- Hold ---
-    // Re-arm timer for the hold period with a single one-shot tick.
-    if (_running) {
-        struct itimerspec hold{};
-        hold.it_value.tv_sec     = HOLD_MS / 1000;
-        hold.it_value.tv_nsec    = (HOLD_MS % 1000) * 1000000L;
-        // interval stays zero — one shot
-        timerfd_settime(fd, 0, &hold, nullptr);
-        waitTick(fd, _running);
-
-        // Restore periodic interval for fade-out.
-        struct itimerspec periodic{};
-        periodic.it_value.tv_sec     = STEP_MS / 1000;
-        periodic.it_value.tv_nsec    = (STEP_MS % 1000) * 1000000L;
-        periodic.it_interval         = periodic.it_value;
-        timerfd_settime(fd, 0, &periodic, nullptr);
-    }
-
-    // --- Fade out ---
-    for (int i = N_STEPS; i >= 0 && _running; --i) {
-        applyBrightness(i / static_cast<float>(N_STEPS));
-        if (!waitTick(fd, _running)) break;
-    }
-
+done:
     close(fd);
 
-    // Signal completion via callback — course Ch. 2.2.1 / 3.3.2.
-    if (_running && _onDone)
+    if (_onDone)
         _onDone();
 
     _running = false;
@@ -124,16 +131,15 @@ void PatternFade::run() {
 // ---------------------------------------------------------------------------
 
 void PatternRipple::run() {
-    static constexpr float TWO_PI      = 6.28318f;
-    static constexpr int   N_FINGERS   = 10;
-    static constexpr float SPEED       = 1.0f;
-    static constexpr long  STEP_MS     = 40;
+    static constexpr float TWO_PI    = 6.28318f;
+    static constexpr int   N_FINGERS = 10;
+    static constexpr float SPEED     = 1.0f;
+    static constexpr long  STEP_MS   = 40;
 
     int fd = makeTimerFd(STEP_MS);
 
     const float phase_step = (TWO_PI / 3.0f) / N_FINGERS;
-
-    const auto t_start = std::chrono::steady_clock::now();
+    const auto  t_start    = std::chrono::steady_clock::now();
 
     // Loop runs until stop() sets _running = false (Ch. 3.3.3).
     while (_running) {
@@ -153,7 +159,6 @@ void PatternRipple::run() {
 
     close(fd);
 
-    // Callback fires whether stop() was called externally or loop exited.
     if (_onDone)
         _onDone();
 

@@ -1,8 +1,8 @@
 #ifndef _GPIO_H
 #define _GPIO_H
 
-#include "types.h"
 #include <gpiod.hpp>
+#include <optional>
 
 namespace gpio {
     /**
@@ -10,6 +10,7 @@ namespace gpio {
      * function is called.* 
      */
     void setupGpio();
+    void teardownGpio();
     
     /**
      * Set a GPIO pin to a given value. 
@@ -31,10 +32,15 @@ namespace gpio {
      * @param pin --- the pin on which to block. 
      * @param edge --- the edge transition to wait for. 
      * @return  The event that occurred. Useful if `edge` is edge::BOTH and you wish
-     *          to determine whether the edge was rising or falling. 
+     *          to determine whether the edge was rising or falling. Returns empty if 
+     *          `cancelLineRequests` is called while this call is active.  
      */
-    gpiod::edge_event::event_type blockUntilEdge(int pin, gpiod::line::edge edge);
-    void registerCallback(int pin, gpiod::line::edge edge, GpioCallback callback);
+    std::optional<gpiod::edge_event::event_type> blockUntilEdge(int pin, gpiod::line::edge edge);
+    
+    /**
+     * Cancels current `blockUntilEdge()` calls.  
+     */
+    void cancelLineRequests();
 }
 
 #endif

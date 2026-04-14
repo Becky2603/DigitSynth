@@ -3,3 +3,5 @@ INPUT = ../src/main.cpp ../include/
 PROJECT_NAME = "DigitSynth"
 
 EXTRACT_ALL = YES
+
+HAVE_DOT = NO

@@ -7,8 +7,5 @@ uint8_t MidiScaler::scaleValue(float value){ // assuming for now that value is i
     if (scaled_value > 127){
         scaled_value = 127;
     }
-    else if (scaled_value < 0){
-        scaled_value = 0;
-    }
     return scaled_value;
 }

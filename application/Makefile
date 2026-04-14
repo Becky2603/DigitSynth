@@ -5,7 +5,7 @@ PACKAGENAME=digitsynth-arm64
 
 all: 
 	cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=On 
-	cmake --build build/
+	cmake --build build/  --parallel 8
 
 run: all
 	./build/digitsynth
