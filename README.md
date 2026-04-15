@@ -71,7 +71,7 @@ sudo make install
 ```bash
 git clone https://github.com/thestk/rtmidi.git
 cd rtmidi
-cmake
+cmake .
 make
 sudo make install
 ```
