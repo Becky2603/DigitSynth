@@ -32,11 +32,9 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/button-driver.cpp
 		${SOURCE_DIRECTORY}/midi-driver.cpp
     ${SOURCE_DIRECTORY}/TLC59711.cpp
-		${SOURCE_DIRECTORY}/SynthController.cpp
 		${SOURCE_DIRECTORY}/ModeManager.cpp
 		${SOURCE_DIRECTORY}/ChordManager.cpp
 		${SOURCE_DIRECTORY}/MidiScaler.cpp
-		${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
 )
 
@@ -52,11 +50,9 @@ target_sources(digitsynth_static
     ${SOURCE_DIRECTORY}/TLC59711.cpp
     	${SOURCE_DIRECTORY}/flex-sensor.cpp
     	${SOURCE_DIRECTORY}/button-driver.cpp
-    	${SOURCE_DIRECTORY}/SynthController.cpp
     	${SOURCE_DIRECTORY}/ModeManager.cpp
     	${SOURCE_DIRECTORY}/ChordManager.cpp
     	${SOURCE_DIRECTORY}/MidiScaler.cpp
-    	${SOURCE_DIRECTORY}/paramMapper.cpp
 )
 
 link_directories("/usr/local/lib/")

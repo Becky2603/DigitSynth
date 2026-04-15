@@ -27,6 +27,7 @@ add_test(NAME TestTLC COMMAND test_TLC)
 #
 
 # test_mode_manager
-add_executable(test_mode_manager synth_logic/mode_manager_test.cpp ../application/src/ModeManager.cpp)
-target_include_directories(test_mode_manager PRIVATE ../application/include ${CMAKE_SOURCE_DIR}/include)
+add_executable(test_mode_manager synth_logic/mode_manager_test.cpp)
+target_include_directories(test_mode_manager PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_mode_manager digitsynth_static)
 add_test(NAME TestModeManager COMMAND test_mode_manager)
