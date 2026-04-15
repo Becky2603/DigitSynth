@@ -57,6 +57,7 @@ cd DigitSynth
 |---|---|---|
 | IIR Filter Library | Digital IIR filter design and processing | [berndporr/iir1](https://github.com/berndporr/iir1) |
 | RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
+| ADS1115 Raspberry Pi Library| Reads ADS1115 chip and returns voltage on selected pin | [wryan67/ads1115_rpi_lib](https://github.com/wryan67/ads1115_rpi_lib)|
 
 **IIR Library:**
 ```bash
