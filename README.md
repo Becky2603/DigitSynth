@@ -33,6 +33,71 @@ A MIDI-receiving device is required to complete the setup, either a hardware syn
 A full wiring diagram is available here: (https://github.com/user-attachments/assets/2b044adc-b435-4e66-ab19-fdcfc553dd06)
 
 ---
+## Software Requirements
+
+### Toolchain
+- **Language:** C++17
+- **Compiler:** G++ (compiled natively on Raspberry Pi)
+- **IDE:** Visual Studio Code with the Remote SSH extension
+
+### 1. Clone the Repository
+ 
+```bash
+git clone https://github.com/RTES-Group/DigitSynth.git
+cd DigitSynth
+```
+
+### 2. Install Dependencies
+
+#### Dependencies
+
+| Library | Purpose | Source |
+|---|---|---|
+| IIR Filter Library | Digital IIR filter design and processing | [berndporr/iir1](https://github.com/berndporr/iir1) |
+| RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
+
+**IIR Library:**
+```bash
+git clone https://github.com/berndporr/iir1.git
+cd iir1
+cmake .
+make
+sudo make install
+```
+**RtMidi:**
+```bash
+git clone https://github.com/thestk/rtmidi.git
+cd rtmidi
+cmake
+make
+sudo make install
+```
+
+**ads1115rpi:**
+```bash
+git clone https://github.com/berndporr/ads1115rpi.git
+cd ads1115rpi
+cmake .
+make
+sudo make install
+```
+### 3. Enable SPI on the Raspberry Pi:
+SPI must be enabled before the project will run:
+
+```bash
+sudo raspi-config
+# Navigate to: Interface Options → SPI → Enable
+```
+
+### 4. Build the project:
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+---
 
 Follow our build journey on Instagram: [![Instagram](https://img.shields.io/badge/Instagram-%23E1306C.svg?style=flat&logo=instagram&logoColor=white)](https://instagram.com/digitsynth_)
 
