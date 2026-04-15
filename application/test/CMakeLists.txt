@@ -31,3 +31,9 @@ add_executable(test_mode_manager synth_logic/mode_manager_test.cpp)
 target_include_directories(test_mode_manager PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_mode_manager digitsynth_static)
 add_test(NAME TestModeManager COMMAND test_mode_manager)
+
+# test_chord_manager
+add_executable(test_chord_manager synth_logic/chord_manager_test.cpp)
+target_include_directories(test_chord_manager PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_chord_manager digitsynth_static)
+add_test(NAME TestChordManager COMMAND test_chord_manager)
