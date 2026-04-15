@@ -17,15 +17,15 @@
 
 The table below outlines the hardware components used in this project. Exact component matches are not required, and suitable alternatives will yield comparable results. However, as the software has been developed specifically for the Raspberry Pi, it is strongly recommended to retain this as the target platform.
  
-| Component | Part Number | Quantity | Approx. Cost |
+| Component | Part Number | Quantity | Approx. Cost (unit)|
 |---|---|---|---|
 | Raspberry Pi 5 | Pi 5 8GB | 1 | £161.53 |
 | Adafruit ADS1115 | 1085 | 1 | £11.18 |
 | Adafruit TLC59711 | 1455 | 1 | £6.73 |
-| Spectra Symbol Flex Sensor FLX| FLX-L-055-123-MP | 4 | £8.51 x 4 |
-| Tactile Switch, 4.3mm, 160g | MCDTS2-1N| 4 | £0.17 x 4 |
-| Kingbright L-7113IT 5mm 2V Red LED 80mcd | 56-0250 | £0.08 x 10 |
-| Pisugar S Plus 5000 mAh Raspberry Pi UPS | Pisugar S Plus | $29.99 |
+| Spectra Symbol Flex Sensor FLX| FLX-L-055-123-MP | 4 | £8.51 |
+| Tactile Switch, 4.3mm, 160g | MCDTS2-1N| 4 | £0.17 |
+| Kingbright L-7113IT 5mm 2V Red LED 80mcd | 56-0250 | 10 | £0.08 |
+| Pisugar S Plus 5000 mAh Raspberry Pi UPS | Pisugar S Plus | 1 | $29.99 |
 
 A MIDI-receiving device is required to complete the setup, either a hardware synthesiser or a software synthesiser running on a connected laptop. In this project, a Roland JD-Xi synthesiser was used, receiving MIDI directly from the Raspberry Pi over USB-B.
 
