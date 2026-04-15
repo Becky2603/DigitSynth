@@ -88,6 +88,7 @@ SPI must be enabled before the project will run:
 
 ```bash
 sudo raspi-config
+gpio i2cd
 # Navigate to: Interface Options → SPI → Enable
 ```
 
