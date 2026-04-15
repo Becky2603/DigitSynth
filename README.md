@@ -29,7 +29,7 @@ The table below outlines the hardware components used in this project. Exact com
 
 A MIDI-receiving device is required to complete the setup, either a hardware synthesiser or a software synthesiser running on a connected laptop. In this project, a Roland JD-Xi synthesiser was used, receiving MIDI directly from the Raspberry Pi over USB-B.
 
-A full wiring diagram is available here [(https://github.com/user-attachments/assets/2b044adc-b435-4e66-ab19-fdcfc553dd06)]
+>A full wiring diagram is available here: [(https://github.com/user-attachments/assets/2b044adc-b435-4e66-ab19-fdcfc553dd06)]
 ---
 
 Follow our build journey on Instagram: [![Instagram](https://img.shields.io/badge/Instagram-%23E1306C.svg?style=flat&logo=instagram&logoColor=white)](https://instagram.com/digitsynth_)
