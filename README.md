@@ -77,7 +77,7 @@ sudo make install
 
 **ads1115rpi:**
 ```bash
-git clone https://github.com/berndporr/ads1115rpi.git
+git clone https://github.com/wryan67/ads1115_rpi_lib
 cd ads1115rpi
 cmake .
 make
