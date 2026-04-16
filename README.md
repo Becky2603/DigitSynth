@@ -94,7 +94,7 @@ make test
 
 ---
 
-# Contributing
+## Contributing
 
 See the issues tab for a list of potential contributions. In particular we would welcome expanding support for other synths. 
 
