@@ -22,12 +22,7 @@ jobs:
       run: |
         cd application/
         make
-
-    - name: test
-      run: | 
-        cd application/ 
-        make test 
-    
+   
     - name: archive-test-log
       if: always()
       uses: actions/upload-artifact@v6

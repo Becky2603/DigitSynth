@@ -30,7 +30,6 @@ jobs:
         cmake .
         make
         sudo make install
-      
     
     - name: make
       run: |
