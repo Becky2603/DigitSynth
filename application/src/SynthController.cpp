@@ -80,7 +80,7 @@ SynthController::SynthController(TLC59711& tlc)
         }
     );
     
-    this->flexSensor.registerCallback([this] (std::array<ExtensionData, 4> values){
+    this->flexDSP.registerCallback([this] (std::array<ExtensionData, 4> values){
         /*
         for (auto d : values) {
             std::cout << d << " ";
