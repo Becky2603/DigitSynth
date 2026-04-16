@@ -19,31 +19,23 @@ public:
     // not own it. The caller (main) owns the hardware and its lifetime.
     explicit SynthController(TLC59711& tlc);
     ~SynthController();
-
-    ControlMode getCurrentMode(); // for testing
-    uint8_t getCurrentChord();   // for testing
-    midi_message getLastCC(int i);    // for testing
     
     void registerMidiCallback(MidiCallback callback);
 
 private:
     void startRipple();
     void stopRipple();
-    void startFade();
-    void stopFade();
     
     TLC59711&                    _tlc;
     PatternRipple _ripple;  // null when not in chord mode
-    PatternFade _fade;
 
     ModeManager  modeManager;
     ChordManager chordManager;
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
+    LfoManager lfoManager;
     
     std::optional<MidiCallback> midiCallback = {};
-
-    midi_message lastCC[4];
     
     ButtonDriver buttonDriver;
     FlexSensor   flexSensor;
