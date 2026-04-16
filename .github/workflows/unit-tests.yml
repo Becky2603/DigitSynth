@@ -1,0 +1,53 @@
+name: C/C++ CI unit tests
+
+on:
+  push:
+    branches: [ "fix-unit-tests" ]
+  pull_request:
+    branches: [ "" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: install-deps
+      run: | 
+        sudo ./install-deps.sh
+   
+    - name: make
+      run: |
+        cd application/
+        make
+
+    - name: test
+      run: | 
+        cd application/ 
+        make test 
+    
+    - name: archive-test-log
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: test-log 
+        path: ./application/build/Testing/Temporary/LastTest.log
+    
+    - name: package
+      run: | 
+        cd application/
+        make deb
+
+    - name: archive-binary
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-binary
+        path: ./application/build/digitsynth
+
+    - name: archive-package
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-package
+        path: ./application/build/digitsynth-aarch64.deb
