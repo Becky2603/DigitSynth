@@ -25,6 +25,7 @@ jobs:
 
     - name: test
       run: | 
+        ldconfig -p | grep gpiod
         cd application/ 
         make test 
     
