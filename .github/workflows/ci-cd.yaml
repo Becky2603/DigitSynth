@@ -14,8 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - install-deps: 
-      sudo ./install-deps.sh
+    - name: install-deps
+      run: | 
+        sudo ./install-deps.sh
    
     - name: make
       run: |
