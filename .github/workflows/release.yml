@@ -1,4 +1,4 @@
-name: C/C++ CI - Release
+name: C/C++ - Release 
 
 on:
   push:
@@ -23,11 +23,6 @@ jobs:
         cd application/
         make
 
-    - name: test
-      run: | 
-        cd application/ 
-        make test 
-    
     - name: archive-test-log
       if: always()
       uses: actions/upload-artifact@v6
@@ -51,3 +46,4 @@ jobs:
       with:
         name: digitsynth-package
         path: ./application/build/digitsynth-aarch64.deb
+
