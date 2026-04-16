@@ -12,6 +12,7 @@
 #include "TLC59711.h"
 #include "patterns.h"
 #include "flex-sensor.h"
+#include "FlexDSP.h"
 
 class SynthController {
 public:
@@ -46,7 +47,7 @@ private:
     midi_message lastCC[4];
     
     ButtonDriver buttonDriver;
-    FlexSensor   flexSensor;
+    FlexDSP flexDSP;
 };
 
 #endif /* SynthController_hpp */
