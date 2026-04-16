@@ -8,11 +8,11 @@ int main(){
     
     //cycle through the shapes
     lfoManager.cycleShape();
-    assert(lfoManager.getShape == SQR);
+    assert(lfoManager.getShape() == SQR);
     lfoManager.cycleShape();
-    assert(lfoManager.getShape == SH);
+    assert(lfoManager.getShape() == SH);
     lfoManager.cycleShape();
-    assert(lfoManager.getShape == SIN);
+    assert(lfoManager.getShape() == SIN);
     
     //disable
     lfoManager.toggle();
