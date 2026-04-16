@@ -26,6 +26,7 @@ jobs:
     - name: test
       run: | 
         LD_LIBRARY_PATH=/usr/local/lib/
+        ls /usr/local/lib
         cd application/
         make test 
     
