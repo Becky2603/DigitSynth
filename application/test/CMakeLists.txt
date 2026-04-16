@@ -12,3 +12,5 @@ endfunction()
 
 create_test(test-foo TestFoo test_foo.cpp)
 create_test(test-adc-driver TestAdcDriver test_adc-driver.cpp)
+create_test(test-combined TestCombined combined_test.cpp)
+create_test(test-mode-manager TestModeManager mode_manager_test.cpp)
