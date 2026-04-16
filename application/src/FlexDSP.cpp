@@ -5,7 +5,7 @@ FlexDSP::FlexDSP(float sampleRate, float cutoffHz) {
     // where 0.5 = Nyquist. cutoffHz / sampleRate 
     double normalisedCutoff = cutoffHz / sampleRate;
     for (auto& f : filters) {
-        f.setup(2, normalisedCutoff);
+        f.setup(4, normalisedCutoff);
     }
 }
 
