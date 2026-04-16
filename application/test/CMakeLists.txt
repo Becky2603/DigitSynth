@@ -43,3 +43,9 @@ add_executable(test_message_builder synth_logic/message_builder_test.cpp)
 target_include_directories(test_message_builder PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_message_builder digitsynth_static)
 add_test(NAME TestMessageBuilder COMMAND test_message_builder)
+
+# test_lfo_manager
+add_executable(test_lfo_manager synth_logic/lfo_manager_test.cpp)
+target_include_directories(test_lfo_manager PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_lfo_manager digitsynth_static)
+add_test(NAME TestLfoManager COMMAND test_lfo_manager)
