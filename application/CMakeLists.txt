@@ -35,6 +35,7 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/ModeManager.cpp
 		${SOURCE_DIRECTORY}/MessageBuilder.cpp
 		${SOURCE_DIRECTORY}/LfoManager.cpp
+		${SOURCE_DIRECTORY}/LedController.cpp
 		${SOURCE_DIRECTORY}/ChordManager.cpp
 		${SOURCE_DIRECTORY}/MidiScaler.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
@@ -54,6 +55,7 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/button-driver.cpp
 	${SOURCE_DIRECTORY}/MessageBuilder.cpp
 	${SOURCE_DIRECTORY}/LfoManager.cpp
+	${SOURCE_DIRECTORY}/LedController.cpp
     	${SOURCE_DIRECTORY}/ModeManager.cpp
     	${SOURCE_DIRECTORY}/ChordManager.cpp
     	${SOURCE_DIRECTORY}/MidiScaler.cpp

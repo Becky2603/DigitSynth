@@ -49,3 +49,12 @@ add_executable(test_lfo_manager synth_logic/lfo_manager_test.cpp)
 target_include_directories(test_lfo_manager PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(test_lfo_manager digitsynth_static)
 add_test(NAME TestLfoManager COMMAND test_lfo_manager)
+
+# test_led_controller
+add_executable(test_led_controller synth_logic/led_controller_test.cpp)
+target_include_directories(test_led_controller PRIVATE 
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/test/mocks
+)
+target_link_libraries(test_led_controller digitsynth_static)
+add_test(NAME TestLedController COMMAND test_led_controller)
