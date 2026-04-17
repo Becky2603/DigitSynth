@@ -3,8 +3,12 @@
 
 #include <gpiod.hpp>
 #include <optional>
+#include <functional>
 
 namespace gpio {
+    
+    using GpioCallback = std::function<void(void)>;                  
+    
     /**
      * Set up the `gpiod` driver. *Must be called before any other `gpio` 
      * function is called.* 
