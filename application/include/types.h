@@ -2,13 +2,10 @@
 #define CALLBACK_TYPES_H_
 
 #include <array>
-#include <cstdint>
 #include <functional>
-#include <optional>
 
 #include <sys/types.h>
 
-using AdcData = std::optional<uint32_t>;
 using ExtensionData = float;      
 using Brightness = float;               
 using ButtonIndex = int;                   

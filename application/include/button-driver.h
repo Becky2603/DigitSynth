@@ -4,6 +4,7 @@
 #include "types.h"
 #include <thread>
 #include <array>
+#include <optional>
 
 class ButtonDriver {
 public:
