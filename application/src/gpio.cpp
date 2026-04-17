@@ -25,7 +25,7 @@ void gpio::setupGpio() {
 }
 
 void gpio::teardownGpio() {
-    lineRequestsRunning = false;
+    gpio::cancelLineRequests();
     chip->close();
 }
 
