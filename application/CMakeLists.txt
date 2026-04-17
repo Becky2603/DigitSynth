@@ -39,6 +39,7 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
         ${SOURCE_DIRECTORY}/FlexDSP.cpp
+       	${SOURCE_DIRECTORY}/LedController.cpp
 )
 
 target_sources(digitsynth_static
@@ -59,6 +60,9 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/MidiScaler.cpp
     	${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/FlexDSP.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
+    	${SOURCE_DIRECTORY}/LedController.cpp
 )
 
 link_directories("/usr/local/lib/")

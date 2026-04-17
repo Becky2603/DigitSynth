@@ -3,44 +3,37 @@
 
 #include "ModeManager.hpp"
 #include "button-driver.h"
-#include "paramMapper.hpp"
+#include "MessageBuilder.hpp"
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
+#include "LedController.hpp"
 #include <cstdint>
-#include "TLC59711.h"
+#include <optional>
+#include "types.h"
+#include "ITLC59711.hpp"
 #include "patterns.h"
-#include "FlexDSP.hpp"
+#include "flex-sensor.h"
+#include "LfoManager.hpp"
 
 class SynthController {
 public:
-    // TLC59711 is passed in by reference — SynthController uses it but does
-    // not own it. The caller (main) owns the hardware and its lifetime.
-    explicit SynthController(TLC59711& tlc, FlexSensor &fs);
-
-    ControlMode getCurrentMode(); // for testing
-    uint8_t getCurrentChord();   // for testing
-    midi_message getLastCC(int i);    // for testing
+    //TLC59711 passed in by reference — SynthController uses it but doesn't own it
+    explicit SynthController(TLC59711& tlc);
+    ~SynthController();
     
     void registerMidiCallback(MidiCallback callback);
-
 private:
-    void startRipple();
-    void stopRipple();
-    void startFade();
-    void stopFade();
-    
-    TLC59711&                    _tlc;
-    PatternRipple _ripple;  // null when not in chord mode
-    PatternFade _fade;
-
     ModeManager  modeManager;
     ChordManager chordManager;
-    ParamMapper  paramMapper;
+    MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
+    LfoManager lfoManager;
+    
+    PatternRipple _ripple;
+    
+    LedController ledController;
     
     std::optional<MidiCallback> midiCallback = {};
-
-    midi_message lastCC[4];
     
     ButtonDriver buttonDriver;
     FlexDSP flexDSP;

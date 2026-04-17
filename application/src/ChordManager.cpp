@@ -1,19 +1,7 @@
 #include "ChordManager.hpp"
 
 void ChordManager::updateChord(int index){
-    switch(index){
-        case 0:
-            currentChordIndex = 0;
-            break;
-        case 1:
-            currentChordIndex = 1;
-            break;
-        case 2:
-            currentChordIndex = 2;
-            break;
-        case 3:
-            currentChordIndex = 3;
-    }
+    currentChordIndex = index;
 }
 
 uint8_t ChordManager::getCurrentChord(){
