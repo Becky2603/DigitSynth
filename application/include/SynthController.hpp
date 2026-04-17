@@ -10,10 +10,10 @@
 #include <cstdint>
 #include <optional>
 #include "types.h"
-#include "ITLC59711.hpp"
+#include "TLC59711.h"
 #include "patterns.h"
-#include "flex-sensor.h"
 #include "LfoManager.hpp"
+#include "FlexDSP.hpp"
 
 class SynthController {
 public:

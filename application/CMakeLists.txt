@@ -36,7 +36,6 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/ModeManager.cpp
 		${SOURCE_DIRECTORY}/ChordManager.cpp
 		${SOURCE_DIRECTORY}/MidiScaler.cpp
-		${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
         ${SOURCE_DIRECTORY}/FlexDSP.cpp
        	${SOURCE_DIRECTORY}/LedController.cpp
@@ -58,7 +57,6 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/ModeManager.cpp
     	${SOURCE_DIRECTORY}/ChordManager.cpp
     	${SOURCE_DIRECTORY}/MidiScaler.cpp
-    	${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/FlexDSP.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
         ${SOURCE_DIRECTORY}/TLC59711.cpp

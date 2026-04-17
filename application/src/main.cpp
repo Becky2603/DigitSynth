@@ -1,4 +1,5 @@
 
+#include "ITLC59711.hpp"
 #include "SynthController.hpp"
 #include "TLC59711.h"
 #include "button-driver.h"
@@ -12,15 +13,15 @@
 int main() {
     gpio::setupGpio();
     
-    TLC59711 tlc(17, 27);
-    FlexSensor fx;
-    fx.begin();
-    tlc.start();
-    SynthController synth(tlc, fx);
+    // TLC59711 tlc(17, 27);
+    // FlexSensor fs;
+    // fs.begin();
+    // tlc.start();
+    // SynthController synth(tlc, fs);
     
-    getchar();
+    // getchar();
     
-    std::cout <<"stop\n";
+    // std::cout <<"stop\n";
     
     
     

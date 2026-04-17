@@ -1,5 +1,7 @@
 #include "SynthController.hpp"
-#include <iostream>
+#include "FlexDSP.hpp"
+#include "TLC59711.h"
+#include "flex-sensor.h"
 
 SynthController::SynthController(TLC59711& tlc)
 : _ripple(tlc), ledController(tlc, _ripple)
@@ -31,7 +33,7 @@ SynthController::SynthController(TLC59711& tlc)
         }
     });
     
-    this->flexSensor.registerCallback([this] (std::array<ExtensionData, 4> values){
+    this->flexDSP.registerCallback([this] (std::array<ExtensionData, 4> values){
         if (modeManager.getCurrentMode() == NORMAL){
             for (int i = 0; i < 4; i++){
                 uint8_t scaledVal = midiScaler.scaleValue(values[i]);
