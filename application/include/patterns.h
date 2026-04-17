@@ -4,7 +4,6 @@
 #include <atomic>
 #include <thread>
 #include "TLC59711.h"
-#include "types.h"
 
 /**
  * Base class for LED patterns.
@@ -19,6 +18,7 @@
  */
 class Pattern {
 public:
+    using DoneCallback = std::function<void()>;
 
     explicit Pattern(TLC59711& tlc) : _tlc(tlc) {}
     virtual ~Pattern() { stop(); }

@@ -6,7 +6,6 @@
 #include <sys/types.h>
 
 
-using DoneCallback = std::function<void()>;
 using GpioCallback = std::function<void(void)>;                  
 
 
