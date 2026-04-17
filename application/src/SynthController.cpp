@@ -1,4 +1,5 @@
 #include "SynthController.hpp"
+#include "flex-sensor.h"
 
 SynthController::SynthController(TLC59711& tlc)
 : _tlc(tlc), _ripple(_tlc), _fade(_tlc)
@@ -108,7 +109,7 @@ void SynthController::onButtonEvent(int index){
     }
 }
 
-void SynthController::onFlexEvent(std::array<ExtensionData, 4>& values){
+void SynthController::onFlexEvent(std::array<FlexSensor::ExtensionData, 4>& values){
     ControlMode currentMode = modeManager.getCurrentMode();
     ControlMode prevMode = modeManager.getPreviousMode();
     for (int i = 0; i < 4; i++){
