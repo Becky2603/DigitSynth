@@ -63,6 +63,9 @@ SynthController::SynthController(TLC59711& tlc)
     });
 }
 
+SynthController::~SynthController() {
+}
+
 void SynthController::registerMidiCallback(MidiCallback callback){
     midiCallback = callback;
 }

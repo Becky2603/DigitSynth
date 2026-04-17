@@ -29,6 +29,7 @@ void MidiDriver::openPort(unsigned int portIndex) {
 }
 
 void MidiDriver::sendMessage(const midi_message& msg) {
+    std::cout << "Sending message\n";
     if (!portOpen_) {
         throw std::runtime_error("MIDI output port is not open");
     }

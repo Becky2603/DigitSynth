@@ -14,6 +14,7 @@ FlexDSP::FlexDSP(float sampleRate, float cutoffHz) {
         }
         this->callback.value()(filtered);
     });
+    this->fs.begin();
 }
 
 // config
