@@ -6,7 +6,6 @@
 
 #include <sys/types.h>
 
-using Brightness = float;               
 using ButtonIndex = int;                   
 
 using DoneCallback = std::function<void()>;
