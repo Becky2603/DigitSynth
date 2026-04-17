@@ -5,7 +5,7 @@
 
 using namespace button_driver;
 
-ButtonDriver::ButtonDriver() {
+ButtonDriver::ButtonDriver() : IButtonDriver() {
     for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
             while (this->running) {

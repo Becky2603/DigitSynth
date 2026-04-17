@@ -11,14 +11,15 @@ namespace button_driver {
     using ButtonCallback = std::function<void(ButtonIndex)>;   
        
 
-// class IButtonDriver {
-// public:
-//     virtual ~IButtonDriver() {};
-    
-//     virtual void registerSingleButtonCallback(SingleButtonCallback callback);
-// };
+class IButtonDriver {
+public:
+    virtual ~IButtonDriver() = default;
 
-class ButtonDriver {
+    virtual void registerButtonCallback(ButtonCallback callback);  
+    virtual void deregisterButtonCallback();  
+};
+
+class ButtonDriver : public IButtonDriver {
 public:
    
     ButtonDriver();
