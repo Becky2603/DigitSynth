@@ -6,6 +6,22 @@
 SynthController::SynthController(TLC59711& tlc)
 : _ripple(tlc), ledController(tlc, _ripple)
 {
+    
+    auto ports = this->midiDriver.listOutputPorts();
+
+    std::cout << "Available MIDI output ports:\n";
+    for (size_t i = 0; i < ports.size(); ++i) {
+        std::cout << i << ": " << ports[i] << '\n';
+    }
+
+    if (ports.empty()) {
+        std::cerr << "No MIDI output ports found.\n";
+        exit(-1);
+    }
+
+    std::cout << "Opening port 0...\n";
+    this->midiDriver.openPort(0);
+    
     this->buttonDriver.registerSingleButtonCallback([this] (int index) {
         if (modeManager.getCurrentMode() == NORMAL){
             switch(index){
@@ -57,6 +73,7 @@ SynthController::SynthController(TLC59711& tlc)
         }
         ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
     });
+    
 }
 
 SynthController::~SynthController() {
