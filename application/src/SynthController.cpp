@@ -42,9 +42,7 @@ SynthController::SynthController(TLC59711& tlc)
                 }
                 auto messages = messageBuilder.buildMessages(i, scaledVal);
                 for (auto& msg : messages){
-                    if (midiCallback.has_value()){
-                        midiCallback.value()(msg);
-                    }
+                    midiDriver.sendMessage(msg);
                 }
                 
             }
@@ -54,9 +52,7 @@ SynthController::SynthController(TLC59711& tlc)
                 uint8_t velocity = midiScaler.scaleValue(values[i]);
                 uint8_t note = chordManager.getNote(i);
                 midi_message msg = {0x90, note, velocity};
-                if (midiCallback.has_value()){
-                    midiCallback.value()(msg);
-                }
+                midiDriver.sendMessage(msg);
             }
         }
         ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
@@ -64,8 +60,4 @@ SynthController::SynthController(TLC59711& tlc)
 }
 
 SynthController::~SynthController() {
-}
-
-void SynthController::registerMidiCallback(MidiCallback callback){
-    midiCallback = callback;
 }

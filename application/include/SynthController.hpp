@@ -9,6 +9,7 @@
 #include "LedController.hpp"
 #include <cstdint>
 #include <optional>
+#include "midi-driver.hpp"
 #include "types.h"
 #include "TLC59711.h"
 #include "patterns.h"
@@ -28,12 +29,11 @@ private:
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
     LfoManager lfoManager;
+    MidiDriver midiDriver; 
     
     PatternRipple _ripple;
     
     LedController ledController;
-    
-    std::optional<MidiCallback> midiCallback = {};
     
     ButtonDriver buttonDriver;
     FlexDSP flexDSP;
