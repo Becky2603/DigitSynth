@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <optional>
 #include "types.h"
-#include "TLC59711.h"
+#include "ITLC59711.hpp"
 #include "patterns.h"
 #include "flex-sensor.h"
 #include "LfoManager.hpp"
@@ -28,6 +28,9 @@ private:
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
     LfoManager lfoManager;
+    
+    PatternRipple _ripple;
+    
     LedController ledController;
     
     std::optional<MidiCallback> midiCallback = {};
