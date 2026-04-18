@@ -5,7 +5,7 @@
 #include <thread>
 
 void FlexSensor::updateIfNeeded() {
-    if (this->currentChannel != ADS1115settings::AIN0 || !this->callback.has_value()) { return; } 
+    if (!this->callback.has_value()) { return; } 
     
     std::array<ExtensionData, 4> data;
     data[0] = this->values[ADS1115settings::AIN0];
@@ -24,8 +24,7 @@ uint64_t FlexSensor::getNSamples() {
 
 FlexSensor::FlexSensor() {
     this->adsCallback = [&] (float f) {
-        this->values[this->currentChannel] = f;
-        this->values[this->currentChannel] =  (f - 0.75) / 0.55;
+        auto prevChannel = this->currentChannel;
         
         switch (this->currentChannel) {
             case (ADS1115settings::AIN0):
@@ -42,12 +41,12 @@ FlexSensor::FlexSensor() {
  
             case (ADS1115settings::AIN3):
                 this->currentChannel = ADS1115settings::AIN0;
+                this->updateIfNeeded();
                 break;               
         }
         
+        this->values[prevChannel] =  (f - 0.75) / 0.55;
         this->adc.readChannel(this->currentChannel, &this->adsCallback);
-        this->updateIfNeeded();
-        
     };
 }
 
