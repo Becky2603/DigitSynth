@@ -2,6 +2,8 @@
 #include "FlexDSP.hpp"
 #include "TLC59711.h"
 #include "flex-sensor.h"
+#include <thread>
+#include <chrono>
 
 SynthController::SynthController(TLC59711& tlc)
 : _ripple(tlc), ledController(tlc, _ripple)
@@ -20,6 +22,15 @@ SynthController::SynthController(TLC59711& tlc)
     }
 
     this->midiDriver.openPort(2);
+    
+    //give the synth a moment to initialise
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    
+    //play Fmaj9 on boot
+    for (int i = 0; i < 6; i++){
+        midi_message msg = {0x90, chordManager.getNote(i), 120};
+        midiDriver.sendMessage(msg);
+    }
     
     this->buttonDriver.registerSingleButtonCallback([this] (int index) {
         std::cout << "\nbutton pressed " << index << std::endl;
@@ -50,12 +61,12 @@ SynthController::SynthController(TLC59711& tlc)
             }
             else {
                 // send note offs for current chord
-                for (int i = 0; i < 4; i++){
+                for (int i = 0; i < 6; i++){
                     midi_message noteOff = {0x80, chordManager.getNote(i), 0};
                     midiDriver.sendMessage(noteOff);
                 }
                 chordManager.updateChord(index);
-                for (int i = 0; i < 4; i++){
+                for (int i = 0; i < 6; i++){
                     uint8_t note = chordManager.getNote(i);
                     midi_message msg = {0x90, note, 120};
                     midiDriver.sendMessage(msg);
@@ -78,16 +89,6 @@ SynthController::SynthController(TLC59711& tlc)
                 
             }
         }
-        /*
-        else {
-            for (int i = 0; i < 4; i++){
-                uint8_t velocity = midiScaler.scaleValue(values[i]);
-                uint8_t note = chordManager.getNote(i);
-                midi_message msg = {0x90, note, velocity};
-                midiDriver.sendMessage(msg);
-            }
-        }
-         */
         ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
     });
     
