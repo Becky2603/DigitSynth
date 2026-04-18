@@ -16,6 +16,23 @@ int main() {
     
     TLC59711 tlc(17, 27);
     tlc.start();
+    // 
+    // std::array<Brightness, 8> leds = {1, 1, 1, 1, 1, 1, 1, 1,};
+    // tlc.update(leds);
+    // getchar();
+    // 
+    // for (int i = 0; i < 8; i++) {
+        // std::cout << i << std::endl;
+        // for (int j = 0; j < 8; j++) {
+            // if (i==j) {leds[j] = 1.0;}
+            // else {leds[j] = 0.0;}
+        // }
+        // tlc.update(leds);
+        // 
+        // getchar();
+    // }
+    
+    tlc.start();
     SynthController synth(tlc);
     getchar();
     std::cout <<"stop\n";

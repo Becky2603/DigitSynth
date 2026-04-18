@@ -8,10 +8,17 @@ void FlexSensor::updateIfNeeded() {
     if (!this->callback.has_value()) { return; } 
     
     std::array<ExtensionData, 4> data;
-    data[0] = mapVoltage(this->values[ADS1115settings::AIN0], ADS1115settings::AIN0);
-    data[1] = mapVoltage(this->values[ADS1115settings::AIN1], ADS1115settings::AIN1);
-    data[2] = mapVoltage(this->values[ADS1115settings::AIN2], ADS1115settings::AIN2);
-    data[3] = mapVoltage(this->values[ADS1115settings::AIN3], ADS1115settings::AIN3);
+    // data[0] = mapVoltage(this->values[ADS1115settings::AIN0], ADS1115settings::AIN0);
+    // data[1] = mapVoltage(this->values[ADS1115settings::AIN1], ADS1115settings::AIN1);
+    // data[2] = mapVoltage(this->values[ADS1115settings::AIN2], ADS1115settings::AIN2);
+    // data[3] = mapVoltage(this->values[ADS1115settings::AIN3], ADS1115settings::AIN3);
+    
+    
+    data[0] = 0; 
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 1;
+       
     
     this->n_samples++;
     this->callback.value()(data);
