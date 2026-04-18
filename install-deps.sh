@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo apt install -y autotools-dev autoconf-archive libtool pkg-config alsa
+sudo apt install -y autotools-dev autoconf-archive libtool pkg-config alsa libasound2-dev
 
 # libgpiod
 curl -S https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-2.2.tar.gz -o libgpiod.tar.gz
