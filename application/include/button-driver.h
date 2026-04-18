@@ -19,6 +19,10 @@ public:
     virtual void deregisterButtonCallback() = 0;  
 };
 
+/**
+ * Callback-based interface with physical buttons. Calls a given callback when 
+ * buttons are pressed, passing the index of the pressed button. 
+ */
 class ButtonDriver : public IButtonDriver {
 public:
    

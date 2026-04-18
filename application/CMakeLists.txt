@@ -13,7 +13,7 @@ endif()
 project(DigitSynth)
 
 include(CTest)
-#include(docs/Docs.cmake)
+include(docs/Docs.cmake)
 add_executable(digitsynth)
 add_library(digitsynth_static)
 target_include_directories(digitsynth PRIVATE include)
