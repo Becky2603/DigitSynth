@@ -33,6 +33,8 @@ SynthController::SynthController(TLC59711& tlc)
                     break;
                 case 2: // cycle through the LFO shapes
                     lfoManager.cycleShape();
+                    midi_message msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
+                    midiDriver.sendMessage(msg);
                     break;
                 case 3: // turn off/on
                     
@@ -44,6 +46,11 @@ SynthController::SynthController(TLC59711& tlc)
                 modeManager.updateMode(); // exit chord mode, back to normal
             }
             else {
+                // send note offs for current chord
+                for (int i = 0; i < 4; i++){
+                    midi_message noteOff = {0x80, chordManager.getNote(i), 0};
+                    midiDriver.sendMessage(noteOff);
+                }
                 chordManager.updateChord(index);
             }
         }
