@@ -3,7 +3,7 @@
 #include "TLC59711.h"
 #include "flex-sensor.h"
 
-SynthController::SynthController(ITLC59711& tlc)
+SynthController::SynthController(TLC59711& tlc)
 : _ripple(tlc), ledController(tlc, _ripple)
 {
     

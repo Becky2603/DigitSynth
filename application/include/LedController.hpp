@@ -2,7 +2,6 @@
 #define LedController_hpp
 
 #include "MidiTypes.hpp"
-#include "TLC59711.h"
 #include "ITLC59711.hpp"
 #include "patterns.h"
 #include <array>

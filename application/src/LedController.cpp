@@ -6,6 +6,7 @@ LedController::LedController(ITLC59711& tlc, Pattern& ripple)
     : _tlc(tlc), _ripple(ripple) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
+    (void) mode; 
     if (pattern == RIPPLE) {
         if (!rippleRunning) {
             startRipple();

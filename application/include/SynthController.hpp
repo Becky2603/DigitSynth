@@ -19,7 +19,7 @@
 class SynthController {
 public:
     //TLC59711 passed in by reference — SynthController uses it but doesn't own it
-    explicit SynthController(ITLC59711& tlc);
+    explicit SynthController(TLC59711& tlc);
     ~SynthController();
 
 private:
