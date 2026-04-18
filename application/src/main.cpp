@@ -1,5 +1,6 @@
 
 #include "ITLC59711.hpp"
+#include "MidiTypes.hpp"
 #include "SynthController.hpp"
 #include "TLC59711.h"
 #include "button-driver.h"
@@ -16,9 +17,7 @@ int main() {
     TLC59711 tlc(17, 27);
     tlc.start();
     SynthController synth(tlc);
-    
     getchar();
-    
     std::cout <<"stop\n";
     
     

@@ -72,8 +72,9 @@ link_directories("/lib/aarch64-linux-gnu")
 
 find_library(RTMIDI rtmidi)
 find_library(IIR iir)
+find_library(ASOUND asound)
 
-target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR})
-target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR})
+target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
+target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
 
 add_subdirectory(test)

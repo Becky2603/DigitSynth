@@ -19,10 +19,10 @@ SynthController::SynthController(TLC59711& tlc)
         exit(-1);
     }
 
-    std::cout << "Opening port 0...\n";
-    this->midiDriver.openPort(0);
+    this->midiDriver.openPort(2);
     
     this->buttonDriver.registerSingleButtonCallback([this] (int index) {
+        std::cout << "button pressed " << index << std::endl;
         if (modeManager.getCurrentMode() == NORMAL){
             switch(index){
                 case 0: // enter chord mode
