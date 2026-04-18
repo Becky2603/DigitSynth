@@ -28,30 +28,19 @@ int main(){
     ledController.update(NORMAL, true, SIN, {0, 0, 0, 0});
     assert(testPattern.startCalled == false);
     assert(testPattern.stopCalled == true);
-    //test 4: normal mode thumb LEDs always on
-    assert(mockTLC.lastChannels[0] == 1);
-    assert(mockTLC.lastChannels[5] == 1);
-    
-    //test 5: button 1 LED indicates normal mode
-    assert(mockTLC.lastChannels[6] == 1);
-    //test 6: button 2 LED indicates LFO enabled/disabled
-    assert(mockTLC.lastChannels[7] == 1);
-    ledController.update(NORMAL, false, SIN, {0, 0, 0, 0});
-    assert(mockTLC.lastChannels[7] == 0);
-    //test 7: button 3 LED brightness indicates LFO shape
-    assert(mockTLC.lastChannels[8] == 0);
-    ledController.update(NORMAL, false, SQR, {0, 0, 0, 0});
-    assert(mockTLC.lastChannels[8] == 0.5);
-    ledController.update(NORMAL, false, SH, {0, 0, 0, 0});
-    assert(mockTLC.lastChannels[8] == 1);
-    //test 8: flex sensor values drive LED brightnesses
-    ledController.update(NORMAL, false, SQR, {0.3f, 0.68f, 0.11f, 0.314f});
-    assert(mockTLC.lastChannels[1] == 0.3f);
-    assert(mockTLC.lastChannels[2] == 0.68f);
-    assert(mockTLC.lastChannels[3] == 0.11f);
-    assert(mockTLC.lastChannels[4] == 0.314f);
-    //test 9: button 4 LED always on when device is in normal mode
-    assert(mockTLC.lastChannels[9] == 1);
+
+    //test 4: flex sensor values drive left hand LED brightnesses
+    ledController.update(NORMAL, false, SIN, {0.3f, 0.68f, 0.11f, 0.314f});
+    assert(mockTLC.lastChannels[Led::L_thumb]  == 0.3f);
+    assert(mockTLC.lastChannels[Led::L_index]  == 0.68f);
+    assert(mockTLC.lastChannels[Led::L_middle] == 0.11f);
+    assert(mockTLC.lastChannels[Led::L_ring]   == 0.314f);
+
+    //test 5: same flex values mirrored to right hand LEDs
+    assert(mockTLC.lastChannels[Led::R_thumb]  == 0.3f);
+    assert(mockTLC.lastChannels[Led::R_index]  == 0.68f);
+    assert(mockTLC.lastChannels[Led::R_middle] == 0.11f);
+    assert(mockTLC.lastChannels[Led::R_ring]   == 0.314f);
     
     return 0;
 }

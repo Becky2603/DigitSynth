@@ -13,7 +13,7 @@
 
 class ITLC59711 {
 public:
-    static constexpr int NUM_LEDS = 10;
+    static constexpr int NUM_LEDS = 8;
     using Channels = std::array<Brightness, NUM_LEDS>;
 
     virtual ~ITLC59711() = default;

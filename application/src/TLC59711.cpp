@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 
-constexpr int TLC59711::FRAME_TO_GS[10];
+constexpr int TLC59711::FRAME_TO_GS[TLC59711::NUM_LEDS];
 
 TLC59711::TLC59711(int data_pin, int clk_pin, int num_drivers)
     : _data_pin(data_pin),
