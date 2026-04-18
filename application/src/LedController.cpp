@@ -1,9 +1,12 @@
 #include "LedController.hpp"
+#include "ITLC59711.hpp"
 
-LedController::LedController(TLC59711& tlc, Pattern& ripple)
+LedController::LedController(ITLC59711& tlc, Pattern& ripple)
     : _tlc(tlc), _ripple(ripple) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
+    (void)lfoEnabled;
+    (void)shape;
     if (mode == CHORD) {
         if (!rippleRunning) {
             startRipple();
