@@ -6,7 +6,6 @@
 #include <unordered_map>
 
 #include "adc-driver.h"
-#include "types.h"
 
 /**
  * When `begin()` is called, this class will sample each channel of the 
@@ -15,6 +14,8 @@
  */
 class FlexSensor {
 public:
+    using ExtensionData = float;      
+    using ExtensionCallback = std::function<void(std::array<ExtensionData, 4>)>;
     
     FlexSensor();
 
@@ -25,8 +26,9 @@ public:
     
     /**
      * Register the function that will be called when data is ready. 
+     * @param callback --- the callback to be registered. 
      */
-    void registerCallback(ExtensionCallback);
+    void registerCallback(ExtensionCallback callback);
     
 private: 
     /**

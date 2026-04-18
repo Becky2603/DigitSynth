@@ -51,6 +51,8 @@ uint8_t ParamMapper::getCC(int index, ControlMode current_mode){
                     break;
             }
             break;
+	 case CHORD:
+	    break;
     }
     return cc_num;
 }

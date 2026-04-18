@@ -1,0 +1,41 @@
+name: C/C++ CI 
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: install-deps
+      run: | 
+        sudo ./install-deps.sh
+   
+    - name: make
+      run: |
+        cd application/
+        make
+   
+    - name: package
+      run: | 
+        cd application/
+        make deb
+
+    - name: archive-binary
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-binary
+        path: ./application/build/digitsynth
+
+    - name: archive-package
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-package
+        path: ./application/build/digitsynth-aarch64.deb

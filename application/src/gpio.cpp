@@ -1,17 +1,17 @@
 #include "gpio.h"
-#include "types.h"
 #include <chrono>
 #include <cstring>
 #include <gpiod.hpp>
 #include <iostream>
 #include <optional>
-#include <thread>
+
+#define BLOCK_TIMEOUT_MS    (500)
 
 static gpiod::chip *chip;
 
-static std::thread t; 
-static std::optional<GpioCallback> callback = {};
-static std::optional<gpiod::line_request *> callbackRequest = {};
+static std::optional<gpio::GpioCallback> callback = {};
+
+static bool lineRequestsRunning = false; 
 
 void gpio::setupGpio() {
     chip = new gpiod::chip("/dev/gpiochip0");
@@ -20,22 +20,12 @@ void gpio::setupGpio() {
         exit(-1);
     }
     
-    t = std::thread([] () {
-        while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            
-            while (::callbackRequest.has_value()) {
-                bool r = ::callbackRequest.value()->wait_edge_events(std::chrono::milliseconds(200));
-                if (r && ::callback.has_value()) {
-                    gpiod::edge_event_buffer buf;
-                    ::callbackRequest.value()->read_edge_events(buf, 1);
-                    ::callback.value()();
-                    
-                    ::callback = {};
-                }
-            }
-        }
-    });
+    lineRequestsRunning = true;
+}
+
+void gpio::teardownGpio() {
+    gpio::cancelLineRequests();
+    chip->close();
 }
 
 void gpio::setPin(int pin, bool value) {
@@ -74,44 +64,35 @@ bool gpio::getPin(int pin) {
     return value;
 }
 
-void gpio::blockUntilEdge(int pin, gpiod::line::edge edge) {
+std::optional<gpiod::edge_event::event_type> gpio::blockUntilEdge(int pin, gpiod::line::edge edge) {
     if (chip == nullptr) {
         std::cerr << "GPIO chip not set up\n";
         exit(-1);
     }   
     
     gpiod::line_config line_config; 
-    line_config.add_line_settings(pin, gpiod::line_settings().set_direction(gpiod::line::direction::INPUT).set_edge_detection(edge));
+    line_config.add_line_settings(pin, gpiod::line_settings().set_direction(gpiod::line::direction::INPUT).set_edge_detection(edge).set_bias(gpiod::line::bias::PULL_DOWN));
     auto builder = chip->prepare_request();
     builder
         .set_consumer("digitsynth callback")
         .set_line_config(line_config);
     
-    auto request = new gpiod::line_request(builder.do_request());
-    
+    auto rq = gpiod::line_request(builder.do_request());
     bool r = false;
     
-    while (!r) {
-        r = request->wait_edge_events(std::chrono::milliseconds(500));
+    while (!r && lineRequestsRunning) {
+        r = rq.wait_edge_events(std::chrono::milliseconds(BLOCK_TIMEOUT_MS));
     }
+    
+    if (!lineRequestsRunning) { return {}; }
+    
     gpiod::edge_event_buffer buf; 
-    request->read_edge_events(buf, 1);
+    rq.read_edge_events(buf, 1);
+    auto e = buf.get_event(0);
+    
+    return e.type();
 }
 
-void gpio::registerCallback(int pin, gpiod::line::edge edge, GpioCallback callback) {
-    if (chip == nullptr) {
-        std::cerr << "GPIO chip not set up\n";
-        exit(-1);
-    }   
-    
-    gpiod::line_config line_config; 
-    line_config.add_line_settings(pin, gpiod::line_settings().set_direction(gpiod::line::direction::INPUT).set_edge_detection(edge));
-    auto builder = chip->prepare_request();
-    builder
-        .set_consumer("digitsynth callback")
-        .set_line_config(line_config);
-    
-    auto request = new gpiod::line_request(builder.do_request());
-    ::callback = callback;
-    ::callbackRequest = request;
+void gpio::cancelLineRequests() {
+    lineRequestsRunning = false;
 }

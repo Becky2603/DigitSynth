@@ -1,13 +1,17 @@
 #include "button-driver.h"
 #include "gpio.h"
-#include "types.h"
+#include <gpiod.hpp>
+#include <thread>
 
 ButtonDriver::ButtonDriver() {
-    for (size_t i = 0; i < workers.size(); i++) {
+    for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
-            while (running) {
-                gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
-                bool val = gpio::getPin(ButtonDriver::BUTTON_PINS[i]);
+            while (this->running) {
+                auto edge = gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
+                
+                if (!edge.has_value()) { continue; }
+                
+                bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
                 this->buttonStatuses[i] = val;
                 
                 
@@ -19,7 +23,7 @@ ButtonDriver::ButtonDriver() {
                 if (!this->allButtonsCallback.has_value()) { continue; }
                 bool allPressed = false;
                 for (auto status : buttonStatuses) {
-                    if (!status) { break; }
+                    if (!status) { allPressed = false; break; }
                     allPressed = true;
                 }
                 
@@ -29,7 +33,15 @@ ButtonDriver::ButtonDriver() {
     }
 }
 
-void ButtonDriver::registerAllButtonsCallback(std::function<void(void)> callback) {
+ButtonDriver::~ButtonDriver() {
+    this->running = false;
+    gpio::cancelLineRequests();
+    for (std::thread &t: this->workers) {
+        if (t.joinable()) { t.join(); }
+    }
+}
+
+void ButtonDriver::registerAllButtonsCallback(AllButtonsCallback callback) {
     this->allButtonsCallback = callback;
 }
 
@@ -38,7 +50,7 @@ void ButtonDriver::deregisterSingleButtonCallback() {
 }
 
 
-void ButtonDriver::registerSingleButtonCallback(ButtonCallback callback) {
+void ButtonDriver::registerSingleButtonCallback(SingleButtonCallback callback) {
     this->singleButtonCallback = callback;
 }
 
