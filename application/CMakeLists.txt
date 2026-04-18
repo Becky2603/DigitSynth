@@ -30,35 +30,51 @@ target_sources(digitsynth
 		${SOURCE_DIRECTORY}/gpio.cpp
 		${SOURCE_DIRECTORY}/flex-sensor.cpp
 		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/midi-driver.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
 		${SOURCE_DIRECTORY}/SynthController.cpp
 		${SOURCE_DIRECTORY}/ModeManager.cpp
 		${SOURCE_DIRECTORY}/ChordManager.cpp
 		${SOURCE_DIRECTORY}/MidiScaler.cpp
-		${SOURCE_DIRECTORY}/paramMapper.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp
+        ${SOURCE_DIRECTORY}/FlexDSP.cpp
+       	${SOURCE_DIRECTORY}/LedController.cpp
+        ${SOURCE_DIRECTORY}/LfoManager.cpp
+        ${SOURCE_DIRECTORY}/MessageBuilder.cpp
 )
 
 target_sources(digitsynth_static
 	PUBLIC
-    	${SOURCE_DIRECTORY}/foo.cpp
-    	${SOURCE_DIRECTORY}/adc-driver.cpp
-    	${SOURCE_DIRECTORY}/button-driver.cpp
-    	${SOURCE_DIRECTORY}/gpio.cpp
+		# Add source files here to build them
+		${SOURCE_DIRECTORY}/foo.cpp
+		${SOURCE_DIRECTORY}/adc-driver.cpp
+		${SOURCE_DIRECTORY}/button-driver.cpp
+		${SOURCE_DIRECTORY}/gpio.cpp
+		${SOURCE_DIRECTORY}/midi-driver.cpp
+        ${SOURCE_DIRECTORY}/patterns.cpp
+        ${SOURCE_DIRECTORY}/TLC59711.cpp
     	${SOURCE_DIRECTORY}/flex-sensor.cpp
     	${SOURCE_DIRECTORY}/button-driver.cpp
     	${SOURCE_DIRECTORY}/SynthController.cpp
     	${SOURCE_DIRECTORY}/ModeManager.cpp
     	${SOURCE_DIRECTORY}/ChordManager.cpp
     	${SOURCE_DIRECTORY}/MidiScaler.cpp
-    	${SOURCE_DIRECTORY}/paramMapper.cpp
+        ${SOURCE_DIRECTORY}/FlexDSP.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
         ${SOURCE_DIRECTORY}/TLC59711.cpp
+    	${SOURCE_DIRECTORY}/LedController.cpp
+        ${SOURCE_DIRECTORY}/LfoManager.cpp
+        ${SOURCE_DIRECTORY}/MessageBuilder.cpp
 )
 
 link_directories("/usr/local/lib/")
+link_directories("/lib/aarch64-linux-gnu")
 
-target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi rtmidi)
-target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi rtmidi)
+find_library(RTMIDI rtmidi)
+find_library(IIR iir)
+find_library(ASOUND asound)
+
+target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
+target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
 
 add_subdirectory(test)

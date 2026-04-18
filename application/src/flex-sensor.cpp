@@ -12,12 +12,17 @@ void FlexSensor::updateIfNeeded() {
     data[2] = this->values[ADS1115settings::AIN2];
     data[3] = this->values[ADS1115settings::AIN3];
     
+    this->n_samples++;
     this->callback.value()(data);
+}
+
+uint64_t FlexSensor::getNSamples() {
+    return this->n_samples;
 }
 
 FlexSensor::FlexSensor() {
     this->adsCallback = [&] (float f) {
-        this->values[this->currentChannel] =  f / FlexSensor::V_MAX;
+        this->values[this->currentChannel] =  (f / FlexSensor::V_MAX) + FlexSensor::V_OFF;
         
         switch (this->currentChannel) {
             case (ADS1115settings::AIN0):

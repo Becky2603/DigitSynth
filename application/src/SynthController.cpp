@@ -1,190 +1,87 @@
 #include "SynthController.hpp"
+#include "FlexDSP.hpp"
+#include "TLC59711.h"
 #include "flex-sensor.h"
 
 SynthController::SynthController(TLC59711& tlc)
-: _tlc(tlc), _ripple(_tlc), _fade(_tlc)
+: _ripple(tlc), ledController(tlc, _ripple)
 {
+    
+    auto ports = this->midiDriver.listOutputPorts();
 
-}
+    std::cout << "Available MIDI output ports:\n";
+    for (size_t i = 0; i < ports.size(); ++i) {
+        std::cout << i << ": " << ports[i] << '\n';
+    }
 
-void SynthController::onButtonEvent(int index){
-    std::cout << "on button event called " << index << std::endl;
-    // if (modeManager.getCurrentMode() == CHORD){
-    if (false){
-        int previousChord = chordManager.getCurrentChord();
-        chordManager.updateChord(index);
-        int currentChord = chordManager.getCurrentChord();
-        if (currentChord != previousChord){ // i.e. we are switching to a new chord
-            for (int i = 0; i < 4; i++){
-                /*
-                midi_message msg;
-                msg.status = 0x90; // Note On message
-                msg.data_1 = chordManager.getNote(i);
-                msg.data_2 = 127;
-                //midiDriver.noteOnCallback(msg);
-                */
+    if (ports.empty()) {
+        std::cerr << "No MIDI output ports found.\n";
+        exit(-1);
+    }
+
+    this->midiDriver.openPort(2);
+    
+    this->buttonDriver.registerSingleButtonCallback([this] (int index) {
+        std::cout << "button pressed " << index << std::endl;
+        if (modeManager.getCurrentMode() == NORMAL){
+            midi_message msg; 
+            switch(index){
+                case 0: // enter chord mode
+                    modeManager.updateMode();
+                    break;
+                case 1: // enable/disable the LFO
+                    lfoManager.toggle();
+                    break;
+                case 2: // cycle through the LFO shapes
+                    lfoManager.cycleShape();
+                    msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
+                    midiDriver.sendMessage(msg);
+                    break;
+                default:
+                    break;
             }
         }
-        else{ //same chord -> do nothing
-            return;
-        }
-    }
-    else {
-        modeManager.updateMode(index);
-        
-        switch (index) {
-            case 0:
-                stopFade();
-                startRipple();
-                break;
-            case 1:
-                stopRipple();
-                startFade();
-                break;
-            default:
-                break;
-            
-        }
-        
-        /*
-        switch(modeManager.getCurrentMode()){
-            case EQ:
-                switch (modeManager.getPreviousMode()) {
-                    case EQ:
-                        break;
-                    case SOURCE_EQ: // sourceEQ -> EQ
-                        stopRipple();
-                        startFade();
-                        break;
-                    case DETUNE: // Detune -> EQ
-                        stopRipple(); // ripple for now
-                        startFade();
-                        break;
-                    case CHORD:
-                        break;
-                    default:
-                        break;
+        else { // chord mode
+            if (index == chordManager.getCurrentChord()){
+                modeManager.updateMode(); // exit chord mode, back to normal
+            }
+            else {
+                // send note offs for current chord
+                for (int i = 0; i < 4; i++){
+                    midi_message noteOff = {0x80, chordManager.getNote(i), 0};
+                    midiDriver.sendMessage(noteOff);
                 }
-                break;
-            case SOURCE_EQ:
-                switch (modeManager.getPreviousMode()) {
-                    case EQ: // EQ -> sourceEQ
-                        stopFade();
-                        startRipple();
-                        break;
-                    case SOURCE_EQ:
-                        break;
-                    case DETUNE:
-                        stopRipple(); // ripple placeholder
-                        startRipple();
-                        break;
-                    case CHORD:
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case DETUNE:
-                switch (modeManager.getPreviousMode()) {
-                    case EQ:
-                        stopFade();
-                        startRipple(); // placeholder for now
-                        break;
-                    case SOURCE_EQ: // sourceEQ -> Detune
-                        stopRipple();
-                        startRipple();
-                        break;
-                    case DETUNE:
-                        break;
-                    case CHORD:
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case CHORD:
-                break;
+                chordManager.updateChord(index);
+            }
         }
-        }*/
-    }
-}
-
-void SynthController::onFlexEvent(std::array<FlexSensor::ExtensionData, 4>& values){
-    ControlMode currentMode = modeManager.getCurrentMode();
-    ControlMode prevMode = modeManager.getPreviousMode();
-    for (int i = 0; i < 4; i++){
-        uint8_t scaled_value = midiScaler.scaleValue(values[i]);
-        uint8_t cc_num;
-        if (currentMode == CHORD){
-            cc_num = paramMapper.getCC(i, prevMode);
+    });
+    
+    this->flexDSP.registerCallback([this] (std::array<ExtensionData, 4> values){
+        if (modeManager.getCurrentMode() == NORMAL){
+            for (int i = 0; i < 4; i++){
+                uint8_t scaledVal = midiScaler.scaleValue(values[i]);
+                if (i == 2 && !lfoManager.isEnabled()) {
+                    scaledVal = 64; // middle value
+                }
+                auto messages = messageBuilder.buildMessages(i, scaledVal);
+                for (auto& msg : messages){
+                    midiDriver.sendMessage(msg);
+                }
+                
+            }
         }
         else {
-            cc_num = paramMapper.getCC(i, currentMode);
+            for (int i = 0; i < 4; i++){
+                uint8_t velocity = midiScaler.scaleValue(values[i]);
+                uint8_t note = chordManager.getNote(i);
+                midi_message msg = {0x90, note, velocity};
+                midiDriver.sendMessage(msg);
+            }
         }
-        midi_message msg;
-        msg.status = 0xB0; // Control Change
-        msg.data_1 = cc_num;
-        msg.data_2 = scaled_value;
-        lastCC[i] = msg; // for testing
-        //midiDriver.ccCalback(msg);
-    }
+        ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
+    });
+    
 }
 
-void SynthController::onAllButtonsPressed(){
-    ControlMode currentMode = modeManager.getCurrentMode();
-    if (currentMode != CHORD){ // under normal operation, do nothing
-        return;
-    }
-    else { // in chord mode: exit chord mode and return to what we were doing before
-        currentMode = modeManager.getPreviousMode();
-        int mode_index;
-        switch(currentMode){
-            case EQ:
-                mode_index = 0;
-                break;
-            case SOURCE_EQ:
-                mode_index = 1;
-                break;
-            case DETUNE:
-                mode_index = 2;
-                break;
-            case CHORD:
-                mode_index = 3;
-                break;
-        }
-        modeManager.updateMode(mode_index);
-    }
-}
-
-ControlMode SynthController::getCurrentMode(){
-    return modeManager.getCurrentMode();
-}
-
-uint8_t SynthController::getCurrentChord(){
-    return chordManager.getCurrentChord();
-}
-
-midi_message SynthController::getLastCC(int i){
-    return lastCC[i];
-}
-
-void SynthController::startRipple() {
-    std::cout << "rippling\n";
-    // PatternRipple runs in its own thread (course Ch. 3) and calls
-    // tlc.update() internally on each frame — SynthController just
-    // starts and stops it as mode changes dictate.
-    _ripple.start();
-}
-
-void SynthController::stopRipple() {
-    _ripple.stop();
-}
-
-void SynthController::startFade() {
-    std::cout << "fade\n";
-    _fade.start();
-}
-
-void SynthController::stopFade() {
-    _fade.stop();
+SynthController::~SynthController() {
 }

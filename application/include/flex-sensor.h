@@ -30,13 +30,16 @@ public:
      */
     void registerCallback(ExtensionCallback callback);
     
+    uint64_t getNSamples();
+    
 private: 
     /**
      * Will call the callback if all ADC channels have been sampled.
      */
     void updateIfNeeded();
 
-    const float V_MAX = 5.0;
+    const float V_MAX = 0.8;
+    const float V_OFF = -1.0;
     ADS1115rpi::ADSCallbackInterface adsCallback;
     std::unordered_map<ADS1115settings::Input, ExtensionData> values = {
         { ADS1115settings::AIN0, 0.0 },
@@ -48,6 +51,7 @@ private:
     AdcDriver adc; 
     ADS1115settings::Input currentChannel = ADS1115settings::AIN0;
     
+    uint64_t n_samples;
 };
 
 #endif
