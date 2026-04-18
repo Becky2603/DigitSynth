@@ -17,27 +17,19 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
         }
         // handle normal LED stuff
         TLC59711::Channels c{};
-        c[0] = 1; // thumb LED on
-        c[5] = 1; // thumb LED on
-        c[6] = 1; // indicates normal mode
-        if (lfoEnabled) { c[7] = 1;} // indicates LFO enabled/disabled
-        else { c[7] = 0;}
-        switch(shape){
-            case SIN:
-                c[8] = 0;
-                break;
-            case SQR:
-                c[8] = 0.5;
-                break;
-            case SH:
-                c[8] = 1;
-                break;
-        }
-        c[9] = 1;
-        c[1] = flexValues[0];
-        c[2] = flexValues[1];
-        c[3] = flexValues[2];
-        c[4] = flexValues[3];
+
+        // Left hand — flex brightness per finger
+        c[Led::L_thumb]  = flexValues[0];
+        c[Led::L_index]  = flexValues[1];
+        c[Led::L_middle] = flexValues[2];
+        c[Led::L_ring]   = flexValues[3];
+
+        // Right hand — flex brightness per finger
+        c[Led::R_thumb]  = flexValues[0];
+        c[Led::R_index]  = flexValues[1];
+        c[Led::R_middle] = flexValues[2];
+        c[Led::R_ring]   = flexValues[3];
+
         this->_tlc.update(c);
     }
 }
