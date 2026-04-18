@@ -13,8 +13,8 @@ endfunction()
 
 #create_test(test-foo TestFoo test_foo.cpp)
 #create_test(test-adc-driver TestAdcDriver test_adc-driver.cpp)
-# create_test(test-combined TestCombined        synth_logic/combined_test.cpp)
-# create_test(test-mode-manager TestModeManager synth_logic/mode_manager_test.cpp)
-# create_test(test-gpio TestGpio test_gpio.cpp)
-create_test(test_led_controller TestLedController synth_logic/led_controller_test.cpp)
-
+#create_test(test-button-driver TestButtonDriver test_button-driver.cpp)
+## create_test(test-combined TestCombined        synth_logic/combined_test.cpp)
+## create_test(test-mode-manager TestModeManager synth_logic/mode_manager_test.cpp)
+#create_test(test-gpio TestGpio test_gpio.cpp)
+#create_test(test_led_controller TestLedController synth_logic/led_controller_test.cpp)

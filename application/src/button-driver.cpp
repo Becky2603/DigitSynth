@@ -1,6 +1,5 @@
 #include "button-driver.h"
 #include "gpio.h"
-#include "types.h"
 #include <gpiod.hpp>
 #include <thread>
 

@@ -7,12 +7,12 @@
 #include <condition_variable>
 #include <atomic>
 #include <gpiod.hpp>
-#include "types.h"
 
 class TLC59711 {
     friend class TLC59711Test;
 public:
     static constexpr int NUM_LEDS = 10;
+    using Brightness = float;               
 
     using Channels = std::array<Brightness, NUM_LEDS>;
 

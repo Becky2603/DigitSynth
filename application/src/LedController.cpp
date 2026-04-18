@@ -1,6 +1,6 @@
 #include "LedController.hpp"
 
-LedController::LedController(ITLC59711& tlc, Pattern& ripple)
+LedController::LedController(TLC59711& tlc, Pattern& ripple)
     : _tlc(tlc), _ripple(ripple) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
@@ -16,7 +16,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
             rippleRunning = false;
         }
         // handle normal LED stuff
-        ITLC59711::Channels c{};
+        TLC59711::Channels c{};
         c[0] = 1; // thumb LED on
         c[5] = 1; // thumb LED on
         c[6] = 1; // indicates normal mode

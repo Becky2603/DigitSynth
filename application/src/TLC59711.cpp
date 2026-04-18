@@ -44,7 +44,6 @@ void TLC59711::update(const Channels& channels) {
     
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        std::cout << "queueing...\n";
         _pending = channels;
         _dirty   = true;
     }

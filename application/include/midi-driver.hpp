@@ -3,26 +3,24 @@
 
 #include <string>
 #include <vector>
+#include <rtmidi/RtMidi.h>
 
 #include "MidiTypes.hpp"
-
-class RtMidiOut;
 
 class MidiDriver {
     public:
         MidiDriver();
-        ~MidiDriver();
 
         MidiDriver(const MidiDriver&) = delete;
         MidiDriver& operator=(const MidiDriver&) = delete;
 
-        std::vector<std::string> listOutputPorts() const;
+        std::vector<std::string> listOutputPorts();
         void openPort(unsigned int portIndex);
 
         void sendMessage(const midi_message& msg);
 
     private:
-        RtMidiOut* midiOut_;
+        rt::midi::RtMidiOut midiOut_;
         bool portOpen_;
 };
 

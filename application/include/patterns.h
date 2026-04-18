@@ -3,7 +3,7 @@
 #include <functional>
 #include <atomic>
 #include <thread>
-#include "ITLC59711.hpp"
+#include "TLC59711.h"
 
 /**
  * Base class for LED patterns.
@@ -57,12 +57,12 @@ private:
  */
 class PatternFade : public Pattern {
 public:
-    explicit PatternFade(ITLC59711& tlc) : _tlc(tlc) {}
+    explicit PatternFade(TLC59711& tlc) : _tlc(tlc) {}
 
 protected:
     void run() override;
 private:
-    ITLC59711& _tlc;
+    TLC59711& _tlc;
 };
 
 // ---------------------------------------------------------------------------
@@ -72,10 +72,10 @@ private:
  */
 class PatternRipple : public Pattern {
 public:
-    explicit PatternRipple(ITLC59711& tlc) : _tlc(tlc) {}
+    explicit PatternRipple(TLC59711& tlc) : _tlc(tlc) {}
 
 protected:
     void run() override;
 private:
-    ITLC59711& _tlc;
+    TLC59711& _tlc;
 };

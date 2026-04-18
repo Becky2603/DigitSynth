@@ -1,6 +1,5 @@
 
 #include "flex-sensor.h"
-#include "types.h"
 #include <ads1115rpi.h>
 #include <array>
 

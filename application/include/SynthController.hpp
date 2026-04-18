@@ -9,11 +9,12 @@
 #include "LedController.hpp"
 #include <cstdint>
 #include <optional>
+#include "midi-driver.hpp"
 #include "types.h"
-#include "ITLC59711.hpp"
+#include "TLC59711.h"
 #include "patterns.h"
-#include "flex-sensor.h"
 #include "LfoManager.hpp"
+#include "FlexDSP.hpp"
 
 class SynthController {
 public:
@@ -28,15 +29,14 @@ private:
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
     LfoManager lfoManager;
+    MidiDriver midiDriver; 
     
     PatternRipple _ripple;
     
     LedController ledController;
     
-    std::optional<MidiCallback> midiCallback = {};
-    
     ButtonDriver buttonDriver;
-    FlexSensor   flexSensor;
+    FlexDSP flexDSP;
 };
 
 #endif /* SynthController_hpp */

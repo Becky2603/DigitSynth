@@ -91,7 +91,7 @@ void PatternFade::run() {
     int fd = makeTimerFd(STEP_MS);
 
     auto applyBrightness = [&](float b) {
-        ITLC59711::Channels ch{};
+        TLC59711::Channels ch{};
         for (auto& v : ch) v = b;
         _tlc.update(ch);
     };
@@ -149,7 +149,7 @@ void PatternRipple::run() {
         const float t_secs = std::chrono::duration<float>(
             std::chrono::steady_clock::now() - t_start).count();
 
-        ITLC59711::Channels channels{};
+        TLC59711::Channels channels{};
         for (int f = 0; f < N_FINGERS; ++f) {
             const float raw = std::sin(TWO_PI * SPEED * t_secs + f * phase_step);
             channels[f] = (raw + 1.0f) / 2.0f;

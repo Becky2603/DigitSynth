@@ -1,12 +1,17 @@
 #ifndef BUTTON_DRIVER_H_
 #define BUTTON_DRIVER_H_
 
-#include "types.h"
 #include <thread>
 #include <array>
+#include <functional>
+#include <optional>
 
 class ButtonDriver {
 public:
+    using ButtonIndex = int;                   
+    using SingleButtonCallback = std::function<void(ButtonIndex)>;   
+    using AllButtonsCallback = std::function<void(void)>;
+    
     ButtonDriver();
     ~ButtonDriver();
     

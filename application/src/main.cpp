@@ -1,4 +1,5 @@
 
+#include "ITLC59711.hpp"
 #include "SynthController.hpp"
 #include "TLC59711.h"
 #include "button-driver.h"
@@ -10,5 +11,17 @@
 #include <iostream>
 
 int main() {
-    return(0);
+    gpio::setupGpio();
+    
+    TLC59711 tlc(17, 27);
+    tlc.start();
+    SynthController synth(tlc);
+    
+    getchar();
+    
+    std::cout <<"stop\n";
+    
+    
+    
+    return 0;
 }
