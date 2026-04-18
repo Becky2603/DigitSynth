@@ -24,6 +24,7 @@ SynthController::SynthController(TLC59711& tlc)
     this->buttonDriver.registerSingleButtonCallback([this] (int index) {
         std::cout << "button pressed " << index << std::endl;
         if (modeManager.getCurrentMode() == NORMAL){
+            midi_message msg; 
             switch(index){
                 case 0: // enter chord mode
                     modeManager.updateMode();
@@ -33,11 +34,10 @@ SynthController::SynthController(TLC59711& tlc)
                     break;
                 case 2: // cycle through the LFO shapes
                     lfoManager.cycleShape();
-                    midi_message msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
+                    msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
                     midiDriver.sendMessage(msg);
                     break;
-                case 3: // turn off/on
-                    
+                default:
                     break;
             }
         }
