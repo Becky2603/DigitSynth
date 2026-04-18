@@ -6,6 +6,22 @@
 #include "patterns.h"
 #include <array>
 
+
+namespace Led {
+
+    static constexpr int L_thumb   = 0;  ///< Thumb flex brightness
+    static constexpr int L_index   = 1;  ///< Index finger flex brightness
+    static constexpr int L_middle  = 2;  ///< Middle finger flex brightness
+    static constexpr int L_ring    = 3;  ///< Ring finger flex brightness
+
+
+    static constexpr int R_thumb   = 4;  ///< Thumb flex brightness
+    static constexpr int R_index   = 5;  ///< Index finger flex brightness
+    static constexpr int R_middle  = 6;  ///< Middle finger flex brightness
+    static constexpr int R_ring    = 7;  ///< Ring finger flex brightness
+
+}
+
 class LedController {
 public:
     explicit LedController(TLC59711& tlc, Pattern& ripple);
