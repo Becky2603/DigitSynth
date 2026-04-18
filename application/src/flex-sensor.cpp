@@ -21,7 +21,7 @@ void FlexSensor::updateIfNeeded() {
     // std::cout << std::string(1000, '\b');
     for (int i = 0; i < 4; i++) {
         auto channel = (ADS1115settings::Input) i;
-        printf("%.3f\t%.3f\t%.4f\t%.3f\t\t", data[i], this->values[channel], this->maxes[channel], this->mins[channel]);
+        printf("| %.3f\t%.3f\t%.3f\t%.3f |", data[i], this->values[channel], this->maxes[channel], this->mins[channel]);
     }
     printf("\n");
 }

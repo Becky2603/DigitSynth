@@ -5,7 +5,7 @@
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(ITLC59711& tlc)
+SynthController::SynthController(TLC59711& tlc)
 : _ripple(tlc), ledController(tlc, _ripple)
 {
     
@@ -68,6 +68,7 @@ SynthController::SynthController(ITLC59711& tlc)
                 chordManager.updateChord(index);
                 for (int i = 0; i < 6; i++){
                     uint8_t note = chordManager.getNote(i);
+                    std::cout << "sending note-on\n";
                     midi_message msg = {0x90, note, 120};
                     midiDriver.sendMessage(msg);
                 }
@@ -95,4 +96,8 @@ SynthController::SynthController(ITLC59711& tlc)
 }
 
 SynthController::~SynthController() {
+    for (int i = 0; i < 6; i++){
+        midi_message noteOff = {0x80, chordManager.getNote(i), 0};
+        midiDriver.sendMessage(noteOff);
+    }   
 }
