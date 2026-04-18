@@ -2,23 +2,17 @@ cmake_minimum_required(VERSION 3.23)
 
 enable_testing()
 
-# test_foo
-add_executable(test_foo test_foo.cpp)
-add_executable(test_adc-driver test_adc-driver.cpp)
-target_include_directories(test_foo PRIVATE include)
-target_include_directories(test_adc-driver PRIVATE include)
-target_link_libraries(test_foo digitsynth_static -lgpiod)
-target_link_libraries(test_adc-driver digitsynth_static -lgpiod)
-add_test(NAME TestFoo COMMAND test_foo)
+function(create_test EXE NAME FILE)
+    add_executable(${EXE} ${FILE})
+    target_include_directories(${EXE} PRIVATE include)
+    link_directories("/usr/local/lib/")
+    target_link_libraries(${EXE} digitsynth_static gpiod gpiodcxx ads1115rpi rtmidi)
+    add_test(NAME ${NAME} COMMAND ${EXE})
+endfunction()
 
-# test_TLC
-add_executable(test_TLC test_TLC.cpp)
-target_include_directories(test_TLC PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(test_TLC digitsynth_static)
-add_test(NAME TestTLC COMMAND test_TLC)
-
-
-add_executable(test_combined synth_logic/combined_test.cpp)
-target_include_directories(test_TLC PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(test_combined digitsynth_static)
-add_test(NAME TestCombined COMMAND test_combined)
+create_test(test-foo TestFoo test_foo.cpp)
+create_test(test-adc-driver TestAdcDriver test_adc-driver.cpp)
+create_test(test-button-driver TestButtonDriver test_button-driver.cpp)
+# create_test(test-combined TestCombined        synth_logic/combined_test.cpp)
+# create_test(test-mode-manager TestModeManager synth_logic/mode_manager_test.cpp)
+create_test(test-gpio TestGpio test_gpio.cpp)

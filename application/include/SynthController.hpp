@@ -2,12 +2,11 @@
 #define SynthController_hpp
 
 #include "ModeManager.hpp"
+#include "flex-sensor.h"
 #include "paramMapper.hpp"
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
 #include <cstdint>
-#include <memory>
-#include "types.h"
 #include "TLC59711.h"
 #include "patterns.h"
 
@@ -18,7 +17,7 @@ public:
     explicit SynthController(TLC59711& tlc);
 
     void onButtonEvent(int index);
-    void onFlexEvent(std::array<ExtensionData, 4>& values);
+    void onFlexEvent(std::array<FlexSensor::ExtensionData, 4>& values);
     void onAllButtonsPressed();
 
     ControlMode getCurrentMode(); // for testing

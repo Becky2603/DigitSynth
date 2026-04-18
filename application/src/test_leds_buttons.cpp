@@ -12,7 +12,6 @@
 #include "button-driver.h"
 #include "gpio.h"
 #include "patterns.h"
-#include "types.h"
 #include <linux/spi/spi.h>
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>

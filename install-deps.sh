@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+sudo apt install -y autotools-dev autoconf-archive libtool pkg-config
+
 # libgpiod
 curl -S https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-2.2.tar.gz -o libgpiod.tar.gz
 tar -xf libgpiod.tar.gz
