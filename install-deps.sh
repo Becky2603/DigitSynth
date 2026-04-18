@@ -30,7 +30,7 @@ cd -
 # RtMidi
 git clone https://github.com/thestk/rtmidi.git
 cd rtmidi
-cmake .
+cmake . -DRTMIDI_API_ALSA=ON -DRTMIDI_API_JACK=OFF
 make
 sudo make install
 cd -
