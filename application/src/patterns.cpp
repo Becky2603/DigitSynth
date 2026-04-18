@@ -84,7 +84,7 @@ void Pattern::stop() {
 // ---------------------------------------------------------------------------
 
 void PatternFade::run() {
-    static constexpr long STEP_MS = 40;   // ~25 fps
+    static constexpr long STEP_MS = 40;  
     static constexpr long HOLD_MS = 500;
     static constexpr int  N_STEPS = 20;
 
@@ -96,8 +96,6 @@ void PatternFade::run() {
         _tlc.update(ch);
     };
 
-    // Loop runs until stop() sets _running = false (Ch. 3.3.3),
-    // repeating fade-in → hold → fade-out indefinitely.
     while (_running) {
 
         // --- Fade in ---
@@ -135,7 +133,7 @@ done:
 
 void PatternRipple::run() {
     static constexpr float TWO_PI    = 6.28318f;
-    static constexpr int   N_FINGERS = 10;
+    static constexpr int   N_FINGERS = TLC59711::NUM_LEDS;  // 8 LEDs
     static constexpr float SPEED     = 1.0f;
     static constexpr long  STEP_MS   = 40;
 
