@@ -3,6 +3,8 @@
 #include <gpiod.hpp>
 #include <thread>
 
+using namespace button_driver;
+
 ButtonDriver::ButtonDriver() {
     for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
@@ -12,22 +14,11 @@ ButtonDriver::ButtonDriver() {
                 if (!edge.has_value()) { continue; }
                 
                 bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
-                this->buttonStatuses[i] = val;
-                
                 
                 if (!val) { continue; }
-                if (!this->singleButtonCallback.has_value()) { continue; }
+                if (!this->buttonCallback.has_value()) { continue; }
                     
-                this->singleButtonCallback.value()(i); 
-               
-                if (!this->allButtonsCallback.has_value()) { continue; }
-                bool allPressed = false;
-                for (auto status : buttonStatuses) {
-                    if (!status) { allPressed = false; break; }
-                    allPressed = true;
-                }
-                
-                if (allPressed) { this->allButtonsCallback.value()(); }
+                this->buttonCallback.value()(i); 
             }
         });  
     }
@@ -41,19 +32,10 @@ ButtonDriver::~ButtonDriver() {
     }
 }
 
-void ButtonDriver::registerAllButtonsCallback(AllButtonsCallback callback) {
-    this->allButtonsCallback = callback;
+void ButtonDriver::registerButtonCallback(ButtonCallback callback) {
+    this->buttonCallback = callback;
 }
 
-void ButtonDriver::deregisterSingleButtonCallback() {
-    this->singleButtonCallback = {};
-}
-
-
-void ButtonDriver::registerSingleButtonCallback(SingleButtonCallback callback) {
-    this->singleButtonCallback = callback;
-}
-
-void ButtonDriver::deregisterAllButtonsCallback() {
-    this->allButtonsCallback = {};
+void ButtonDriver::deregisterButtonCallback() {
+    this->buttonCallback = {};
 }

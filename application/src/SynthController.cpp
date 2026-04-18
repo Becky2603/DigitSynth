@@ -1,10 +1,12 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
 #include "TLC59711.h"
+#include "button-driver.h"
 #include "flex-sensor.h"
+#include <memory>
 
-SynthController::SynthController(TLC59711& tlc)
-: _ripple(tlc), ledController(tlc, _ripple)
+SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver)
+: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver)
 {
     
     auto ports = this->midiDriver.listOutputPorts();
@@ -21,8 +23,8 @@ SynthController::SynthController(TLC59711& tlc)
 
     this->midiDriver.openPort(2);
     
-    this->buttonDriver.registerSingleButtonCallback([this] (int index) {
-        std::cout << "button pressed " << index << std::endl;
+    this->buttonDriver.get()->registerButtonCallback([this] (int index) {
+        std::cout << "\nbutton pressed " << index << std::endl;
         if (modeManager.getCurrentMode() == NORMAL){
             midi_message msg; 
             switch(index){

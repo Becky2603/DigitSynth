@@ -1,26 +1,17 @@
 #include "button-driver.h"
 #include "gpio.h"
 
-bool test_registerSingleButtonCallback() {
+using namespace button_driver; 
+
+bool test_registerButtonCallback() {
     ButtonDriver bd; 
     
-    bd.registerSingleButtonCallback([] (ButtonDriver::ButtonIndex idx) {
+    bd.registerButtonCallback([] (ButtonIndex idx) {
         (void) idx; 
     });
     
     return true;
 }
-
-bool test_registerAllButtonsCallback() {
-    ButtonDriver bd; 
-    
-    bd.registerAllButtonsCallback([] (void) {
-    
-    });
-    
-    return true;
-}
-
 
 /**
  * Make sure that destroying an instance of `ButtonDriver` frees up the GPIO pins.
@@ -46,8 +37,7 @@ int main() {
     
     bool success = true;
     
-    success &= test_registerSingleButtonCallback();
-    success &= test_registerAllButtonsCallback();
+    success &= test_registerButtonCallback();
     success &= test_destruct();
     
     

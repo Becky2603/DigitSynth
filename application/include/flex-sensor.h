@@ -37,11 +37,23 @@ private:
      * Will call the callback if all ADC channels have been sampled.
      */
     void updateIfNeeded();
+    
+    float mapVoltage(float f, ADS1115settings::Input channel);
 
-    const float V_MAX = 0.8;
-    const float V_OFF = -1.0;
     ADS1115rpi::ADSCallbackInterface adsCallback;
     std::unordered_map<ADS1115settings::Input, ExtensionData> values = {
+        { ADS1115settings::AIN0, 0.0 },
+        { ADS1115settings::AIN1, 0.0 },
+        { ADS1115settings::AIN2, 0.0 },
+        { ADS1115settings::AIN3, 0.0 },
+    };
+    std::unordered_map<ADS1115settings::Input, ExtensionData> mins = {
+        { ADS1115settings::AIN0, 5.0 },
+        { ADS1115settings::AIN1, 5.0 },
+        { ADS1115settings::AIN2, 5.0 },
+        { ADS1115settings::AIN3, 5.0 },
+    };
+    std::unordered_map<ADS1115settings::Input, ExtensionData> maxes = {
         { ADS1115settings::AIN0, 0.0 },
         { ADS1115settings::AIN1, 0.0 },
         { ADS1115settings::AIN2, 0.0 },

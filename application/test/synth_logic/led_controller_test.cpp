@@ -31,13 +31,13 @@ int main(){
 
     //test 4: flex sensor values drive left hand LED brightnesses
     ledController.update(NORMAL, false, SIN, {0.3f, 0.68f, 0.11f, 0.314f});
-    assert(mockTLC.lastChannels[Led::L_thumb]  == 0.3f);
+    assert(mockTLC.lastChannels[Led::L_pinky]  == 0.3f);
     assert(mockTLC.lastChannels[Led::L_index]  == 0.68f);
     assert(mockTLC.lastChannels[Led::L_middle] == 0.11f);
     assert(mockTLC.lastChannels[Led::L_ring]   == 0.314f);
 
     //test 5: same flex values mirrored to right hand LEDs
-    assert(mockTLC.lastChannels[Led::R_thumb]  == 0.3f);
+    assert(mockTLC.lastChannels[Led::R_pinky]  == 0.3f);
     assert(mockTLC.lastChannels[Led::R_index]  == 0.68f);
     assert(mockTLC.lastChannels[Led::R_middle] == 0.11f);
     assert(mockTLC.lastChannels[Led::R_ring]   == 0.314f);
