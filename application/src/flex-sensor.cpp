@@ -24,7 +24,8 @@ uint64_t FlexSensor::getNSamples() {
 
 FlexSensor::FlexSensor() {
     this->adsCallback = [&] (float f) {
-        this->values[this->currentChannel] =  (f / FlexSensor::V_MAX) + FlexSensor::V_OFF;
+        this->values[this->currentChannel] = f;
+        this->values[this->currentChannel] =  (f - 0.75) / 0.55;
         
         switch (this->currentChannel) {
             case (ADS1115settings::AIN0):
