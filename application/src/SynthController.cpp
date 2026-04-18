@@ -26,7 +26,7 @@ SynthController::SynthController(ITLC59711& tlc)
     //give the synth a moment to initialise
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
-    //play Fmaj9 on boot
+    //play Am11 on boot
     for (int i = 0; i < 6; i++){
         midi_message msg = {0x90, chordManager.getNote(i), 120};
         midiDriver.sendMessage(msg);

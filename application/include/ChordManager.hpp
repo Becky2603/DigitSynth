@@ -9,7 +9,7 @@ public:
     uint8_t getCurrentChord();
     uint8_t getNote(int i);
 private:
-    uint8_t currentChordIndex = 0;
+    uint8_t currentChordIndex = 1;
     const uint8_t noteSelection[24] = {
         41, 53, 57, 60, 64, 67,  //Fmaj9
         33, 45, 52, 55, 62, 67,  //Am11
