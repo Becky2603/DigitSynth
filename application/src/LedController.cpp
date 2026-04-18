@@ -34,10 +34,6 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
         c[Led::R_middle] = flexValues[2];
         c[Led::R_ring]   = flexValues[3];
 
-        std::cout << std::string(200, '\b');
-        for (float f : flexValues) {
-            printf("%.3f\t", f);
-        }
         this->_tlc.update(c);
     }
 }

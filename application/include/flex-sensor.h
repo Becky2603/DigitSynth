@@ -37,6 +37,8 @@ private:
      * Will call the callback if all ADC channels have been sampled.
      */
     void updateIfNeeded();
+    
+    float mapVoltage(float f, ADS1115settings::Input channel);
 
     ADS1115rpi::ADSCallbackInterface adsCallback;
     std::unordered_map<ADS1115settings::Input, ExtensionData> values = {

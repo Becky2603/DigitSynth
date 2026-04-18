@@ -7,12 +7,12 @@ FlexDSP::FlexDSP(float sampleRate, float cutoffHz) {
         f.setup(4, normalisedCutoff);
     }
     this->fs.registerCallback([this](std::array<FlexSensor::ExtensionData, 4> raw) {
-        if (!this->callback.has_value()) { return; }
-        std::array<FlexSensor::ExtensionData, 4> filtered;
-        for (int i = 0; i < 4; i++) {
-            filtered[i] = static_cast<float>(this->filters[i].filter(raw[i]));
-        }
-        this->callback.value()(filtered);
+        // if (!this->callback.has_value()) { return; }
+        // std::array<FlexSensor::ExtensionData, 4> filtered;
+        // for (int i = 0; i < 4; i++) {
+            // filtered[i] = static_cast<float>(this->filters[i].filter(raw[i]));
+        // }
+        this->callback.value()(raw);
     });
     this->fs.begin();
 }
