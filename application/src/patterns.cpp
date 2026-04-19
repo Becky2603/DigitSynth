@@ -44,19 +44,6 @@ static bool waitTick(int fd, const std::atomic<bool>& running) {
     return running.load();
 }
 
-/**
- * Re-arm an existing timerfd with a new period.
- * Used to switch between the step rate and the hold duration mid-run.
- */
-static void rearmTimerFd(int fd, long period_ms, bool repeat) {
-    struct itimerspec its{};
-    its.it_value.tv_sec     = period_ms / 1000;
-    its.it_value.tv_nsec    = (period_ms % 1000) * 1000000L;
-    if (repeat) {
-        its.it_interval = its.it_value;
-    }
-    timerfd_settime(fd, 0, &its, nullptr);
-}
 
 // ---------------------------------------------------------------------------
 // Pattern base
@@ -80,60 +67,12 @@ void Pattern::stop() {
 }
 
 // ---------------------------------------------------------------------------
-// PatternFade
-// ---------------------------------------------------------------------------
-
-void PatternFade::run() {
-    static constexpr long STEP_MS = 40;  
-    static constexpr long HOLD_MS = 500;
-    static constexpr int  N_STEPS = 20;
-
-    int fd = makeTimerFd(STEP_MS);
-
-    auto applyBrightness = [&](float b) {
-        TLC59711::Channels ch{};
-        for (auto& v : ch) v = b;
-        _tlc.update(ch);
-    };
-
-    while (_running) {
-
-        // --- Fade in ---
-        for (int i = 0; i <= N_STEPS && _running; ++i) {
-            applyBrightness(i / static_cast<float>(N_STEPS));
-            if (!waitTick(fd, _running)) goto done;
-        }
-
-        // --- Hold ---
-        if (_running) {
-            rearmTimerFd(fd, HOLD_MS, /*repeat=*/false);
-            if (!waitTick(fd, _running)) goto done;
-            rearmTimerFd(fd, STEP_MS,  /*repeat=*/true);
-        }
-
-        // --- Fade out ---
-        for (int i = N_STEPS; i >= 0 && _running; --i) {
-            applyBrightness(i / static_cast<float>(N_STEPS));
-            if (!waitTick(fd, _running)) goto done;
-        }
-    }
-
-done:
-    close(fd);
-
-    if (_onDone)
-        _onDone();
-
-    _running = false;
-}
-
-// ---------------------------------------------------------------------------
 // PatternRipple
 // ---------------------------------------------------------------------------
 
 void PatternRipple::run() {
     static constexpr float TWO_PI    = 6.28318f;
-    static constexpr int   N_FINGERS = TLC59711::NUM_LEDS;  // 8 LEDs
+    static constexpr int   N_FINGERS = 8;  // 8 LEDs
     static constexpr float SPEED     = 1.0f;
     static constexpr long  STEP_MS   = 40;
 
@@ -147,7 +86,7 @@ void PatternRipple::run() {
         const float t_secs = std::chrono::duration<float>(
             std::chrono::steady_clock::now() - t_start).count();
 
-        TLC59711::Channels channels{};
+        led_driver::ILedDriver::Channels channels{};
         for (int f = 0; f < N_FINGERS; ++f) {
             const float raw = std::sin(TWO_PI * SPEED * t_secs + f * phase_step);
             channels[f] = (raw + 1.0f) / 2.0f;
