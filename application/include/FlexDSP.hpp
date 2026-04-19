@@ -13,7 +13,7 @@ public:
 
     // sampleRate = how often your ADC fires in Hz (check your ADS1115 config)
     // cutoffHz   = frequency above which noise is attenuated (5Hz is a good start)
-    FlexDSP(flex_sensor::IFlexSensor *flexSensor, float sampleRate = 10, float cutoffHz = 5.0f);
+    FlexDSP(flex_sensor::IFlexSensor *flexSensor, float sampleRate = 100, float cutoffHz = 20.0f);
 
     // called by SynthController 
     void registerCallback(FilteredCallback callback);

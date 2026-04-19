@@ -14,7 +14,7 @@ FlexDSP::FlexDSP(flex_sensor::IFlexSensor *flexSensor, float sampleRate, float c
         for (int i = 0; i < 4; i++) {
             filtered[i] = static_cast<float>(this->filters[i].filter(raw[i]));
         }
-        this->callback.value()(raw);
+        this->callback.value()(filtered);
     });
     this->flexSensor->begin();
 }

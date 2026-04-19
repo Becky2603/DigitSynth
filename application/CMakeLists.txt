@@ -13,34 +13,16 @@ endif()
 project(DigitSynth)
 
 include(CTest)
-include(docs/Docs.cmake)
-add_executable(digitsynth)
+# include(docs/Docs.cmake)
 add_library(digitsynth_static)
+add_executable(digitsynth)
 target_include_directories(digitsynth PRIVATE include)
 target_include_directories(digitsynth_static PUBLIC include)
 set(SOURCE_DIRECTORY src/)
 
 target_sources(digitsynth
 	PRIVATE
-		# Add source files here to build them
 		${SOURCE_DIRECTORY}/main.cpp
-		${SOURCE_DIRECTORY}/foo.cpp
-		${SOURCE_DIRECTORY}/adc-driver.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/gpio.cpp
-		${SOURCE_DIRECTORY}/flex-sensor.cpp
-		${SOURCE_DIRECTORY}/button-driver.cpp
-		${SOURCE_DIRECTORY}/midi-driver.cpp
-        ${SOURCE_DIRECTORY}/TLC59711.cpp
-		${SOURCE_DIRECTORY}/SynthController.cpp
-		${SOURCE_DIRECTORY}/ModeManager.cpp
-		${SOURCE_DIRECTORY}/ChordManager.cpp
-		${SOURCE_DIRECTORY}/MidiScaler.cpp
-        ${SOURCE_DIRECTORY}/patterns.cpp
-        ${SOURCE_DIRECTORY}/FlexDSP.cpp
-       	${SOURCE_DIRECTORY}/LedController.cpp
-        ${SOURCE_DIRECTORY}/LfoManager.cpp
-        ${SOURCE_DIRECTORY}/MessageBuilder.cpp
 )
 
 target_sources(digitsynth_static
@@ -65,6 +47,7 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/LedController.cpp
         ${SOURCE_DIRECTORY}/LfoManager.cpp
         ${SOURCE_DIRECTORY}/MessageBuilder.cpp
+        ${SOURCE_DIRECTORY}/voltage-scaler.cpp
 )
 
 link_directories("/usr/local/lib/")
@@ -74,7 +57,8 @@ find_library(RTMIDI rtmidi)
 find_library(IIR iir)
 find_library(ASOUND asound)
 
-target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
 target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
+target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
+target_link_libraries(digitsynth digitsynth_static)
 
 add_subdirectory(test)

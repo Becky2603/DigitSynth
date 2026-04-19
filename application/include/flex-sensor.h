@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "adc-driver.h"
+#include "voltage-scaler.h"
 
 namespace flex_sensor {
 using ExtensionData = float;      
@@ -28,7 +29,8 @@ public:
 class FlexSensor : public IFlexSensor {
 public:
         
-    FlexSensor(adc_driver::IAdcDriver *adcDriver);
+    FlexSensor(adc_driver::IAdcDriver *adcDriver, voltage_scaler::IVoltageScaler *voltageScaler);
+    ~FlexSensor();
 
     /**
      * Start sampling the sensors.
@@ -58,21 +60,16 @@ private:
         { ADS1115settings::AIN2, 0.0 },
         { ADS1115settings::AIN3, 0.0 },
     };
-    std::unordered_map<ADS1115settings::Input, ExtensionData> mins = {
-        { ADS1115settings::AIN0, 5.0 },
-        { ADS1115settings::AIN1, 5.0 },
-        { ADS1115settings::AIN2, 5.0 },
-        { ADS1115settings::AIN3, 5.0 },
-    };
-    std::unordered_map<ADS1115settings::Input, ExtensionData> maxes = {
-        { ADS1115settings::AIN0, 0.0 },
-        { ADS1115settings::AIN1, 0.0 },
-        { ADS1115settings::AIN2, 0.0 },
-        { ADS1115settings::AIN3, 0.0 },
-    };
+
     std::optional<ExtensionCallback> callback = {};     
     std::unique_ptr<adc_driver::IAdcDriver> adc;
+    std::unique_ptr<voltage_scaler::IVoltageScaler> vs; 
+    
     ADS1115settings::Input currentChannel = ADS1115settings::AIN0;
+    
+    
+    std::thread worker;
+    bool running = true;
     
     uint64_t n_samples;
 };
