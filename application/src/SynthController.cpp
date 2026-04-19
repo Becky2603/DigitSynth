@@ -1,6 +1,6 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
-#include "TLC59711.h"
+#include "ILedDriver.hpp"
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "midi-driver.hpp"
@@ -8,11 +8,11 @@
 #include <chrono>
 
 SynthController::SynthController(
-    TLC59711& tlc, 
-    button_driver::IButtonDriver *buttonDriver, 
+    led_driver::ILedDriver *tlc,
+    button_driver::IButtonDriver *buttonDriver,
     flex_sensor::IFlexSensor *flexSensor, 
     midi_driver::IMidiDriver *midiDriver
-): midiDriver(midiDriver), _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
+): midiDriver(midiDriver), _ripple(*tlc), ledController(*tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     
     auto ports = this->midiDriver->listOutputPorts();
