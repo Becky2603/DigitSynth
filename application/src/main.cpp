@@ -1,6 +1,7 @@
 
 #include "SynthController.hpp"
 #include "TLC59711.h"
+#include "adc-driver.h"
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "gpio.h"
@@ -11,27 +12,11 @@ int main() {
     gpio::setupGpio();
     
     auto bd = new button_driver::ButtonDriver(); 
-    auto fs = new flex_sensor::FlexSensor();
+    auto adc = new adc_driver::Ads1115Driver();
+    auto fs = new flex_sensor::FlexSensor(static_cast<adc_driver::IAdcDriver *>(adc));
+    adc = nullptr;
     auto md = new midi_driver::MidiDriver();
     TLC59711 tlc(17, 27);
-    tlc.start();
-    
-    // 
-    // std::array<Brightness, 8> leds = {1, 1, 1, 1, 1, 1, 1, 1,};
-    // tlc.update(leds);
-    // getchar();
-    // 
-    // for (int i = 0; i < 8; i++) {
-        // std::cout << i << std::endl;
-        // for (int j = 0; j < 8; j++) {
-            // if (i==j) {leds[j] = 1.0;}
-            // else {leds[j] = 0.0;}
-        // }
-        // tlc.update(leds);
-        // 
-        // getchar();
-    // }
-    
     tlc.start();
     SynthController synth(
         tlc, 

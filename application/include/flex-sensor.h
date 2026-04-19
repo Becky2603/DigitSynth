@@ -2,6 +2,7 @@
 #define FLEX_SENSOR_H_
 
 #include <ads1115rpi.h>
+#include <memory>
 #include <optional>
 #include <unordered_map>
 
@@ -27,7 +28,7 @@ public:
 class FlexSensor : public IFlexSensor {
 public:
         
-    FlexSensor();
+    FlexSensor(adc_driver::IAdcDriver *adcDriver);
 
     /**
      * Start sampling the sensors.
@@ -70,7 +71,7 @@ private:
         { ADS1115settings::AIN3, 0.0 },
     };
     std::optional<ExtensionCallback> callback = {};     
-    AdcDriver adc; 
+    std::unique_ptr<adc_driver::IAdcDriver> adc;
     ADS1115settings::Input currentChannel = ADS1115settings::AIN0;
     
     uint64_t n_samples;
