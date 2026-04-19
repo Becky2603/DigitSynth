@@ -9,16 +9,20 @@
 #include "LedController.hpp"
 #include "flex-sensor.h"
 #include "midi-driver.hpp"
-#include "types.h"
-#include "ITLC59711.hpp"
 #include "patterns.h"
 #include "LfoManager.hpp"
 #include "FlexDSP.hpp"
+#include <memory>
 
 class SynthController {
 public:
     //TLC59711 passed in by reference — SynthController uses it but doesn't own it
-    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
+    explicit SynthController(
+        TLC59711& tlc, 
+        button_driver::IButtonDriver *buttonDriver, 
+        flex_sensor::IFlexSensor     *flexSensor, 
+        midi_driver::IMidiDriver     *midiDriver
+    );
     ~SynthController();
 
 private:
@@ -27,7 +31,7 @@ private:
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
     LfoManager lfoManager;
-    MidiDriver midiDriver; 
+    std::unique_ptr<midi_driver::IMidiDriver> midiDriver; 
     
     PatternRipple _ripple;
     

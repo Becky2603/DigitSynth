@@ -3,15 +3,19 @@
 #include "TLC59711.h"
 #include "button-driver.h"
 #include "flex-sensor.h"
-#include "types.h"
+#include "midi-driver.hpp"
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
-: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
+SynthController::SynthController(
+    TLC59711& tlc, 
+    button_driver::IButtonDriver *buttonDriver, 
+    flex_sensor::IFlexSensor *flexSensor, 
+    midi_driver::IMidiDriver *midiDriver
+): midiDriver(midiDriver), _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     
-    auto ports = this->midiDriver.listOutputPorts();
+    auto ports = this->midiDriver->listOutputPorts();
 
     std::cout << "Available MIDI output ports:\n";
     for (size_t i = 0; i < ports.size(); ++i) {
@@ -23,7 +27,7 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
         exit(-1);
     }
 
-    this->midiDriver.openPort(2);
+    this->midiDriver->openPort(2);
     
     //give the synth a moment to initialise
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -31,7 +35,7 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
     //play Am11 on boot
     for (int i = 0; i < 6; i++){
         midi_message msg = {0x90, chordManager.getNote(i), 120};
-        midiDriver.sendMessage(msg);
+        midiDriver->sendMessage(msg);
     }
     
     this->buttonDriver->registerSingleButtonCallback([this] (button_driver::ButtonIndex index) {
@@ -48,7 +52,7 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
                 case 2: // cycle through the LFO shapes
                     lfoManager.cycleShape();
                     msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
-                    midiDriver.sendMessage(msg);
+                    this->midiDriver->sendMessage(msg);
                     break;
                 case 3: // change LED pattern
                     ledController.togglePattern();
@@ -65,14 +69,14 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
                 // send note offs for current chord
                 for (int i = 0; i < 6; i++){
                     midi_message noteOff = {0x80, chordManager.getNote(i), 0};
-                    midiDriver.sendMessage(noteOff);
+                    this->midiDriver->sendMessage(noteOff);
                 }
                 chordManager.updateChord(index);
                 for (int i = 0; i < 6; i++){
                     uint8_t note = chordManager.getNote(i);
                     std::cout << "sending note-on\n";
                     midi_message msg = {0x90, note, 120};
-                    midiDriver.sendMessage(msg);
+                    this->midiDriver->sendMessage(msg);
                 }
             }
         }
@@ -87,7 +91,7 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
                 }
                 auto messages = messageBuilder.buildMessages(i, scaledVal);
                 for (auto& msg : messages){
-                    midiDriver.sendMessage(msg);
+                    this->midiDriver->sendMessage(msg);
                 }
                 
             }
@@ -100,6 +104,6 @@ SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *bu
 SynthController::~SynthController() {
     for (int i = 0; i < 6; i++){
         midi_message noteOff = {0x80, chordManager.getNote(i), 0};
-        midiDriver.sendMessage(noteOff);
+        this->midiDriver->sendMessage(noteOff);
     }   
 }
