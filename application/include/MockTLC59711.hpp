@@ -5,7 +5,7 @@
 
 namespace led_driver {
 
-class MockTLC59711 : public ITLC59711 { //a fake TLC that records update() calls for unit testing LedController class
+class MockTLC59711 : public ILedDriver { //a fake TLC that records update() calls for unit testing LedController class
 public:
     void update(const Channels& channels) override { // records channels and updates a flag instead of driving real hardware
         lastChannels = channels;
