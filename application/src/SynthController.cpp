@@ -3,10 +3,11 @@
 #include "TLC59711.h"
 #include "button-driver.h"
 #include "flex-sensor.h"
+#include "types.h"
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(ILedDriver *tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
+SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
 : _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     
@@ -33,7 +34,7 @@ SynthController::SynthController(ILedDriver *tlc, button_driver::IButtonDriver *
         midiDriver.sendMessage(msg);
     }
     
-    this->buttonDriver->registerButtonCallback([this] (int index) {
+    this->buttonDriver->registerSingleButtonCallback([this] (button_driver::ButtonIndex index) {
         std::cout << "\nbutton pressed " << index << std::endl;
         if (modeManager.getCurrentMode() == NORMAL){
             midi_message msg; 

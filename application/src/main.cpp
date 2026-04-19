@@ -2,6 +2,7 @@
 #include "SynthController.hpp"
 #include "TLC59711.h"
 #include "button-driver.h"
+#include "flex-sensor.h"
 #include "gpio.h"
 #include <iostream>
 
@@ -9,6 +10,7 @@ int main() {
     gpio::setupGpio();
     
     auto bd = new button_driver::ButtonDriver(); 
+    auto fs = new flex_sensor::FlexSensor();
     TLC59711 tlc(17, 27);
     tlc.start();
     
@@ -29,8 +31,9 @@ int main() {
     // }
     
     tlc.start();
-    SynthController synth(tlc, static_cast<button_driver::IButtonDriver *>(bd));
+    SynthController synth(tlc, static_cast<button_driver::IButtonDriver *>(bd), static_cast<flex_sensor::IFlexSensor *>(fs));
     bd = nullptr; 
+    fs = nullptr; 
     getchar();
     std::cout <<"stop\n";
     

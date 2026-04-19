@@ -7,6 +7,7 @@
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
 #include "LedController.hpp"
+#include "flex-sensor.h"
 #include "midi-driver.hpp"
 #include "types.h"
 #include "ILedDriver.hpp"
@@ -17,7 +18,7 @@
 class SynthController {
 public:
     //TLC59711 passed in by reference — SynthController uses it but doesn't own it
-    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver);
+    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
     ~SynthController();
 
 private:

@@ -6,14 +6,14 @@
 #include "flex-sensor.h"
 #include <Iir.h>
 
-using FilteredCallback = std::function<void(std::array<FlexSensor::ExtensionData, 4>)>;
+using FilteredCallback = std::function<void(std::array<flex_sensor::ExtensionData, 4>)>;
 
 class FlexDSP {
 public:
 
     // sampleRate = how often your ADC fires in Hz (check your ADS1115 config)
     // cutoffHz   = frequency above which noise is attenuated (5Hz is a good start)
-    FlexDSP(float sampleRate = 10, float cutoffHz = 5.0f);
+    FlexDSP(flex_sensor::IFlexSensor *flexSensor, float sampleRate = 10, float cutoffHz = 5.0f);
 
     // called by SynthController 
     void registerCallback(FilteredCallback callback);
@@ -25,7 +25,7 @@ private:
     // one 4th order Butterworth low pass per sensor channel
     std::array<Iir::Butterworth::LowPass<4>, 4> filters;
     std::optional<FilteredCallback> callback;
-    FlexSensor fs; 
+    std::unique_ptr<flex_sensor::IFlexSensor> flexSensor; 
 };
 
 #endif

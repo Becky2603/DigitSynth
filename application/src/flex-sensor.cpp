@@ -4,6 +4,8 @@
 #include <array>
 #include <thread>
 
+using namespace flex_sensor;
+
 void FlexSensor::updateIfNeeded() {
     if (!this->callback.has_value()) { return; } 
     

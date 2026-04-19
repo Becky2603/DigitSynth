@@ -7,16 +7,26 @@
 
 #include "adc-driver.h"
 
+namespace flex_sensor {
+using ExtensionData = float;      
+using ExtensionCallback = std::function<void(std::array<ExtensionData, 4>)>;
+
+class IFlexSensor {
+public: 
+    virtual ~IFlexSensor() = default;
+    
+    virtual void registerCallback(ExtensionCallback) = 0;
+    virtual void begin() = 0;
+};
+    
 /**
  * When `begin()` is called, this class will sample each channel of the 
  * ADC in turn and call the registered callback once every channel has been
  * sampled. 
  */
-class FlexSensor {
+class FlexSensor : public IFlexSensor {
 public:
-    using ExtensionData = float;      
-    using ExtensionCallback = std::function<void(std::array<ExtensionData, 4>)>;
-    
+        
     FlexSensor();
 
     /**
@@ -66,4 +76,5 @@ private:
     uint64_t n_samples;
 };
 
+}
 #endif
