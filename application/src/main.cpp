@@ -11,7 +11,7 @@ int main() {
     
     auto bd = new button_driver::ButtonDriver(); 
     auto fs = new flex_sensor::FlexSensor();
-    TLC59711 tlc(17, 27);
+    auto tlc = new led_driver::TLC59711(17, 27);
     tlc.start();
     
     // 
@@ -31,9 +31,10 @@ int main() {
     // }
     
     tlc.start();
-    SynthController synth(tlc, static_cast<button_driver::IButtonDriver *>(bd), static_cast<flex_sensor::IFlexSensor *>(fs));
-    bd = nullptr; 
+    SynthController synth(static_cast<led_driver::ILedDriver *>(tlc), static_cast<button_driver::IButtonDriver *>(bd), static_cast<flex_sensor::IFlexSensor *>(fs));
+    bd = nullptr;
     fs = nullptr; 
+    tlc = nullptr;
     getchar();
     std::cout <<"stop\n";
     

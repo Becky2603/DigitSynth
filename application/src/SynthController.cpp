@@ -1,13 +1,13 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
-#include "TLC59711.h"
+#include "ILedDriver.h"
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "types.h"
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
+SynthController::SynthController(led_driver::ILedDriver *tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
 : _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     

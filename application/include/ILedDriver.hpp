@@ -11,13 +11,17 @@
  MockTLC59711 just records what is sent to it and is used for unit testing the LedController class
 */
 
+namespace led_driver {
+
 class ILedDriver {
 public:
     static constexpr int NUM_LEDS = 8;
     using Channels = std::array<Brightness, NUM_LEDS>;
-
+    
     virtual ~ILedDriver() = default;
     virtual void update(const Channels& channels) = 0;
 };
+
+}
 
 #endif /* ILedDriver_hpp */

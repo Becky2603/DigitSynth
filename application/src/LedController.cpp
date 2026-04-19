@@ -1,8 +1,8 @@
 #include "LedController.hpp"
-#include "ITLC59711.hpp"
+#include "ILedDriver.hpp"
 #include <cstdio>
 
-LedController::LedController(ITLC59711& tlc, Pattern& ripple)
+LedController::LedController(led_driver::ILedDriver *tlc, Pattern& ripple)
     : _tlc(tlc), _ripple(ripple) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
@@ -20,7 +20,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
         }
         // Status pattern independent of chord/normal mode
         // handle normal LED stuff
-        ITLC59711::Channels c{};
+        ILedDriver::Channels c{};
 
         // Left hand
         c[Led::L_pinky]  = 1; // not needed here

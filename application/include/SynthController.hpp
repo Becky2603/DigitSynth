@@ -18,7 +18,7 @@
 class SynthController {
 public:
     //TLC59711 passed in by reference — SynthController uses it but doesn't own it
-    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
+    explicit SynthController(led_driver::ILedDriver *tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
     ~SynthController();
 
 private:
@@ -34,6 +34,7 @@ private:
     
     
     std::unique_ptr<button_driver::IButtonDriver> buttonDriver;
+    std::unique_ptr<led_driver::ILedDriver> tlc;
     FlexDSP flexDSP;
 };
 
