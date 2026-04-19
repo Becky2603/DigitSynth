@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 
+using namespace led_driver;
 constexpr int TLC59711::FRAME_TO_GS[TLC59711::NUM_LEDS];
 
 TLC59711::TLC59711(int data_pin, int clk_pin, int num_drivers)

@@ -6,7 +6,7 @@
 
 int main(){
     MockPattern testPattern;
-    MockTLC59711 mockTLC;
+    led_driver::MockTLC59711 mockTLC;
     LedController ledController(mockTLC, testPattern);
     
     //initially, pattern is not running
