@@ -2,14 +2,22 @@
 #ifndef MidiTypes_hpp
 #define MidiTypes_hpp
 
-#include <stdio.h>
 #include <cstdint>
 
 enum ControlMode {
-    EQ,
-    SOURCE_EQ,
-    DETUNE,
+    NORMAL,
     CHORD
+};
+
+enum LedPattern {
+    STATUS,
+    RIPPLE
+};
+
+enum LfoShape {
+    SIN,
+    SQR,
+    SH
 };
 
 struct midi_message {

@@ -2,45 +2,39 @@
 #define SynthController_hpp
 
 #include "ModeManager.hpp"
-#include "paramMapper.hpp"
+#include "button-driver.h"
+#include "MessageBuilder.hpp"
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
-#include <cstdint>
-#include <memory>
+#include "LedController.hpp"
+#include "flex-sensor.h"
+#include "midi-driver.hpp"
 #include "types.h"
-#include "TLC59711.h"
+#include "ITLC59711.hpp"
 #include "patterns.h"
+#include "LfoManager.hpp"
+#include "FlexDSP.hpp"
 
 class SynthController {
 public:
-    // TLC59711 is passed in by reference — SynthController uses it but does
-    // not own it. The caller (main) owns the hardware and its lifetime.
-    explicit SynthController(TLC59711& tlc);
-
-    void onButtonEvent(int index);
-    void onFlexEvent(std::array<ExtensionData, 4>& values);
-    void onAllButtonsPressed();
-
-    ControlMode getCurrentMode(); // for testing
-    uint8_t getCurrentChord();   // for testing
-    midi_message getLastCC(int i);    // for testing
+    //TLC59711 passed in by reference — SynthController uses it but doesn't own it
+    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
+    ~SynthController();
 
 private:
-    void startRipple();
-    void stopRipple();
-    void startFade();
-    void stopFade();
-    
-    TLC59711&                    _tlc;
-    PatternRipple _ripple;  // null when not in chord mode
-    PatternFade _fade;
-
     ModeManager  modeManager;
     ChordManager chordManager;
-    ParamMapper  paramMapper;
+    MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
-
-    midi_message lastCC[4];
+    LfoManager lfoManager;
+    MidiDriver midiDriver; 
+    
+    PatternRipple _ripple;
+    
+    LedController ledController;
+    
+    std::unique_ptr<button_driver::IButtonDriver> buttonDriver;
+    FlexDSP flexDSP;
 };
 
 #endif /* SynthController_hpp */

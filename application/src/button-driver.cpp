@@ -1,49 +1,41 @@
 #include "button-driver.h"
 #include "gpio.h"
-#include "types.h"
 #include <gpiod.hpp>
 #include <thread>
 
+using namespace button_driver;
+
 ButtonDriver::ButtonDriver() {
-    for (size_t i = 0; i < workers.size(); i++) {
+    for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {
-            while (running) {
+            while (this->running) {
                 auto edge = gpio::blockUntilEdge(ButtonDriver::BUTTON_PINS[i], gpiod::line::edge::BOTH);
-                bool val = edge == gpiod::edge_event::event_type::RISING_EDGE;
-                this->buttonStatuses[i] = val;
                 
+                if (!edge.has_value()) { continue; }
+                
+                bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
                 
                 if (!val) { continue; }
-                if (!this->singleButtonCallback.has_value()) { continue; }
+                if (!this->buttonCallback.has_value()) { continue; }
                     
-                this->singleButtonCallback.value()(i); 
-               
-                if (!this->allButtonsCallback.has_value()) { continue; }
-                bool allPressed = false;
-                for (auto status : buttonStatuses) {
-                    if (!status) { allPressed = false; break; }
-                    allPressed = true;
-                }
-                
-                if (allPressed) { this->allButtonsCallback.value()(); }
+                this->buttonCallback.value()(i); 
             }
         });  
     }
 }
 
-void ButtonDriver::registerAllButtonsCallback(std::function<void(void)> callback) {
-    this->allButtonsCallback = callback;
+ButtonDriver::~ButtonDriver() {
+    this->running = false;
+    gpio::cancelLineRequests();
+    for (std::thread &t: this->workers) {
+        if (t.joinable()) { t.join(); }
+    }
 }
 
-void ButtonDriver::deregisterSingleButtonCallback() {
-    this->singleButtonCallback = {};
+void ButtonDriver::registerButtonCallback(ButtonCallback callback) {
+    this->buttonCallback = callback;
 }
 
-
-void ButtonDriver::registerSingleButtonCallback(ButtonCallback callback) {
-    this->singleButtonCallback = callback;
-}
-
-void ButtonDriver::deregisterAllButtonsCallback() {
-    this->allButtonsCallback = {};
+void ButtonDriver::deregisterButtonCallback() {
+    this->buttonCallback = {};
 }

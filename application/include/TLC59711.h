@@ -1,21 +1,17 @@
 #pragma once
 #include <cstdint>
-#include <array>
 #include <vector>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
 #include <gpiod.hpp>
-#include "types.h"
 
-class TLC59711 {
+#include "ITLC59711.hpp"
+
+class TLC59711 : public ITLC59711 {
     friend class TLC59711Test;
 public:
-    static constexpr int NUM_LEDS = 10;
-
-    using Channels = std::array<Brightness, NUM_LEDS>;
-
     TLC59711(int data_pin, int clk_pin, int num_drivers = 1);
     ~TLC59711();
 
@@ -39,8 +35,7 @@ private:
     static constexpr int FRAME_TO_GS[NUM_LEDS] = {
         0, 1, 2,
         3, 4, 5,
-        6, 7, 8,
-        9
+        6, 7
     };
 
     static constexpr int  CHANNELS_PER_DRIVER = 12;

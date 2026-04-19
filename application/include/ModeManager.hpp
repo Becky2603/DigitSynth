@@ -1,17 +1,14 @@
 #ifndef ModeManager_hpp
 #define ModeManager_hpp
 
-#include <stdio.h>
 #include "MidiTypes.hpp"
 
 class ModeManager {
 public:
     ControlMode getCurrentMode();
-    ControlMode getPreviousMode();
-    void updateMode(int index);
+    void updateMode();
 private:
-    ControlMode current_controlMode = EQ;
-    ControlMode previous_controlMode = EQ;
+    ControlMode current_controlMode = NORMAL;
 };
 
 #endif /* ModeManager_hpp */

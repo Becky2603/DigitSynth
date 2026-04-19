@@ -3,7 +3,7 @@
 #include <cassert>
 
 int main(){
-    TLC59711 tlc(27, 17);
+    TLC59711 tlc(17, 27);
     SynthController controller(tlc);
     assert(controller.getCurrentMode() == EQ);
     

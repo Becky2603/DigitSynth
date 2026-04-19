@@ -6,16 +6,27 @@
 #include <unordered_map>
 
 #include "adc-driver.h"
-#include "types.h"
 
+namespace flex_sensor {
+using ExtensionData = float;      
+using ExtensionCallback = std::function<void(std::array<ExtensionData, 4>)>;
+
+class IFlexSensor {
+public: 
+    virtual ~IFlexSensor() = default;
+    
+    virtual void registerCallback(ExtensionCallback) = 0;
+    virtual void begin() = 0;
+};
+    
 /**
  * When `begin()` is called, this class will sample each channel of the 
  * ADC in turn and call the registered callback once every channel has been
  * sampled. 
  */
-class FlexSensor {
+class FlexSensor : public IFlexSensor {
 public:
-    
+        
     FlexSensor();
 
     /**
@@ -29,15 +40,30 @@ public:
      */
     void registerCallback(ExtensionCallback callback);
     
+    uint64_t getNSamples();
+    
 private: 
     /**
      * Will call the callback if all ADC channels have been sampled.
      */
     void updateIfNeeded();
+    
+    float mapVoltage(float f, ADS1115settings::Input channel);
 
-    const float V_MAX = 5.0;
     ADS1115rpi::ADSCallbackInterface adsCallback;
     std::unordered_map<ADS1115settings::Input, ExtensionData> values = {
+        { ADS1115settings::AIN0, 0.0 },
+        { ADS1115settings::AIN1, 0.0 },
+        { ADS1115settings::AIN2, 0.0 },
+        { ADS1115settings::AIN3, 0.0 },
+    };
+    std::unordered_map<ADS1115settings::Input, ExtensionData> mins = {
+        { ADS1115settings::AIN0, 5.0 },
+        { ADS1115settings::AIN1, 5.0 },
+        { ADS1115settings::AIN2, 5.0 },
+        { ADS1115settings::AIN3, 5.0 },
+    };
+    std::unordered_map<ADS1115settings::Input, ExtensionData> maxes = {
         { ADS1115settings::AIN0, 0.0 },
         { ADS1115settings::AIN1, 0.0 },
         { ADS1115settings::AIN2, 0.0 },
@@ -47,6 +73,8 @@ private:
     AdcDriver adc; 
     ADS1115settings::Input currentChannel = ADS1115settings::AIN0;
     
+    uint64_t n_samples;
 };
 
+}
 #endif

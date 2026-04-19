@@ -2,34 +2,33 @@
 #include "types.h"
 
 #include <rtmidi/RtMidi.h>
+#include <string>
 #include <stdexcept>
 
 MidiDriver::MidiDriver()
-    : midiOut_(new RtMidiOut()), portOpen_(false) {}
+    : midiOut_(rt::midi::RtMidi::Api::LINUX_ALSA), portOpen_(false) { 
 
-MidiDriver::~MidiDriver() {
-    delete midiOut_;
-}
+    }
 
-std::vector<std::string> MidiDriver::listOutputPorts() const {
+std::vector<std::string> MidiDriver::listOutputPorts() {
     std::vector<std::string> ports;
-    const unsigned int count = midiOut_->getPortCount();
+    const unsigned int count = midiOut_.getPortCount();
 
     ports.reserve(count);
     for (unsigned int i = 0; i < count; i++) {
-        ports.push_back(midiOut_->getPortName(i));
+        ports.push_back(midiOut_.getPortName(i));
     }
 
     return ports;
 }
 
 void MidiDriver::openPort(unsigned int portIndex) {
-    const unsigned int count = midiOut_->getPortCount();
+    const unsigned int count = midiOut_.getPortCount();
     if (portIndex >= count) {
         throw std::out_of_range("Requested MIDI port index does not exist");
     }
 
-    midiOut_->openPort(portIndex);
+    midiOut_.openPort(portIndex);
     portOpen_ = true;
 }
 
@@ -44,11 +43,5 @@ void MidiDriver::sendMessage(const midi_message& msg) {
         msg.data_2
     };
 
-    midiOut_->sendMessage(&bytes);
-}
-
-MidiCallback MidiDriver::makeCallback() {
-    return [this](midi_message msg) {  
-        sendMessage(msg);
-    };
+    midiOut_.sendMessage(&bytes);
 }
