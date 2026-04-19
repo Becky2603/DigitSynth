@@ -12,7 +12,7 @@ class MockButtonDriver : public IButtonDriver {
 public:
     void registerSingleButtonCallback(SingleButtonCallback cb) override { singleCallback = cb; }
     void deregisterSingleButtonCallback() override {}
-    void registerAllButtonsCallback(AllButtonsCallback cb) override {}
+    void registerAllButtonsCallback(AllButtonsCallback cb) override {(void)cb; }
     void deregisterAllButtonsCallback() override {}
     void simulatePress(size_t index) { if (singleCallback) singleCallback(index); }
     SingleButtonCallback singleCallback;

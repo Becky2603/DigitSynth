@@ -1,7 +1,0 @@
-Package: digitsynth
-Version: VERSION
-Section: embedded
-Priority: optional
-Architecture: arm64
-Maintainer: DigitSynth
-Description: Release binary for DigitSynth. 
