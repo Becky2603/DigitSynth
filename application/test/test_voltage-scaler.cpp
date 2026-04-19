@@ -4,6 +4,18 @@
 bool testChannelSegregation() {
     bool success = true;
     
+    auto vs = voltage_scaler::VoltageScaler();
+    
+    for (int i = 0; i < 4; i++) {
+        float offset = i * 10.0;
+        vs.scale(offset, (ADS1115settings::Input) i);
+        vs.scale(offset + 10.0, (ADS1115settings::Input) i);
+    }
+    
+    for (int i = 0; i < 4; i++) {
+        success &= vs.scale(i * 10.0 + 5.0, (ADS1115settings::Input) i) == 0.5;
+    }
+    
     return success;
 }
 
