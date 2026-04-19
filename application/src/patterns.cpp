@@ -44,19 +44,6 @@ static bool waitTick(int fd, const std::atomic<bool>& running) {
     return running.load();
 }
 
-/**
- * Re-arm an existing timerfd with a new period.
- * Used to switch between the step rate and the hold duration mid-run.
- */
-static void rearmTimerFd(int fd, long period_ms, bool repeat) {
-    struct itimerspec its{};
-    its.it_value.tv_sec     = period_ms / 1000;
-    its.it_value.tv_nsec    = (period_ms % 1000) * 1000000L;
-    if (repeat) {
-        its.it_interval = its.it_value;
-    }
-    timerfd_settime(fd, 0, &its, nullptr);
-}
 
 // ---------------------------------------------------------------------------
 // Pattern base

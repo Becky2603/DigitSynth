@@ -12,7 +12,7 @@ SynthController::SynthController(
     button_driver::IButtonDriver *buttonDriver,
     flex_sensor::IFlexSensor *flexSensor, 
     midi_driver::IMidiDriver *midiDriver
-): midiDriver(midiDriver), _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
+): midiDriver(midiDriver), _ripple(*tlc), ledController(*tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     
     auto ports = this->midiDriver->listOutputPorts();
