@@ -14,11 +14,22 @@ ButtonDriver::ButtonDriver() {
                 if (!edge.has_value()) { continue; }
                 
                 bool val = edge.value() == gpiod::edge_event::event_type::RISING_EDGE;
+                this->buttonStatuses[i] = val;
+                
                 
                 if (!val) { continue; }
-                if (!this->buttonCallback.has_value()) { continue; }
+                if (!this->singleButtonCallback.has_value()) { continue; }
                     
-                this->buttonCallback.value()(i); 
+                this->singleButtonCallback.value()(i); 
+               
+                if (!this->allButtonsCallback.has_value()) { continue; }
+                bool allPressed = false;
+                for (auto status : buttonStatuses) {
+                    if (!status) { allPressed = false; break; }
+                    allPressed = true;
+                }
+                
+                if (allPressed) { this->allButtonsCallback.value()(); }
             }
         });  
     }
@@ -32,10 +43,19 @@ ButtonDriver::~ButtonDriver() {
     }
 }
 
-void ButtonDriver::registerButtonCallback(ButtonCallback callback) {
-    this->buttonCallback = callback;
+void ButtonDriver::registerAllButtonsCallback(AllButtonsCallback callback) {
+    this->allButtonsCallback = callback;
 }
 
-void ButtonDriver::deregisterButtonCallback() {
-    this->buttonCallback = {};
+void ButtonDriver::deregisterSingleButtonCallback() {
+    this->singleButtonCallback = {};
+}
+
+
+void ButtonDriver::registerSingleButtonCallback(SingleButtonCallback callback) {
+    this->singleButtonCallback = callback;
+}
+
+void ButtonDriver::deregisterAllButtonsCallback() {
+    this->allButtonsCallback = {};
 }
