@@ -9,6 +9,11 @@ enum ControlMode {
     CHORD
 };
 
+enum LedPattern {
+    STATUS,
+    RIPPLE
+};
+
 enum LfoShape {
     SIN,
     SQR,
