@@ -1,12 +1,13 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
 #include "TLC59711.h"
+#include "button-driver.h"
 #include "flex-sensor.h"
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(TLC59711& tlc)
-: _ripple(tlc), ledController(tlc, _ripple)
+SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver)
+: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver)
 {
     
     auto ports = this->midiDriver.listOutputPorts();

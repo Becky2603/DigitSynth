@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <array>
 #include <vector>
 #include <thread>
 #include <mutex>

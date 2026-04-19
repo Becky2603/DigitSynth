@@ -7,8 +7,6 @@
 #include "MidiScaler.hpp"
 #include "ChordManager.hpp"
 #include "LedController.hpp"
-#include <cstdint>
-#include <optional>
 #include "midi-driver.hpp"
 #include "types.h"
 #include "ITLC59711.hpp"
@@ -19,7 +17,7 @@
 class SynthController {
 public:
     //TLC59711 passed in by reference — SynthController uses it but doesn't own it
-    explicit SynthController(TLC59711& tlc);
+    explicit SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver);
     ~SynthController();
 
 private:
@@ -34,7 +32,7 @@ private:
     
     LedController ledController;
     
-    ButtonDriver buttonDriver;
+    std::unique_ptr<button_driver::IButtonDriver> buttonDriver;
     FlexDSP flexDSP;
 };
 
