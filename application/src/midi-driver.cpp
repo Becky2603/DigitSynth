@@ -1,14 +1,13 @@
 #include "midi-driver.hpp"
-#include "types.h"
 
 #include <rtmidi/RtMidi.h>
 #include <string>
 #include <stdexcept>
 
-MidiDriver::MidiDriver()
-    : midiOut_(rt::midi::RtMidi::Api::LINUX_ALSA), portOpen_(false) { 
+using namespace midi_driver;
 
-    }
+MidiDriver::MidiDriver()
+    : midiOut_(rt::midi::RtMidi::Api::LINUX_ALSA), portOpen_(false) {}
 
 std::vector<std::string> MidiDriver::listOutputPorts() {
     std::vector<std::string> ports;

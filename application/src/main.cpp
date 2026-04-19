@@ -4,6 +4,7 @@
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "gpio.h"
+#include "midi-driver.hpp"
 #include <iostream>
 
 int main() {
@@ -11,6 +12,7 @@ int main() {
     
     auto bd = new button_driver::ButtonDriver(); 
     auto fs = new flex_sensor::FlexSensor();
+    auto md = new midi_driver::MidiDriver();
     TLC59711 tlc(17, 27);
     tlc.start();
     
@@ -31,9 +33,15 @@ int main() {
     // }
     
     tlc.start();
-    SynthController synth(tlc, static_cast<button_driver::IButtonDriver *>(bd), static_cast<flex_sensor::IFlexSensor *>(fs));
+    SynthController synth(
+        tlc, 
+        static_cast<button_driver::IButtonDriver *>(bd), 
+        static_cast<flex_sensor::IFlexSensor *>(fs),
+        static_cast<midi_driver::IMidiDriver *>(md)
+    );
     bd = nullptr; 
     fs = nullptr; 
+    md = nullptr;
     getchar();
     std::cout <<"stop\n";
     
