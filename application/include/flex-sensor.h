@@ -24,7 +24,7 @@ public:
  * ADC in turn and call the registered callback once every channel has been
  * sampled. 
  */
-class FlexSensor : IFlexSensor {
+class FlexSensor : public IFlexSensor {
 public:
         
     FlexSensor();
