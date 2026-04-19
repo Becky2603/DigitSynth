@@ -50,32 +50,15 @@ private:
     std::thread _thread;
 };
 
-// ---------------------------------------------------------------------------
-
-/**
- * Fades all LEDs in, holds, then fades out — then calls onDone.
- */
-class PatternFade : public Pattern {
-public:
-    explicit PatternFade(TLC59711& tlc) : _tlc(tlc) {}
-
-protected:
-    void run() override;
-private:
-    TLC59711& _tlc;
-};
-
-// ---------------------------------------------------------------------------
-
 /**
  * Ripples a sine wave across all fingers — runs until stop() is called.
  */
 class PatternRipple : public Pattern {
 public:
-    explicit PatternRipple(TLC59711& tlc) : _tlc(tlc) {}
+    explicit PatternRipple(led_driver::ILedDriver& tlc) : _tlc(tlc) {}
 
 protected:
     void run() override;
 private:
-    TLC59711& _tlc;
+    ILedDriver& _tlc;
 };
