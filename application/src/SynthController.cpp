@@ -6,8 +6,8 @@
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver)
-: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver)
+SynthController::SynthController(ILedDriver *tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor)
+: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver), flexDSP(flexSensor)
 {
     
     auto ports = this->midiDriver.listOutputPorts();

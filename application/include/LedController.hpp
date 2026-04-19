@@ -2,7 +2,7 @@
 #define LedController_hpp
 
 #include "MidiTypes.hpp"
-#include "ITLC59711.hpp"
+#include "ILedDriver.hpp"
 #include "patterns.h"
 #include <array>
 

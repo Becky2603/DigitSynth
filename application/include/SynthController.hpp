@@ -9,7 +9,7 @@
 #include "LedController.hpp"
 #include "midi-driver.hpp"
 #include "types.h"
-#include "ITLC59711.hpp"
+#include "ILedDriver.hpp"
 #include "patterns.h"
 #include "LfoManager.hpp"
 #include "FlexDSP.hpp"
@@ -27,10 +27,10 @@ private:
     MidiScaler   midiScaler;
     LfoManager lfoManager;
     MidiDriver midiDriver; 
+    LedController ledController;
     
     PatternRipple _ripple;
     
-    LedController ledController;
     
     std::unique_ptr<button_driver::IButtonDriver> buttonDriver;
     FlexDSP flexDSP;
