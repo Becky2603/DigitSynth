@@ -7,12 +7,24 @@
 #include "gpio.h"
 #include "midi-driver.hpp"
 #include "voltage-scaler.h"
+#include <condition_variable>
 #include <iostream>
+#include <mutex>
 
 int main() {
     gpio::setupGpio();
+    std::condition_variable c;
+    std::mutex m;
+    bool done = false;
     
     auto bd = new button_driver::ButtonDriver();
+    bd->registerAllButtonsCallback([&c, &m, &done] () {
+        std::unique_lock lock(m);
+        done = true;
+        lock.unlock();
+        c.notify_all();
+    });
+    
     auto adc = new adc_driver::Ads1115Driver();
     auto vs = new voltage_scaler::VoltageScaler();
     auto fs = new flex_sensor::FlexSensor(static_cast<adc_driver::IAdcDriver *>(adc), static_cast<voltage_scaler::IVoltageScaler *>(vs));
@@ -31,7 +43,11 @@ int main() {
     fs = nullptr; 
     md = nullptr;
     tlc = nullptr;
-    getchar();
+   
+    {
+        std::unique_lock lock(m);
+        c.wait(lock, [&done] { return done; }); 
+    }
     std::cout <<"stop\n";
     
     
