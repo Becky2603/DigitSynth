@@ -38,7 +38,7 @@ class MockVoltageScaler : public voltage_scaler::IVoltageScaler {
     }
 };
 
-bool testReceiveData() {
+void testReceiveData() {
     auto fs = new flex_sensor::FlexSensor(
         static_cast<adc_driver::IAdcDriver *>(new MockAdcDriver), 
         static_cast<voltage_scaler::IVoltageScaler *>(new MockVoltageScaler)
@@ -61,19 +61,14 @@ bool testReceiveData() {
         for (size_t i = 0; i < f.size(); i++) {
             for (size_t j = 0; j < f.size(); j++) {
                 if (i == j) { continue; }
-                if (f[i] == f[j]) { std::cout << f[i] << f[j] << "\n"; return false; }
+                if (f[i] == f[j]) { std::cout << f[i] << f[j] << "\n"; assert(false); }
             }
         }
     }
-    
-    return true;
 }
 
 int main() {
-    bool success = true; 
+    testReceiveData();
     
-    
-    success &= testReceiveData();
-    
-    return success ? 0 : -1; 
+    return 0; 
 }
