@@ -1,6 +1,6 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
-#include "ILedDriver.h"
+#include "ILedDriver.hpp"
 #include "button-driver.h"
 #include "flex-sensor.h"
 #include "types.h"

@@ -20,7 +20,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
         }
         // Status pattern independent of chord/normal mode
         // handle normal LED stuff
-        ILedDriver::Channels c{};
+        led_driver::ILedDriver::Channels c{};
 
         // Left hand
         c[Led::L_pinky]  = 1; // not needed here

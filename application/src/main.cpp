@@ -12,7 +12,6 @@ int main() {
     auto bd = new button_driver::ButtonDriver(); 
     auto fs = new flex_sensor::FlexSensor();
     auto tlc = new led_driver::TLC59711(17, 27);
-    tlc.start();
     
     // 
     // std::array<Brightness, 8> leds = {1, 1, 1, 1, 1, 1, 1, 1,};
@@ -30,7 +29,7 @@ int main() {
         // getchar();
     // }
     
-    tlc.start();
+    tlc->start();
     SynthController synth(static_cast<led_driver::ILedDriver *>(tlc), static_cast<button_driver::IButtonDriver *>(bd), static_cast<flex_sensor::IFlexSensor *>(fs));
     bd = nullptr;
     fs = nullptr; 

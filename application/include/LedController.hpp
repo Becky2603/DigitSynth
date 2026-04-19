@@ -32,7 +32,7 @@ namespace Led {
 
 class LedController {
 public:
-    explicit LedController(led_driver::ILedDriver *tlc, Pattern& ripple);
+    explicit LedController(led_driver::ILedDriver& tlc, Pattern& ripple);
     void update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues);
     void togglePattern();
 private:
@@ -40,6 +40,7 @@ private:
     void stopRipple();
     
     Pattern& _ripple; //in tests we pass a MockPattern, in practice we pass a PatternRipple
+    led_driver::ILedDriver& _tlc;
     bool rippleRunning = false;
     
     LedPattern pattern = STATUS;
