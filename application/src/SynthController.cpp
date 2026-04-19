@@ -1,12 +1,13 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
 #include "TLC59711.h"
+#include "button-driver.h"
 #include "flex-sensor.h"
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(ITLC59711& tlc)
-: _ripple(tlc), ledController(tlc, _ripple)
+SynthController::SynthController(TLC59711& tlc, button_driver::IButtonDriver *buttonDriver)
+: _ripple(tlc), ledController(tlc, _ripple), buttonDriver(buttonDriver)
 {
     
     auto ports = this->midiDriver.listOutputPorts();
@@ -68,6 +69,7 @@ SynthController::SynthController(ITLC59711& tlc)
                 chordManager.updateChord(index);
                 for (int i = 0; i < 6; i++){
                     uint8_t note = chordManager.getNote(i);
+                    std::cout << "sending note-on\n";
                     midi_message msg = {0x90, note, 120};
                     midiDriver.sendMessage(msg);
                 }
@@ -95,4 +97,8 @@ SynthController::SynthController(ITLC59711& tlc)
 }
 
 SynthController::~SynthController() {
+    for (int i = 0; i < 6; i++){
+        midi_message noteOff = {0x80, chordManager.getNote(i), 0};
+        midiDriver.sendMessage(noteOff);
+    }   
 }

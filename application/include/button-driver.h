@@ -6,12 +6,26 @@
 #include <functional>
 #include <optional>
 
-class ButtonDriver {
-public:
+namespace button_driver {
     using ButtonIndex = int;                   
-    using SingleButtonCallback = std::function<void(ButtonIndex)>;   
-    using AllButtonsCallback = std::function<void(void)>;
-    
+    using ButtonCallback = std::function<void(ButtonIndex)>;   
+       
+
+class IButtonDriver {
+public:
+    virtual ~IButtonDriver() = default;
+
+    virtual void registerButtonCallback(ButtonCallback callback) = 0;  
+    virtual void deregisterButtonCallback() = 0;  
+};
+
+/**
+ * Callback-based interface with physical buttons. Calls a given callback when 
+ * buttons are pressed, passing the index of the pressed button. 
+ */
+class ButtonDriver : public IButtonDriver {
+public:
+   
     ButtonDriver();
     ~ButtonDriver();
     
@@ -21,36 +35,23 @@ public:
      * @param callback --- the callback to be registered. If a callback is currently
      * registered, this will replace it. 
      */
-    void registerSingleButtonCallback(SingleButtonCallback callback);
+    void registerButtonCallback(ButtonCallback callback);
     
     /**
-     * Clear the current single-button callback. 
+     * Clear the current button callback. 
      */
-    void deregisterSingleButtonCallback();
-    
-    /**
-     * Register a callback to be called when all buttons are pressed simultaneously.
-     * @param callback --- the callback to be registered. If a callback is currently registered,
-     * this will replace it. 
-     */
-    void registerAllButtonsCallback(AllButtonsCallback callback);
-    
-    /**
-     * Clear the current all-button callback. 
-     */
-    void deregisterAllButtonsCallback();
-
+    void deregisterButtonCallback();
+   
 private: 
     static constexpr int N_BUTTONS = 4;
     static constexpr int BUTTON_PINS[N_BUTTONS] = { 14, 15, 18, 23 };
 
     std::array<std::thread, N_BUTTONS> workers; 
-    std::array<bool, N_BUTTONS> buttonStatuses; 
     
-    std::optional<SingleButtonCallback> singleButtonCallback;  
-    std::optional<AllButtonsCallback> allButtonsCallback;  
+    std::optional<ButtonCallback> buttonCallback;  
     
     bool running = true; 
 };
 
+}
 #endif
