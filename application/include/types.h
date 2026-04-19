@@ -3,14 +3,11 @@
 
 
 #include <array>
-#include <cstdint>
 #include <functional>
-#include <optional>
 #include "MidiTypes.hpp"
 
 #include <sys/types.h>
 
-typedef std::optional<uint32_t> AdcData;
 typedef float                   ExtensionData;
 typedef float                   Brightness;
 

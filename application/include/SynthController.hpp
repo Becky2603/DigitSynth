@@ -14,10 +14,16 @@
 #include "patterns.h"
 #include "LfoManager.hpp"
 #include "FlexDSP.hpp"
+#include <memory>
 
 class SynthController {
 public:
-    explicit SynthController(led_driver::ILedDriver *tlc, button_driver::IButtonDriver *buttonDriver, flex_sensor::IFlexSensor *flexSensor);
+    explicit SynthController(
+        led_driver::ILedDriver *tlc,
+        button_driver::IButtonDriver *buttonDriver,
+        flex_sensor::IFlexSensor     *flexSensor, 
+        midi_driver::IMidiDriver     *midiDriver
+    );
     ~SynthController();
 
 private:
@@ -26,7 +32,7 @@ private:
     MessageBuilder messageBuilder;
     MidiScaler   midiScaler;
     LfoManager lfoManager;
-    MidiDriver midiDriver; 
+    std::unique_ptr<midi_driver::IMidiDriver> midiDriver; 
     
     PatternRipple _ripple;
     LedController ledController;

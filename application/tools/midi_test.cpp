@@ -22,8 +22,8 @@ int main() {
             return 1;
         }
 
-        std::cout << "Opening port 0...\n";
-        midi.openPort(0);
+        std::cout << "Opening port 1...\n";
+        midi.openPort(1);
 
         midi_message note_on  {0x90, 60, 100}; // Note on, channel 1, middle C
         midi_message note_off {0x80, 60, 0};   // Note off, channel 1, middle C
