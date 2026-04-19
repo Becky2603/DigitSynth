@@ -9,11 +9,11 @@
 #include <chrono>
 
 SynthController::SynthController(
-    led_driver::ILedDriver *tlc,
+    led_driver::ILedDriver &tlc,
     std::unique_ptr<button_driver::IButtonDriver> buttonDriver,
     std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, 
     std::unique_ptr<midi_driver::IMidiDriver> midiDriver
-): midiDriver(std::move(midiDriver)), _ripple(*tlc), ledController(*tlc, _ripple), buttonDriver(std::move(buttonDriver)), flexDSP(std::move(flexSensor))
+): midiDriver(std::move(midiDriver)), _ripple(tlc), ledController(tlc, _ripple), buttonDriver(std::move(buttonDriver)), flexDSP(std::move(flexSensor))
 {
     
     auto ports = this->midiDriver->listOutputPorts();
@@ -99,7 +99,6 @@ SynthController::SynthController(
         }
         ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
     });
-    
 }
 
 SynthController::~SynthController() {

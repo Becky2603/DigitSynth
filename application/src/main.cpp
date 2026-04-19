@@ -18,7 +18,7 @@ int main() {
     std::mutex m;
     bool done = false;
     
-    auto bd = new button_driver::ButtonDriver();
+    auto bd = std::make_unique<button_driver::ButtonDriver>();
     bd->registerAllButtonsCallback([&c, &m, &done] () {
         std::unique_lock lock(m);
         done = true;
@@ -28,10 +28,10 @@ int main() {
     
     auto adc = new adc_driver::Ads1115Driver();
     auto vs = new voltage_scaler::VoltageScaler();
-    auto tlc = new led_driver::TLC59711(17, 27);
-    tlc->start();
+    auto tlc = led_driver::TLC59711(17, 27);
+    tlc.start();
     SynthController synth(
-        static_cast<led_driver::ILedDriver *>(tlc),
+        tlc,
         std::make_unique<button_driver::ButtonDriver>(),
         std::make_unique<flex_sensor::FlexSensor>(static_cast<adc_driver::IAdcDriver *>(adc), static_cast<voltage_scaler::IVoltageScaler *>(vs)),
         std::make_unique<midi_driver::MidiDriver>()
@@ -42,8 +42,6 @@ int main() {
         c.wait(lock, [&done] { return done; }); 
     }
     std::cout <<"stop\n";
-    
-    
     
     return 0;
 }
