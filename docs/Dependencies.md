@@ -2,7 +2,7 @@
 
 This document describes all dependencies required to build and run DigitSynth on Raspberry Pi.
 
-A full installation script is available at `application/install-deps.sh`.
+A full installation script is available at `DigitSynth/install-deps.sh`.
 
 ---
 
