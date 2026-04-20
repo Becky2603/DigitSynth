@@ -116,5 +116,7 @@ SynthController::~SynthController() {
     for (int i = 0; i < 6; i++){
         midi_message noteOff = {0x80, this->chordManager.getNote(i), 0};
         this->midiDriver->sendMessage(noteOff);
-    }   
+        this->buttonDriver->deregisterSingleButtonCallback();
+        this->buttonDriver->deregisterAllButtonsCallback();
+    }
 }
