@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "release" ]
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
       run: |
         cd application/
         make
-   
+        
     - name: package
       run: | 
         cd application/

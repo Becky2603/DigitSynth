@@ -1,9 +1,11 @@
 #include "TLC59711.h"
+#include "gpio.h"
 #include <gpiod.hpp>
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
 
+using namespace led_driver;
 constexpr int TLC59711::FRAME_TO_GS[TLC59711::NUM_LEDS];
 
 TLC59711::TLC59711(int data_pin, int clk_pin, int num_drivers)
@@ -55,23 +57,6 @@ void TLC59711::setBrightness(uint8_t brightness) {
 }
 
 void TLC59711::worker() {
-    // Open chip and claim both output lines — held for the worker's lifetime.
-    gpiod::chip chip("/dev/gpiochip0");
-
-    gpiod::line_config line_config;
-    line_config.add_line_settings(
-        { static_cast<unsigned int>(_data_pin), static_cast<unsigned int>(_clk_pin) },
-        gpiod::line_settings()
-            .set_direction(gpiod::line::direction::OUTPUT)
-            .set_output_value(gpiod::line::value::INACTIVE)
-    );
-
-    gpiod::line_request request = chip
-        .prepare_request()
-        .set_consumer("tlc59711")
-        .set_line_config(line_config)
-        .do_request();
-
     Channels channels{};
 
     while (true) {
@@ -92,13 +77,13 @@ void TLC59711::worker() {
         std::vector<uint8_t> buf;
         buf.reserve(static_cast<size_t>(_num_drivers) * 28);
         buildPacket(buf);
-        shiftOut(buf, request);
+        shiftOut(buf);
         _dirty   = false;
     }
 
     // Drive both pins low before releasing.
-    request.set_value(_data_pin, gpiod::line::value::INACTIVE);
-    request.set_value(_clk_pin,  gpiod::line::value::INACTIVE);
+    gpio::setPin(_data_pin, false);
+    gpio::setPin(_clk_pin,  false);
 }
 
 void TLC59711::buildPacket(std::vector<uint8_t>& buf) const {
@@ -132,25 +117,24 @@ void TLC59711::buildPacket(std::vector<uint8_t>& buf) const {
     }
 }
 
-void TLC59711::shiftOut(const std::vector<uint8_t>& buf,
-                        gpiod::line_request& request) const {
+void TLC59711::shiftOut(const std::vector<uint8_t>& buf) const {
     struct timespec ts{ 0, HALF_PERIOD_NS };
 
     for (uint8_t byte : buf) {
         for (int bit = 7; bit >= 0; --bit) {
             const auto data_val = ((byte >> bit) & 1)
-                ? gpiod::line::value::ACTIVE
-                : gpiod::line::value::INACTIVE;
+                ? true
+                : false;
 
-            request.set_value(_data_pin, data_val);
+            gpio::setPin(_data_pin, data_val);
             nanosleep(&ts, nullptr);
-            request.set_value(_clk_pin, gpiod::line::value::ACTIVE);
+            gpio::setPin(_clk_pin, true);
             nanosleep(&ts, nullptr);
-            request.set_value(_clk_pin, gpiod::line::value::INACTIVE);
+            gpio::setPin(_clk_pin, false);
         }
     }
 
-    request.set_value(_data_pin, gpiod::line::value::INACTIVE);
+    gpio::setPin(_data_pin, false);
     ts.tv_nsec = HALF_PERIOD_NS * 20;
     nanosleep(&ts, nullptr);
 }

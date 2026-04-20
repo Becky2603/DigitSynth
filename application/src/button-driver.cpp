@@ -3,6 +3,8 @@
 #include <gpiod.hpp>
 #include <thread>
 
+using namespace button_driver;
+
 ButtonDriver::ButtonDriver() {
     for (ButtonIndex i = 0; i < (ButtonIndex) workers.size(); i++) {
         workers[i] = std::thread([&, i] () {

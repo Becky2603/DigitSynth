@@ -1,20 +1,23 @@
 #include "FlexDSP.hpp"
 #include "flex-sensor.h"
+#include <memory>
 
-FlexDSP::FlexDSP(float sampleRate, float cutoffHz) {
+FlexDSP::FlexDSP(std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, float sampleRate, float cutoffHz) :
+    flexSensor(std::move(flexSensor)) 
+{
     double normalisedCutoff = cutoffHz / sampleRate;
     for (auto& f : filters) {
         f.setup(4, normalisedCutoff);
     }
-    this->fs.registerCallback([this](std::array<FlexSensor::ExtensionData, 4> raw) {
+    this->flexSensor->registerCallback([this](std::array<flex_sensor::ExtensionData, 4> raw) {
         if (!this->callback.has_value()) { return; }
-        std::array<FlexSensor::ExtensionData, 4> filtered;
+        std::array<flex_sensor::ExtensionData, 4> filtered;
         for (int i = 0; i < 4; i++) {
             filtered[i] = static_cast<float>(this->filters[i].filter(raw[i]));
         }
-        this->callback.value()(raw);
+        this->callback.value()(filtered);
     });
-    this->fs.begin();
+    this->flexSensor->begin();
 }
 
 // config

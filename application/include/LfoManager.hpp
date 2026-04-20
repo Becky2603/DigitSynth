@@ -1,8 +1,8 @@
-
 #ifndef LfoManager_hpp
 #define LfoManager_hpp
 
 #include "MidiTypes.hpp"
+#include <vector>
 
 class LfoManager {
 public:
@@ -12,7 +12,8 @@ public:
     LfoShape getShape() const;
 private:
     bool enabled = true;
-    LfoShape shape = SIN;
+    const std::vector<LfoShape> shapes = {SIN, SQR, SH};
+    int shapeIndex = 0;
 };
 
-#endif /* LfoManager_hpp */
+#endif

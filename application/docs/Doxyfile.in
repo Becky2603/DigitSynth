@@ -4,8 +4,4 @@ PROJECT_NAME = "DigitSynth"
 
 EXTRACT_ALL = YES
 
-<<<<<<< HEAD
 HAVE_DOT = NO
-=======
-HAVE_DOT = NO
->>>>>>> 6e158ed5dc0bb169361d4992cf4e9bc5badc0d83

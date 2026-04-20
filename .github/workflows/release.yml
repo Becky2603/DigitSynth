@@ -1,51 +1,32 @@
-name: C/C++ CI - RELEASE
+name: C/C++ - Release 
 
 on:
   push:
-    branches: [ "release" ]
-  pull_request:
     branches: [ "release" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-24.04-arm
+    outputs:
+      tag: ${{ steps.generate-tag.outputs.tag }}
 
     steps:
     - uses: actions/checkout@v6
 
-    - name: libgpiod
-      run: |
-        curl -S https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-2.2.tar.gz -o libgpiod.tar.gz
-        tar -xf libgpiod.tar.gz
-        cd libgpiod-2.2/
-        ./configure --enable-bindings-cxx
-        make
-        sudo make install
-    
-    - name: ads-1115-driver
-      run: |
-        git clone https://github.com/berndporr/rpi_ads1115.git
-        cd rpi_ads1115/
-        cmake .
-        make
-        sudo make install
-    
+    - name: install-deps
+      run: | 
+        sudo ./install-deps.sh
+   
     - name: make
       run: |
         cd application/
         make
-
-    - name: test
-      run: | 
-        cd application/ 
-        make test 
-
+   
     - name: package
       run: | 
         cd application/
         make deb
-
 
     - name: archive-binary
       uses: actions/upload-artifact@v6
@@ -58,6 +39,18 @@ jobs:
       with:
         name: digitsynth-package
         path: ./application/build/digitsynth-aarch64.deb
-
- 
-   
+    
+    - name: generate-tag
+      id: generate-tag
+      run: |
+        echo "tag=$(cat ./VERSION)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      shell: bash
+    
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "${{ steps.generate-tag.outputs.tag }}"
+        prerelease: false
+        title: "DigitSynth Release"
+        files: |            
+          main

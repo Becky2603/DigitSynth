@@ -1,15 +1,32 @@
 #include "SynthController.hpp"
 #include "FlexDSP.hpp"
-#include "TLC59711.h"
+#include "ILedDriver.hpp"
+#include "button-driver.h"
 #include "flex-sensor.h"
+#include "midi-driver.hpp"
+#include "patterns.h"
+#include <memory>
 #include <thread>
 #include <chrono>
 
-SynthController::SynthController(TLC59711& tlc)
-: _ripple(tlc), ledController(tlc, _ripple)
+SynthController::SynthController(
+    led_driver::ILedDriver &tlc,
+    led_pattern::IPattern &pattern,
+    std::unique_ptr<button_driver::IButtonDriver> buttonDriver,
+    std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, 
+    std::unique_ptr<midi_driver::IMidiDriver> midiDriver
+): 
+    midiDriver(std::move(midiDriver)), 
+    ledController(tlc, pattern, {
+        {SIN, 0.0f},
+        {SQR, 0.5f},
+        {SH,  1.0f}       
+    }), 
+    buttonDriver(std::move(buttonDriver)), 
+    flexDSP(std::move(flexSensor))
 {
     
-    auto ports = this->midiDriver.listOutputPorts();
+    auto ports = this->midiDriver->listOutputPorts();
 
     std::cout << "Available MIDI output ports:\n";
     for (size_t i = 0; i < ports.size(); ++i) {
@@ -21,56 +38,56 @@ SynthController::SynthController(TLC59711& tlc)
         exit(-1);
     }
 
-    this->midiDriver.openPort(2);
+    this->midiDriver->openPort(2);
     
     //give the synth a moment to initialise
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
     //play Am11 on boot
     for (int i = 0; i < 6; i++){
-        midi_message msg = {0x90, chordManager.getNote(i), 120};
-        midiDriver.sendMessage(msg);
+        midi_message msg = {0x90, this->chordManager.getNote(i), 120};
+        this->midiDriver->sendMessage(msg);
     }
     
-    this->buttonDriver.registerSingleButtonCallback([this] (int index) {
+    this->buttonDriver->registerSingleButtonCallback([this] (button_driver::ButtonIndex index) {
         std::cout << "\nbutton pressed " << index << std::endl;
-        if (modeManager.getCurrentMode() == NORMAL){
+        if (this->modeManager.getCurrentMode() == NORMAL){
             midi_message msg; 
             switch(index){
                 case 0: // enter chord mode
-                    modeManager.updateMode();
+                    this->modeManager.updateMode();
                     break;
                 case 1: // enable/disable the LFO
-                    lfoManager.toggle();
+                    this->lfoManager.toggle();
                     break;
                 case 2: // cycle through the LFO shapes
-                    lfoManager.cycleShape();
-                    msg = {0xB0, 3, static_cast<uint8_t>(lfoManager.getShape())};
-                    midiDriver.sendMessage(msg);
+                    this->lfoManager.cycleShape();
+                    msg = {0xB0, 3, static_cast<uint8_t>(this->lfoManager.getShape())};
+                    this->midiDriver->sendMessage(msg);
                     break;
                 case 3: // change LED pattern
-                    ledController.togglePattern();
+                    this->ledController.togglePattern();
                     break;
                 default:
                     break;
             }
         }
         else { // chord mode
-            if (index == chordManager.getCurrentChord()){
-                modeManager.updateMode(); // exit chord mode, back to normal
+            if (index == this->chordManager.getCurrentChord()){
+                this->modeManager.updateMode(); // exit chord mode, back to normal
             }
             else {
                 // send note offs for current chord
                 for (int i = 0; i < 6; i++){
-                    midi_message noteOff = {0x80, chordManager.getNote(i), 0};
-                    midiDriver.sendMessage(noteOff);
+                    midi_message noteOff = {0x80, this->chordManager.getNote(i), 0};
+                    this->midiDriver->sendMessage(noteOff);
                 }
-                chordManager.updateChord(index);
+                this->chordManager.updateChord(index);
                 for (int i = 0; i < 6; i++){
-                    uint8_t note = chordManager.getNote(i);
+                    uint8_t note = this->chordManager.getNote(i);
                     std::cout << "sending note-on\n";
                     midi_message msg = {0x90, note, 120};
-                    midiDriver.sendMessage(msg);
+                    this->midiDriver->sendMessage(msg);
                 }
             }
         }
@@ -79,25 +96,25 @@ SynthController::SynthController(TLC59711& tlc)
     this->flexDSP.registerCallback([this] (std::array<ExtensionData, 4> values){
         if (true){
             for (int i = 0; i < 4; i++){
-                uint8_t scaledVal = midiScaler.scaleValue(values[i]);
-                if (i == 2 && !lfoManager.isEnabled()) {
+                uint8_t scaledVal = this->midiScaler.scaleValue(values[i]);
+                if (i == 2 && !this->lfoManager.isEnabled()) {
                     scaledVal = 64; // middle value
                 }
                 auto messages = messageBuilder.buildMessages(i, scaledVal);
                 for (auto& msg : messages){
-                    midiDriver.sendMessage(msg);
+                    this->midiDriver->sendMessage(msg);
                 }
                 
             }
         }
-        ledController.update(modeManager.getCurrentMode(), lfoManager.isEnabled(), lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
+        this->ledController.update(this->modeManager.getCurrentMode(), this->lfoManager.isEnabled(), this->lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
     });
-    
+
 }
 
 SynthController::~SynthController() {
     for (int i = 0; i < 6; i++){
-        midi_message noteOff = {0x80, chordManager.getNote(i), 0};
-        midiDriver.sendMessage(noteOff);
+        midi_message noteOff = {0x80, this->chordManager.getNote(i), 0};
+        this->midiDriver->sendMessage(noteOff);
     }   
 }

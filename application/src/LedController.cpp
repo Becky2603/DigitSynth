@@ -1,13 +1,15 @@
 #include "LedController.hpp"
-#include "ITLC59711.hpp"
+#include "ILedDriver.hpp"
+#include "patterns.h"
 #include <cstdio>
 
-LedController::LedController(ITLC59711& tlc, Pattern& ripple)
-    : _tlc(tlc), _ripple(ripple) {}
+LedController::LedController(led_driver::ILedDriver& tlc, led_pattern::IPattern& pattern,
+                             std::unordered_map<LfoShape, float> shapeBrightness)
+    : _tlc(tlc), _pattern(pattern), shapeBrightness(shapeBrightness) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
     (void) mode; 
-    if (pattern == RIPPLE) {
+    if (_ledPattern == RIPPLE) {
         if (!rippleRunning) {
             startRipple();
             rippleRunning = true;
@@ -20,7 +22,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
         }
         // Status pattern independent of chord/normal mode
         // handle normal LED stuff
-        ITLC59711::Channels c{};
+        led_driver::ILedDriver::Channels c{};
 
         // Left hand
         c[Led::L_pinky]  = 1; // not needed here
@@ -29,17 +31,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
             c[Led::L_middle] = 1;
         }
         else { c[Led::L_middle] = 0; }
-        switch(shape){
-            case SIN:
-                c[Led::L_ring] = 0;
-                break;
-            case SQR:
-                c[Led::L_ring] = 0.5;
-                break;
-            case SH:
-                c[Led::L_ring] = 1;
-                break;
-        }
+        c[Led::L_ring] = shapeBrightness.at(shape);
 
         // Right hand — flex brightness per finger
         c[Led::R_pinky]  = flexValues[3];
@@ -52,18 +44,18 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
 }
 
 void LedController::startRipple() {
-    _ripple.start();
+    _pattern.start();
 }
 
 void LedController::stopRipple() {
-    _ripple.stop();
+    _pattern.stop();
 }
 
 void LedController::togglePattern() {
-    if (pattern == STATUS){
-        pattern = RIPPLE;
+    if (_ledPattern == STATUS){
+        _ledPattern = RIPPLE;
     }
     else {
-        pattern = STATUS;
+        _ledPattern = STATUS;
     }
 }

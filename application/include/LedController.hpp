@@ -2,8 +2,9 @@
 #define LedController_hpp
 
 #include "MidiTypes.hpp"
-#include "ITLC59711.hpp"
+#include "ILedDriver.hpp"
 #include "patterns.h"
+#include <unordered_map>
 #include <array>
 
 /**
@@ -32,18 +33,21 @@ namespace Led {
 
 class LedController {
 public:
-    explicit LedController(ITLC59711& tlc, Pattern& ripple);
+    explicit LedController(led_driver::ILedDriver& tlc, led_pattern::IPattern& pattern, std::unordered_map<LfoShape, float> shapeBrightness);
     void update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues);
     void togglePattern();
 private:
     void startRipple();
     void stopRipple();
     
-    ITLC59711& _tlc;
-    Pattern& _ripple; //in tests we pass a MockPattern, in practice we pass a PatternRipple
+    led_driver::ILedDriver& _tlc;
+    led_pattern::IPattern& _pattern; //in tests we pass a MockPattern, in practice we pass a PatternRipple
+    
+    const std::unordered_map<LfoShape, float> shapeBrightness;
+    
     bool rippleRunning = false;
     
-    LedPattern pattern = STATUS;
+    LedPattern _ledPattern = STATUS;
 };
 
 #endif /* LedController_hpp */

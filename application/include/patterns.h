@@ -3,8 +3,12 @@
 #include <functional>
 #include <atomic>
 #include <thread>
-#include "TLC59711.h"
+#include "ILedDriver.hpp"
 
+namespace led_pattern {
+
+
+using DoneCallback = std::function<void()>;
 /**
  * Base class for LED patterns.
  *
@@ -16,24 +20,23 @@
  *  - A std::function callback (Ch. 2.2.1) is fired when the pattern completes,
  *    so the caller can chain the next action without polling.
  */
-class Pattern {
+class IPattern {
 public:
-    using DoneCallback = std::function<void()>;
-
-    virtual ~Pattern() { stop(); }
+    IPattern(led_driver::ILedDriver &) {};
+    virtual ~IPattern() { stop(); }
 
     /**
      * Start the pattern in a background thread.
      * @param onDone  Called (from the worker thread) when the pattern finishes
      *                naturally.  May be nullptr.
      */
-    virtual  void start(DoneCallback onDone = nullptr);
+    virtual void start(DoneCallback onDone = nullptr);
 
     /**
      * Signal the pattern to stop and block until the thread exits.
      * Safe to call even if the pattern has already finished.
      */
-    virtual  void stop();
+    virtual void stop();
 
 protected:
     std::atomic<bool>  _running{false};
@@ -50,32 +53,17 @@ private:
     std::thread _thread;
 };
 
-// ---------------------------------------------------------------------------
-
-/**
- * Fades all LEDs in, holds, then fades out — then calls onDone.
- */
-class PatternFade : public Pattern {
-public:
-    explicit PatternFade(TLC59711& tlc) : _tlc(tlc) {}
-
-protected:
-    void run() override;
-private:
-    TLC59711& _tlc;
-};
-
-// ---------------------------------------------------------------------------
-
 /**
  * Ripples a sine wave across all fingers — runs until stop() is called.
  */
-class PatternRipple : public Pattern {
+class PatternRipple : public IPattern {
 public:
-    explicit PatternRipple(TLC59711& tlc) : _tlc(tlc) {}
+    explicit PatternRipple(led_driver::ILedDriver& tlc) : IPattern(tlc), _tlc(tlc) {}
 
 protected:
     void run() override;
 private:
-    TLC59711& _tlc;
+    led_driver::ILedDriver& _tlc;
 };
+
+} // namespace led_pattern
