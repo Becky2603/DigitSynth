@@ -49,7 +49,7 @@ static bool waitTick(int fd, const std::atomic<bool>& running) {
 // Pattern base
 // ---------------------------------------------------------------------------
 
-void Pattern::start(DoneCallback onDone) {
+void led_pattern::Pattern::start(DoneCallback onDone) {
     if(this->_running){
         return;
     }
@@ -59,7 +59,7 @@ void Pattern::start(DoneCallback onDone) {
     _thread  = std::thread([this]{ run(); });
 }
 
-void Pattern::stop() {
+void led_pattern::Pattern::stop() {
     // Set the flag so the worker exits its blocking loop (Ch. 3.3.3).
     _running = false;
     if (_thread.joinable())
@@ -70,7 +70,7 @@ void Pattern::stop() {
 // PatternRipple
 // ---------------------------------------------------------------------------
 
-void PatternRipple::run() {
+void led_pattern::PatternRipple::run() {
     static constexpr float TWO_PI    = 6.28318f;
     static constexpr int   N_FINGERS = 8;  // 8 LEDs
     static constexpr float SPEED     = 1.0f;
