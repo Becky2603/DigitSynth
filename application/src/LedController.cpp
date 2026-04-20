@@ -2,7 +2,7 @@
 #include "ILedDriver.hpp"
 #include <cstdio>
 
-LedController::LedController(led_driver::ILedDriver& tlc, Pattern& ripple)
+LedController::LedController(led_driver::ILedDriver& tlc, led_pattern::ILEDPattern& ripple)
     : _tlc(tlc), _ripple(ripple) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){

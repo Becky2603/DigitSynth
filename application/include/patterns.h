@@ -7,9 +7,8 @@
 
 namespace led_pattern {
 
-/**
- * Minimal interface that LedController depends on — nothing else needed.
- */
+
+//Minimal interface that LedController depends on
 class ILEDPattern {
 public:
     using DoneCallback = std::function<void()>;
