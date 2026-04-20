@@ -3,17 +3,15 @@
 
 #include "patterns.h"
 
-class MockPattern : public Pattern {
+class MockPattern : public led_pattern::ILEDPattern {
 public:
     void start(DoneCallback onDone = nullptr) override {
-	(void)onDone; 
-	startCalled = true;
-     }
+        (void)onDone;
+        startCalled = true;
+    }
     void stop() override { stopCalled = true; }
     bool startCalled = false;
     bool stopCalled = false;
-protected:
-    void run() override {}
 };
 
 #endif /* MockPattern_hpp */
