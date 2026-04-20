@@ -18,7 +18,7 @@ public:
      * Records that start() was called. Does not start a thread.
      * @param onDone Ignored in mock implementation.
      */
-    void start(led_pattern::DoneCallback onDone = nullptr) override {
+    void start(led_pattern::DoneCallback onDone = nullptr) {
         (void) onDone;
         startCalled = true;
     }
@@ -26,7 +26,7 @@ public:
     /**
      * Records that stop() was called. Does not join any thread.
      */
-    void stop() override { stopCalled = true; }
+    void stop() { stopCalled = true; }
 
     void run() override {}
 

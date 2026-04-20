@@ -33,9 +33,8 @@ public:
     /**
      * @brief Construct a pattern with access to an LED driver.
      *
-     * @param driver Reference to the LED driver used for output.
      */
-    explicit IPattern(led_driver::ILedDriver &driver) {}
+    IPattern(led_driver::ILedDriver &) {}
 
     /**
      * @brief Destructor ensures the worker thread is stopped.
@@ -50,14 +49,14 @@ public:
      * @param onDone Optional callback invoked when the pattern completes
      *               naturally.
      */
-    virtual void start(DoneCallback onDone = nullptr);
+    void start(DoneCallback onDone = nullptr);
 
     /**
      * @brief Stop the pattern and wait for the worker thread to exit.
      *
      * Safe to call multiple times. If the pattern is not running, this is a no-op.
      */
-    virtual void stop();
+    void stop();
 
 protected:
     std::atomic<bool>  _running{false}; 

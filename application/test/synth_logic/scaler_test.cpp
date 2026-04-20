@@ -1,6 +1,7 @@
 #include "MidiScaler.hpp"
 #include <cmath>
 #include <cstdint>
+#include <cassert>
 
 int main(){
     MidiScaler scaler;

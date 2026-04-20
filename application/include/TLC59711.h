@@ -1,3 +1,12 @@
+#include "ILedDriver.hpp"
+#include <string>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
+#include <atomic>
+
+
+namespace led_driver {
 /**
  * @class TLC59711
  * @brief LED driver for the TLC59711 using Linux spidev (hardware SPI).
@@ -9,7 +18,7 @@
  *
  * @note This class is not copyable or movable due to thread and file descriptor ownership.
  */
-class TLC59711 : public ILedDriver {
+class TLC59711 : public led_driver::ILedDriver {
     friend class TLC59711Test;
 
 public:
@@ -130,3 +139,4 @@ private:
      */
     std::vector<uint16_t>    _pwm;
 };
+}
