@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
+option(BUILD_DOCS "Build documentation with doxygen" OFF)
+
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 if (NOT ${RELEASE} EQUAL 0)
     add_compile_options(-O3)
@@ -10,10 +12,18 @@ else()
     set(CMAKE_BUILD_TYPE Debug)
 endif()
 
+
+
 project(DigitSynth)
 
 include(CTest)
-# include(docs/Docs.cmake)
+
+if (BUILD_DOCS)
+    message(STATUS "Building docs\n")
+    include(docs/Docs.cmake)
+    return()
+endif (BUILD_DOCS)
+
 add_library(digitsynth_static)
 add_executable(digitsynth)
 target_include_directories(digitsynth PRIVATE include)
