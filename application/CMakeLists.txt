@@ -52,7 +52,6 @@ target_sources(digitsynth_static
     	${SOURCE_DIRECTORY}/midi-scaler.cpp
         ${SOURCE_DIRECTORY}/flex-dsp.cpp
         ${SOURCE_DIRECTORY}/patterns.cpp
-        ${SOURCE_DIRECTORY}/tlc59711.cpp
     	${SOURCE_DIRECTORY}/led-controller.cpp
         ${SOURCE_DIRECTORY}/lfo-manager.cpp
         ${SOURCE_DIRECTORY}/message-builder.cpp
