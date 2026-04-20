@@ -10,9 +10,5 @@ float VoltageScaler::scale(float v, ADS1115settings::Input channel) {
     
     float scaled = (v - this->mins[channel]) / (this->maxes[channel] - this->mins[channel]);
    
-    if (channel == 0) {
-        std::cout << this->maxes[channel] << " " << this->mins[channel] << " " << v << " " << scaled << "\n";
-    }
-    
     return scaled; 
 }

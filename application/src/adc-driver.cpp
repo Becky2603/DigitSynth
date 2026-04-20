@@ -1,5 +1,6 @@
 #include "adc-driver.h"
 #include <ads1115rpi.h>
+#include <thread>
 
 using namespace adc_driver;
 
@@ -23,6 +24,7 @@ void Ads1115Driver::readChannel(ADS1115settings::Input channel, ADS1115rpi::ADSC
     this->ads.setChannel(channel);
     this->ads.registerCallback([&, callback] (float f) {
         this->samplesSinceChannelChange++;
+        std::cout << this->samplesSinceChannelChange << " " << std::this_thread::get_id() << std::endl;
         if (this->samplesSinceChannelChange >= 2) { (*callback)(f); }
     });
 }

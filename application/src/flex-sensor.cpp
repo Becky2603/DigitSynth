@@ -21,6 +21,7 @@ void FlexSensor::updateIfNeeded() {
     data[3] = this->vs->scale(this->values[ADS1115settings::AIN3], ADS1115settings::AIN3);
     
     this->n_samples++;
+    // std::cout << "updating...\n";
     this->callback.value()(data);
 }
 
@@ -34,12 +35,17 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
     
     this->adsCallback = [&] (float f) {
         this->values[this->currentChannel] = f;  
+        this->dataReady.store(true);
+        
+        std::unique_lock lock(this->m);
         this->c.notify_all();
+        lock.unlock();
+        std::cout << "cb finished\n";
     };    
     
     this->worker = std::thread([&] () { while (this->running) {
         std::unique_lock lock(this->m);
-        this->c.wait(lock);
+        this->c.wait(lock, [&] { return this->dataReady.load(); });
         
         switch (this->currentChannel) {
             case (ADS1115settings::Input::AIN0):

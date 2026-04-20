@@ -2,6 +2,7 @@
 #define FLEX_SENSOR_H_
 
 #include <ads1115rpi.h>
+#include <atomic>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
@@ -66,6 +67,7 @@ private:
     std::thread worker;
     std::mutex m;
     std::condition_variable c;
+    std::atomic<bool> dataReady = false;
     bool running = true;
     
     uint64_t n_samples = 0;
