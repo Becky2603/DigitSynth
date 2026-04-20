@@ -1,4 +1,4 @@
-#include "adc-driver.h"
+#include "adc-driver.hpp"
 #include <ads1115rpi.h>
 
 using namespace adc_driver;

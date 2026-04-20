@@ -127,7 +127,20 @@ To run unit tests:
 make test
 ```
 ---
+## User Guide
 
+A full user guide covering button modes, controls, and MIDI mapping is available here:
+
+ [DigitSynth User Guide](docs/HowToUse.pdf)
+ 
+---
+## Demonstration Videos
+
+| Demo 1 | LED Mode Demo | Demo 2 |
+|---|---|---|
+| [![Demo 1](https://img.youtube.com/vi/CaOxxR7UvKo/0.jpg)](https://youtube.com/shorts/CaOxxR7UvKo) | [![Demo 2](https://img.youtube.com/vi/K6ZXAT-Ynss/0.jpg)](https://youtube.com/shorts/K6ZXAT-Ynss) | [![Demo 3](https://img.youtube.com/vi/oUVmrUkGGP4/0.jpg)](https://youtube.com/shorts/oUVmrUkGGP4) |
+
+---
 ## Social Media
 
 Follow our build journey on Instagram: [![Instagram](https://img.shields.io/badge/Instagram-%23E1306C.svg?style=flat&logo=instagram&logoColor=white)](https://instagram.com/digitsynth_)
@@ -139,7 +152,6 @@ We are also awaiting a write-up on [Hackaday.com](https://hackaday.com) about ou
 ## Contributing
 
 See the issues tab for a list of potential contributions. In particular, we would welcome expanding support for other synths. 
-
 
 ---
 ## License

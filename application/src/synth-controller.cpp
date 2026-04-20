@@ -1,10 +1,10 @@
-#include "SynthController.hpp"
-#include "FlexDSP.hpp"
-#include "ILedDriver.hpp"
-#include "button-driver.h"
-#include "flex-sensor.h"
+#include "synth-controller.hpp"
+#include "flex-dsp.hpp"
+#include "i-led-driver.hpp"
+#include "button-driver.hpp"
+#include "flex-sensor.hpp"
 #include "midi-driver.hpp"
-#include "patterns.h"
+#include "patterns.hpp"
 #include <memory>
 #include <thread>
 #include <chrono>
@@ -38,7 +38,8 @@ SynthController::SynthController(
         exit(-1);
     }
 
-    this->midiDriver->openPort(2);
+    this->midiDriver->openPort("JD-Xi");
+    std::cout << "Found JD-Xi synth\n";
     
     //give the synth a moment to initialise
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -116,5 +117,7 @@ SynthController::~SynthController() {
     for (int i = 0; i < 6; i++){
         midi_message noteOff = {0x80, this->chordManager.getNote(i), 0};
         this->midiDriver->sendMessage(noteOff);
-    }   
+        this->buttonDriver->deregisterSingleButtonCallback();
+        this->buttonDriver->deregisterAllButtonsCallback();
+    }
 }

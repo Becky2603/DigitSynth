@@ -4,7 +4,7 @@
 
 #include <array>
 #include <functional>
-#include "MidiTypes.hpp"
+#include "midi-types.hpp"
 
 #include <sys/types.h>
 

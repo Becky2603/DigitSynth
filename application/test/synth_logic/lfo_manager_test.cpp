@@ -1,4 +1,4 @@
-#include "LfoManager.hpp"
+#include "lfo-manager.hpp"
 #include <cassert>
 
 int main(){

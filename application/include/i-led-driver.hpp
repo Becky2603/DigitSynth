@@ -1,7 +1,7 @@
 #ifndef ILedDriver_hpp
 #define ILedDriver_hpp
 
-#include "types.h"
+#include "types.hpp"
 #include <array>
 
 /* Led driver interface for dependency inversion: anything that wants to be an

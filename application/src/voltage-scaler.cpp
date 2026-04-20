@@ -1,4 +1,4 @@
-#include "voltage-scaler.h"
+#include "voltage-scaler.hpp"
 
 using namespace voltage_scaler;
 

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include <functional>
-#include "MidiTypes.hpp"
+#include "midi-types.hpp"
 
 /**
  * @class MessageBuilder

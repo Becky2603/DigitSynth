@@ -1,9 +1,9 @@
 #ifndef LedController_hpp
 #define LedController_hpp
 
-#include "MidiTypes.hpp"
-#include "ILedDriver.hpp"
-#include "patterns.h"
+#include "midi-types.hpp"
+#include "i-led-driver.hpp"
+#include "patterns.hpp"
 #include <unordered_map>
 #include <array>
 

@@ -1,4 +1,4 @@
-#include "ModeManager.hpp"
+#include "mode-manager.hpp"
 
 ControlMode ModeManager::getCurrentMode(){
     return current_controlMode;

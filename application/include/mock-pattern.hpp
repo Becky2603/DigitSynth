@@ -1,8 +1,8 @@
 #ifndef MockPattern_hpp
 #define MockPattern_hpp
 
-#include "ILedDriver.hpp"
-#include "patterns.h"
+#include "i-led-driver.hpp"
+#include "patterns.hpp"
 
 /**
  * Test double for led_pattern::IPattern.

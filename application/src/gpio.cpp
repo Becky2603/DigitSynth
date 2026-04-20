@@ -1,4 +1,4 @@
-#include "gpio.h"
+#include "gpio.hpp"
 #include <chrono>
 #include <cstring>
 #include <gpiod.hpp>
@@ -8,8 +8,6 @@
 #define BLOCK_TIMEOUT_MS    (500)
 
 static gpiod::chip *chip;
-
-static std::optional<gpio::GpioCallback> callback = {};
 
 static bool lineRequestsRunning = false; 
 

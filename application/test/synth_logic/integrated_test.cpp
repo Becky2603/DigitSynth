@@ -4,12 +4,12 @@
 #include <vector>
 #include <array>
 
-#include "MockPattern.hpp"
-#include "SynthController.hpp"
-#include "MockTLC59711.hpp"
-#include "MidiTypes.hpp"
-#include "button-driver.h"
-#include "flex-sensor.h"
+#include "mock-pattern.hpp"
+#include "synth-controller.hpp"
+#include "mock-tlc59711.hpp"
+#include "midi-types.hpp"
+#include "button-driver.hpp"
+#include "flex-sensor.hpp"
 #include "midi-driver.hpp"
 
 namespace button_driver {
@@ -38,7 +38,7 @@ namespace midi_driver {
 class MockMidiDriver : public IMidiDriver {
 public:
     std::vector<std::string> listOutputPorts() override { return {"MockPort"}; }
-    void openPort(unsigned int) override {}
+    void openPort(std::string) override {}
     void sendMessage(const midi_message& msg) override { 
         sentMessages.push_back(msg); 
     }

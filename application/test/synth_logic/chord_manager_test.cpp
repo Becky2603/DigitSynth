@@ -1,5 +1,5 @@
 #include <cassert>
-#include "ChordManager.hpp"
+#include "chord-manager.hpp"
 
 int main(){
     ChordManager chordMan;

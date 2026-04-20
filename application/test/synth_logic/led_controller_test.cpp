@@ -1,7 +1,7 @@
-#include "LedController.hpp"
-#include "MockPattern.hpp"
-#include "MockTLC59711.hpp"
-#include "MidiTypes.hpp"
+#include "led-controller.hpp"
+#include "mock-pattern.hpp"
+#include "mock-tlc59711.hpp"
+#include "midi-types.hpp"
 #include <cassert>
 
 int main(){

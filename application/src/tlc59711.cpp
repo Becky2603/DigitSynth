@@ -1,4 +1,4 @@
-#include "TLC59711.h"
+#include "tlc59711.hpp"
 
 #include <linux/spi/spidev.h>
 #include <sys/ioctl.h>

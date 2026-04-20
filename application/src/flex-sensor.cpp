@@ -1,7 +1,7 @@
 
-#include "flex-sensor.h"
-#include "adc-driver.h"
-#include "voltage-scaler.h"
+#include "flex-sensor.hpp"
+#include "adc-driver.hpp"
+#include "voltage-scaler.hpp"
 #include <ads1115rpi.h>
 #include <array>
 #include <memory>
