@@ -39,6 +39,7 @@ SynthController::SynthController(
     }
 
     this->midiDriver->openPort("JD-Xi");
+    std::cout << "opened port\n";
     
     //give the synth a moment to initialise
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
