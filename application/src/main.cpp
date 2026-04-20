@@ -1,4 +1,3 @@
-
 #include "SynthController.hpp"
 #include "TLC59711.h"
 #include "adc-driver.h"
@@ -27,7 +26,7 @@ int main() {
         c.notify_all();
     });
     
-    auto tlc = led_driver::TLC59711(17, 27);
+    auto tlc = led_driver::TLC59711("/dev/spidev0.0", 1'000'000);
     auto pattern = led_pattern::PatternRipple(tlc);
     tlc.start();
     SynthController synth(
@@ -41,10 +40,9 @@ int main() {
         std::make_unique<midi_driver::MidiDriver>()
     );
    
-    {
-        std::unique_lock lock(m);
-        c.wait(lock, [&done] { return done; }); 
-    }
+
+    getchar();
+    
     std::cout <<"stop\n";
     
     return 0;
