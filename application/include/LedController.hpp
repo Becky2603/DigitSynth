@@ -4,6 +4,7 @@
 #include "MidiTypes.hpp"
 #include "ILedDriver.hpp"
 #include "patterns.h"
+#include <unordered_map>
 #include <array>
 
 /**
@@ -32,7 +33,7 @@ namespace Led {
 
 class LedController {
 public:
-    explicit LedController(led_driver::ILedDriver& tlc, Pattern &pattern);
+    explicit LedController(led_driver::ILedDriver& tlc, Pattern& pattern, std::unordered_map<LfoShape, float> shapeBrightness);
     void update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues);
     void togglePattern();
 private:
@@ -41,6 +42,8 @@ private:
     
     led_driver::ILedDriver& _tlc;
     Pattern& _pattern; //in tests we pass a MockPattern, in practice we pass a PatternRipple
+    
+    const std::unordered_map<LfoShape, float> shapeBrightness;
     
     bool rippleRunning = false;
     

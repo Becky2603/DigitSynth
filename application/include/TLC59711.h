@@ -30,8 +30,7 @@ private:
     void worker();
     
     void buildPacket(std::vector<uint8_t>& buf) const;
-    void shiftOut(const std::vector<uint8_t>& buf,
-                  gpiod::line_request& request) const;
+    void shiftOut(const std::vector<uint8_t>& buf) const;
     static uint16_t toGS(Brightness b);
     
     static constexpr int FRAME_TO_GS[NUM_LEDS] = {

@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "MidiScaler.hpp"
 #include <cmath>
 #include <cstdint>

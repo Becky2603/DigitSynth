@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <array>
@@ -7,6 +8,9 @@
 #include "SynthController.hpp"
 #include "MockTLC59711.hpp"
 #include "MidiTypes.hpp"
+#include "button-driver.h"
+#include "flex-sensor.h"
+#include "midi-driver.hpp"
 
 namespace button_driver {
 class MockButtonDriver : public IButtonDriver {
@@ -23,10 +27,10 @@ public:
 namespace flex_sensor {
 class MockFlexSensor : public IFlexSensor {
 public:
-    void registerCallback(ExtensionCallback cb) override { callback = cb; }
+    void registerCallback(ExtensionCallback cb) override { this->callback = cb; }
     void begin() override {}
-    void simulateReading(std::array<float, 4> values) { if (callback) callback(values); }
-    ExtensionCallback callback;
+    void simulateReading(std::array<float, 4> values) { if (this->callback.has_value()) { callback.value()(values); } }
+    std::optional<ExtensionCallback> callback;
 };
 }
 
@@ -35,28 +39,31 @@ class MockMidiDriver : public IMidiDriver {
 public:
     std::vector<std::string> listOutputPorts() override { return {"MockPort"}; }
     void openPort(unsigned int) override {}
-    void sendMessage(const midi_message& msg) override { sentMessages.push_back(msg); }
+    void sendMessage(const midi_message& msg) override { 
+        sentMessages.push_back(msg); 
+    }
     std::vector<midi_message> sentMessages;
 };
 }
 
 int main() {
+    auto mockMidi    = new midi_driver::MockMidiDriver();
     auto mockTlc     = led_driver::MockTLC59711();
     auto mockPattern = MockPattern(mockTlc);
     auto mockButtons = new button_driver::MockButtonDriver();
     auto mockFlex    = new flex_sensor::MockFlexSensor();
-    auto mockMidi    = new midi_driver::MockMidiDriver();
 
     SynthController synth(
         mockTlc,
         mockPattern,
-        std::make_unique<button_driver::MockButtonDriver>(),
-        std::make_unique<flex_sensor::MockFlexSensor>(),
-        std::make_unique<midi_driver::MockMidiDriver>()
+        std::unique_ptr<button_driver::IButtonDriver>(mockButtons), 
+        std::unique_ptr<flex_sensor::IFlexSensor>(mockFlex),
+        std::unique_ptr<midi_driver::IMidiDriver>(mockMidi)
     );
 
     //Am11 should have been sent on construction
     // 6 note-on messages expected
+    std::cout << mockMidi->sentMessages.size() << std::endl;
     assert(mockMidi->sentMessages.size() == 6);
     for (int i = 0; i < 6; i++) {
         assert(mockMidi->sentMessages[i].status == 0x90);

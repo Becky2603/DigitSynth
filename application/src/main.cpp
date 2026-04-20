@@ -33,7 +33,7 @@ int main() {
     SynthController synth(
         tlc,
         pattern,
-        std::make_unique<button_driver::ButtonDriver>(),
+        std::move(bd),
         std::make_unique<flex_sensor::FlexSensor>(
             std::make_unique<adc_driver::Ads1115Driver>(),
             std::make_unique<voltage_scaler::VoltageScaler>()
