@@ -7,37 +7,65 @@
 
 namespace led_pattern {
 
-
-using DoneCallback = std::function<void()>;
 /**
- * Base class for LED patterns.
+ * @brief Callback invoked when a pattern completes naturally.
  *
- * Each pattern runs in its own thread, which is started by calling start() and stopped by calling stop().
+ * this is executed from the worker thread .
+ */
+using DoneCallback = std::function<void()>;
+
+/**
+ * @class IPattern
+ * @brief Abstract base class for asynchronous LED patterns.
+ *
+ * Each pattern runs in its own worker thread with the lifecycle being controlled via
+ * start() and stop():
+ *
+ * - start() launches the pattern in a background thread.
+ * - stop() begins termination and waits for the thread to exit.
+ *
+ * Derived classes must implement run() and periodically check `_running`
+ * to terminate promptly when requested.
+ *
  */
 class IPattern {
 public:
-    IPattern(led_driver::ILedDriver &) {};
+    /**
+     * @brief Construct a pattern with access to an LED driver.
+     *
+     * @param driver Reference to the LED driver used for output.
+     */
+    explicit IPattern(led_driver::ILedDriver &driver) {}
+
+    /**
+     * @brief Destructor ensures the worker thread is stopped.
+     */
     virtual ~IPattern() { stop(); }
 
     /**
-     * Start the pattern in a background thread.
-     * @param onDone  Called (from the worker thread) when the pattern finishes
-     *                naturally.
+     * @brief Start the pattern in a background thread.
+     *
+     * If the pattern is already running, calling start() has no effect.
+     *
+     * @param onDone Optional callback invoked when the pattern completes
+     *               naturally.
      */
     virtual void start(DoneCallback onDone = nullptr);
 
     /**
-     * Signal the pattern to stop and block until the thread exits.
+     * @brief Stop the pattern and wait for the worker thread to exit.
+     *
+     * Safe to call multiple times. If the pattern is not running, this is a no-op.
      */
     virtual void stop();
 
 protected:
-    std::atomic<bool>  _running{false};
-    DoneCallback       _onDone;
+    std::atomic<bool>  _running{false}; 
+    DoneCallback       _onDone;         
 
     /**
-     * Implemented by each derived pattern.
-     * Must honour _running: exit as soon as _running becomes false.
+     * @brief Pattern execution loop.
+     * Derived classes must implement this method to define the pattern behavior. 
      */
     virtual void run() = 0;
 
@@ -46,14 +74,29 @@ private:
 };
 
 /**
- * Ripples a sine wave across all fingers — runs until stop() is called.
+ * @class PatternRipple
+ * @brief Ripple pattern that uses a phase offset sine wave 
+ *
+ * This pattern animates a wave across all LED channels and runs until stop() is called.
  */
 class PatternRipple : public IPattern {
 public:
-    explicit PatternRipple(led_driver::ILedDriver& tlc) : IPattern(tlc), _tlc(tlc) {}
+    /**
+     * @brief Construct a ripple pattern.
+     *
+     * @param tlc Reference to the LED driver used to control outputs.
+     */
+    explicit PatternRipple(led_driver::ILedDriver& tlc)
+        : IPattern(tlc), _tlc(tlc) {}
 
 protected:
+    /**
+     * @brief Main ripple animation loop.
+     *
+     * Generates a sine-wave pattern across LEDs while `_running` is true.
+     */
     void run() override;
+
 private:
     led_driver::ILedDriver& _tlc;
 };
