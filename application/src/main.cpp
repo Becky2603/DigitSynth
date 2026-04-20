@@ -5,8 +5,8 @@
 #include "flex-sensor.hpp"
 #include "gpio.hpp"
 #include "midi-driver.hpp"
-#include "patterns.h"
-#include "voltage-scaler.h"
+#include "patterns.hpp"
+#include "voltage-scaler.hpp"
 #include <condition_variable>
 #include <iostream>
 #include <memory>
