@@ -26,12 +26,9 @@ std::vector<std::string> MidiDriver::listOutputPorts() {
 
 //Opens MIDI output port at the given index. Must be called before sendMessage()
 void MidiDriver::openPort(std::string deviceName) {
-    std::cout << "OPening a port \n";
-    
     auto devices = this->listOutputPorts();
     int index = 0, foundIndex = -1;
     for (const auto &device : devices) {
-        std::cout << device << " " << deviceName << std::endl;
         if (device.find(deviceName) != std::string::npos) { foundIndex = index; break; }
         index++;
     }
@@ -39,8 +36,7 @@ void MidiDriver::openPort(std::string deviceName) {
     if (foundIndex == -1) {
         throw std::out_of_range("Requested MIDI device does not exist");
     }
-
-    std::cout << "found index: " << foundIndex << std::endl;
+    
     midiOut_.openPort(foundIndex);
     portOpen_ = true;
 }
