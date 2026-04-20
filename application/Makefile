@@ -1,3 +1,4 @@
+NPROC=$(shell nproc --all)
 
 PACKAGENAME=digitsynth-arm64
 
@@ -5,13 +6,17 @@ PACKAGENAME=digitsynth-arm64
 
 all: 
 	cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=On 
-	cmake --build build/  --parallel 8
+	cmake --build build/  --parallel $(NPROC)
 
 run: all
 	./build/digitsynth
 
 test: all
-	cmake --build build/ -- test
+	-cmake --build build/ -- test > ./build/tests.log
+	-cat ./build/tests.log
+	-cat ./build/Testing/Temporary/LastTest.log
+	tail -n 5 ./build/tests.log
+	
 
 docs: all
 	sudo cp -r build/html/* /data/www/

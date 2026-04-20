@@ -1,12 +1,30 @@
 #ifndef BUTTON_DRIVER_H_
 #define BUTTON_DRIVER_H_
 
-#include "types.h"
 #include <thread>
 #include <array>
+#include <functional>
+#include <optional>
 
-class ButtonDriver {
+namespace button_driver {
+    
+using ButtonIndex = size_t;
+using SingleButtonCallback = std::function<void(ButtonIndex)>;
+using AllButtonsCallback   = std::function<void(void)>; 
+    
+class IButtonDriver {
+public:  
+    virtual ~IButtonDriver() = default;
+    
+    virtual void registerSingleButtonCallback(SingleButtonCallback callback) = 0;
+    virtual void deregisterSingleButtonCallback() = 0;
+    virtual void registerAllButtonsCallback(AllButtonsCallback callback) = 0;
+    virtual void deregisterAllButtonsCallback() = 0;
+};
+
+class ButtonDriver : public IButtonDriver {
 public:
+    
     ButtonDriver();
     ~ButtonDriver();
     
@@ -16,24 +34,24 @@ public:
      * @param callback --- the callback to be registered. If a callback is currently
      * registered, this will replace it. 
      */
-    void registerSingleButtonCallback(SingleButtonCallback callback);
+    void registerSingleButtonCallback(SingleButtonCallback callback) override;
     
     /**
      * Clear the current single-button callback. 
      */
-    void deregisterSingleButtonCallback();
+    void deregisterSingleButtonCallback() override;
     
     /**
      * Register a callback to be called when all buttons are pressed simultaneously.
      * @param callback --- the callback to be registered. If a callback is currently registered,
      * this will replace it. 
      */
-    void registerAllButtonsCallback(AllButtonsCallback callback);
+    void registerAllButtonsCallback(AllButtonsCallback callback) override;
     
     /**
      * Clear the current all-button callback. 
      */
-    void deregisterAllButtonsCallback();
+    void deregisterAllButtonsCallback() override;
 
 private: 
     static constexpr int N_BUTTONS = 4;
@@ -47,5 +65,7 @@ private:
     
     bool running = true; 
 };
+
+}
 
 #endif

@@ -1,5 +1,4 @@
 #include "gpio.h"
-#include "types.h"
 #include <chrono>
 #include <cstring>
 #include <gpiod.hpp>
@@ -10,7 +9,7 @@
 
 static gpiod::chip *chip;
 
-static std::optional<GpioCallback> callback = {};
+static std::optional<gpio::GpioCallback> callback = {};
 
 static bool lineRequestsRunning = false; 
 
@@ -25,7 +24,7 @@ void gpio::setupGpio() {
 }
 
 void gpio::teardownGpio() {
-    lineRequestsRunning = false;
+    gpio::cancelLineRequests();
     chip->close();
 }
 

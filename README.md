@@ -25,12 +25,12 @@ The table below outlines the hardware components used in this project. Exact com
 | Adafruit TLC59711 | 1455 | 1 | £6.73 |
 | Spectra Symbol Flex Sensor FLX| FLX-L-055-123-MP | 4 | £8.51 |
 | Tactile Switch, 4.3mm, 160g | MCDTS2-1N| 4 | £0.17 |
-| Kingbright L-7113IT 5mm 2V Red LED 80mcd | 56-0250 | 10 | £0.08 |
+| Kingbright L-7113IT 5mm 2V Red LED 80mcd | 56-0250 | 8 | £0.08 |
 | Pisugar S Plus 5000 mAh Raspberry Pi UPS | Pisugar S Plus | 1 | $29.99 |
 
 A MIDI-receiving device is required to complete the setup, either a hardware synthesiser or a software synthesiser running on a connected laptop. In this project, a Roland JD-Xi synthesiser was used, receiving MIDI directly from the Raspberry Pi over USB-B.
 
-Wiring Diagram:
+### Wiring Diagram:
 
 ![Wiring diagram](docs/wiring-diagram.jpg)
 
@@ -57,6 +57,7 @@ cd DigitSynth
 | RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
 | ADS1115 API | Flex sensor measurement | [berndporr/rpi_ads1115](github.com/berndporr/rpi_ads1115) |
 | libgpiod | GPIO management | [ligpiod](https://libgpiod.readthedocs.io/en/latest/building.html) | 
+| libasound2-dev | ALSA development headers | [libasound2-dev](https://alsa-project.org/) |
 
 Simply run the `install-deps.sh` script:
 ```bash 
@@ -94,11 +95,13 @@ make test
 
 ---
 
-# Contributing
+## Contributing
 
-See the issues tab for a list of potential contributions. In particular we would welcome expanding support for other synths. 
+See the issues tab for a list of potential contributions. In particular, we would welcome expanding support for other synths. 
 
 ---
+
+## Social Media
 
 Follow our build journey on Instagram: [![Instagram](https://img.shields.io/badge/Instagram-%23E1306C.svg?style=flat&logo=instagram&logoColor=white)](https://instagram.com/digitsynth_)
 

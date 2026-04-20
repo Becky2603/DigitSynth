@@ -2,12 +2,24 @@
 #define ADC_DRIVER_H_
 
 #include <ads1115rpi.h>
+#include <optional>
 
-class AdcDriver {
+namespace adc_driver {
+
+using AdcData = std::optional<uint32_t>;
+    
+class IAdcDriver {
+public: 
+    virtual ~IAdcDriver() = default;
+    
+    virtual void readChannel(ADS1115settings::Input, ADS1115rpi::ADSCallbackInterface *) = 0;
+};
+    
+class Ads1115Driver : public IAdcDriver {
 public: 
 
-    AdcDriver();
-    ~AdcDriver(); 
+    Ads1115Driver();
+    ~Ads1115Driver(); 
     
     
     /**
@@ -23,4 +35,5 @@ private:
     int samplesSinceChannelChange; 
 };
 
+}
 #endif
