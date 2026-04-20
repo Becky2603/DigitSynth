@@ -3,6 +3,7 @@
 #include <rtmidi/RtMidi.h>
 #include <string>
 #include <stdexcept>
+#include <ranges>
 
 using namespace midi_driver;
 
@@ -24,13 +25,19 @@ std::vector<std::string> MidiDriver::listOutputPorts() {
 }
 
 //Opens MIDI output port at the given index. Must be called before sendMessage()
-void MidiDriver::openPort(unsigned int portIndex) {
-    const unsigned int count = midiOut_.getPortCount();
-    if (portIndex >= count) {
-        throw std::out_of_range("Requested MIDI port index does not exist");
+void MidiDriver::openPort(std::string deviceName) {
+    auto devices = this->listOutputPorts();
+    int index = 0, foundIndex = -1;
+    for (const auto &device : devices) {
+        if (device.find(deviceName) != std::string::npos) { foundIndex = index; break; }
+        index++;
     }
-
-    midiOut_.openPort(portIndex);
+    
+    if (foundIndex == -1) {
+        throw std::out_of_range("Requested MIDI device does not exist");
+    }
+    
+    midiOut_.openPort(foundIndex);
     portOpen_ = true;
 }
 
