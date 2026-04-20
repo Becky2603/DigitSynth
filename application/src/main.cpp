@@ -28,7 +28,7 @@ int main() {
     });
     
     auto tlc = led_driver::TLC59711(17, 27);
-    auto pattern = PatternRipple(tlc);
+    auto pattern = led_pattern::PatternRipple(tlc);
     tlc.start();
     SynthController synth(
         tlc,
