@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-
+    
     runs-on: ubuntu-24.04-arm
 
     steps:
@@ -27,6 +27,8 @@ jobs:
       run: | 
         cd application/
         make deb
+        
+
 
     - name: archive-binary
       uses: actions/upload-artifact@v6
@@ -39,3 +41,29 @@ jobs:
       with:
         name: digitsynth-package
         path: ./application/build/digitsynth-aarch64.deb
+        
+  docs:
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v6      
+    
+    - name: doxygen
+      run: sudo apt install -y doxygen
+    
+    - name: docs
+      run: | 
+        cd application/
+        make docs
+        
+    - name: archive-docs-tar-gz
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-docs-targz
+        path: ./application/build/digitsynth-documentation.tar.gz
+        
+    - name: archive-docs-zip
+      uses: actions/upload-artifact@v6
+      with:
+        name: digitsynth-docs-zip
+        path: ./application/build/digitsynth-documentation.zip

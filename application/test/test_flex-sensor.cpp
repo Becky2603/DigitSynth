@@ -1,6 +1,6 @@
-#include "adc-driver.h"
-#include "flex-sensor.h"
-#include "voltage-scaler.h"
+#include "adc-driver.hpp"
+#include "flex-sensor.hpp"
+#include "voltage-scaler.hpp"
 #include <ads1115rpi.h>
 #include <chrono>
 #include <cstddef>

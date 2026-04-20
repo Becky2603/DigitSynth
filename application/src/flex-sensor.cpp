@@ -1,7 +1,7 @@
 
-#include "flex-sensor.h"
-#include "adc-driver.h"
-#include "voltage-scaler.h"
+#include "flex-sensor.hpp"
+#include "adc-driver.hpp"
+#include "voltage-scaler.hpp"
 #include <ads1115rpi.h>
 #include <array>
 #include <memory>
@@ -59,7 +59,6 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
 
 FlexSensor::~FlexSensor() {
     this->running = false; 
-    std::cout << "samples: " << this->getNSamples() << std::endl;
     if (worker.joinable()) { worker.join(); }
 }
 

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "ModeManager.hpp"
+#include "mode-manager.hpp"
 #include <cassert>
 
 int main(){

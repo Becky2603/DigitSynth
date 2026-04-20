@@ -1,4 +1,4 @@
-#include "TLC59711.h"
+#include "tlc59711.hpp"
 #include <cstdio>
 #include <mutex>
 #include <thread>
@@ -73,7 +73,7 @@ public:
     // -----------------------------------------------------------------------
 
     static int test_update_returns_immediately() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
 
         TLC59711::Channels ch{};
         for (int i = 0; i < TLC59711::NUM_LEDS; ++i) ch[i] = 0.5f;
@@ -87,7 +87,7 @@ public:
     }
 
     static int test_update_stores_pending() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
 
         TLC59711::Channels ch{};
         for (int i = 0; i < TLC59711::NUM_LEDS; ++i)
@@ -104,7 +104,7 @@ public:
     }
 
     static int test_update_overwrites_previous_pending() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
 
         TLC59711::Channels first{};
         TLC59711::Channels second{};
@@ -124,7 +124,7 @@ public:
     }
 
     static int test_update_dirty_flag_set() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         {
             std::lock_guard<std::mutex> lock(tlc._mutex);
             tlc._dirty = false;
@@ -137,7 +137,7 @@ public:
     }
 
     static int test_update_all_channels_stored() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
 
         TLC59711::Channels ch{};
         ch[0] = 0.1f;
@@ -163,7 +163,7 @@ public:
     // -----------------------------------------------------------------------
 
     static int test_update_thread_safe() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
 
         std::atomic<bool> go{false};
 
@@ -198,24 +198,24 @@ public:
     // -----------------------------------------------------------------------
 
     static int test_setBrightness_default() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         return (tlc._brightness == 127) ? 0 : -1;
     }
 
     static int test_setBrightness_stores_value() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         tlc.setBrightness(200);
         return (tlc._brightness == 200) ? 0 : -1;
     }
 
     static int test_setBrightness_zero() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         tlc.setBrightness(0);
         return (tlc._brightness == 0) ? 0 : -1;
     }
 
     static int test_setBrightness_max() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         tlc.setBrightness(255);
         return (tlc._brightness == 255) ? 0 : -1;
     }
@@ -225,21 +225,21 @@ public:
     // -----------------------------------------------------------------------
 
     static int test_buildPacket_size_one_driver() {
-        TLC59711 tlc(0, 0, 1);
+        TLC59711 tlc("", 0, 1);
         std::vector<uint8_t> buf;
         tlc.buildPacket(buf);
         return (buf.size() == 28) ? 0 : -1;
     }
 
     static int test_buildPacket_size_two_drivers() {
-        TLC59711 tlc(0, 0, 2);
+        TLC59711 tlc("", 0, 2);
         std::vector<uint8_t> buf;
         tlc.buildPacket(buf);
         return (buf.size() == 56) ? 0 : -1;
     }
 
     static int test_buildPacket_magic_bits() {
-        TLC59711 tlc(0, 0, 1);
+        TLC59711 tlc("", 0, 1);
         std::vector<uint8_t> buf;
         tlc.buildPacket(buf);
         const uint8_t top6 = buf[0] >> 2;
@@ -247,7 +247,7 @@ public:
     }
 
     static int test_buildPacket_all_zero_gs_when_dark() {
-        TLC59711 tlc(0, 0, 1);
+        TLC59711 tlc("", 0, 1);
         std::vector<uint8_t> buf;
         tlc.buildPacket(buf);
         for (size_t i = 4; i < buf.size(); ++i)
@@ -256,7 +256,7 @@ public:
     }
 
     static int test_buildPacket_brightness_in_cmd() {
-        TLC59711 tlc(0, 0, 1);
+        TLC59711 tlc("", 0, 1);
         tlc.setBrightness(0x3F);
 
         std::vector<uint8_t> buf;
@@ -280,18 +280,18 @@ public:
     // -----------------------------------------------------------------------
 
     static int test_initial_running_false() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         return (!tlc._running) ? 0 : -1;
     }
 
     static int test_stop_without_start_safe() {
-        TLC59711 tlc(0, 0);
+        TLC59711 tlc("", 0);
         tlc.stop();
         return 0;
     }
 
     static int test_destructor_without_start_safe() {
-        { TLC59711 tlc(0, 0); }
+        { TLC59711 tlc("", 0); }
         return 0;
     }
 

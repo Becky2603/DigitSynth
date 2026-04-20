@@ -1,13 +1,12 @@
-
-#include "SynthController.hpp"
-#include "TLC59711.h"
-#include "adc-driver.h"
-#include "button-driver.h"
-#include "flex-sensor.h"
-#include "gpio.h"
+#include "synth-controller.hpp"
+#include "tlc59711.hpp"
+#include "adc-driver.hpp"
+#include "button-driver.hpp"
+#include "flex-sensor.hpp"
+#include "gpio.hpp"
 #include "midi-driver.hpp"
-#include "patterns.h"
-#include "voltage-scaler.h"
+#include "patterns.hpp"
+#include "voltage-scaler.hpp"
 #include <condition_variable>
 #include <iostream>
 #include <memory>
@@ -27,7 +26,7 @@ int main() {
         c.notify_all();
     });
     
-    auto tlc = led_driver::TLC59711(17, 27);
+    auto tlc = led_driver::TLC59711("/dev/spidev0.0", 1'000'000);
     auto pattern = led_pattern::PatternRipple(tlc);
     tlc.start();
     SynthController synth(
@@ -41,10 +40,9 @@ int main() {
         std::make_unique<midi_driver::MidiDriver>()
     );
    
-    {
-        std::unique_lock lock(m);
-        c.wait(lock, [&done] { return done; }); 
-    }
+
+    getchar();
+    
     std::cout <<"stop\n";
     
     return 0;

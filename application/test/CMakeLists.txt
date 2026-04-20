@@ -10,8 +10,9 @@ function(create_test EXE NAME FILE)
     add_test(NAME ${NAME} COMMAND ${EXE})
 endfunction()
 
-create_test(test-foo TestFoo test_foo.cpp)
-create_test(test-flex-sensor TestFlexSensor test_flex-sensor.cpp)
+create_test(test-flex-sensor TestFlexSensor test_flex-sensor.cpp) 
+# THIS TEST FAILS. This is a known issue: see issue #112 (https://github.com/RTES-Group/DigitSynth/issues/122)
+
 create_test(test-voltage-scaler TestVoltageScaler test_voltage-scaler.cpp)
 create_test(test-gpio TestGpio test_gpio.cpp)
 create_test(scaler-test ScalerTest synth_logic/scaler_test.cpp)
