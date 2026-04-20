@@ -5,6 +5,19 @@
 #include <thread>
 #include "ILedDriver.hpp"
 
+namespace led_pattern {
+
+/**
+ * Minimal interface that LedController depends on — nothing else needed.
+ */
+class ILEDPattern {
+public:
+    using DoneCallback = std::function<void()>;
+    virtual ~ILEDPattern() = default;
+    virtual void start(DoneCallback onDone = nullptr) = 0;
+    virtual void stop() = 0;
+};
+
 /**
  * Base class for LED patterns.
  *
@@ -16,10 +29,8 @@
  *  - A std::function callback (Ch. 2.2.1) is fired when the pattern completes,
  *    so the caller can chain the next action without polling.
  */
-class Pattern {
+class Pattern : public ILEDPattern {
 public:
-    using DoneCallback = std::function<void()>;
-
     virtual ~Pattern() { stop(); }
 
     /**
@@ -27,13 +38,13 @@ public:
      * @param onDone  Called (from the worker thread) when the pattern finishes
      *                naturally.  May be nullptr.
      */
-    virtual  void start(DoneCallback onDone = nullptr);
+    void start(DoneCallback onDone = nullptr) override;
 
     /**
      * Signal the pattern to stop and block until the thread exits.
      * Safe to call even if the pattern has already finished.
      */
-    virtual  void stop();
+    void stop() override;
 
 protected:
     std::atomic<bool>  _running{false};
@@ -62,3 +73,5 @@ protected:
 private:
     led_driver::ILedDriver& _tlc;
 };
+
+} // namespace led_pattern
