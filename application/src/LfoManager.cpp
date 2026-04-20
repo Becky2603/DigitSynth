@@ -5,17 +5,7 @@ void LfoManager::toggle(){
 }
 
 void LfoManager::cycleShape(){
-    switch(shape){
-        case SIN:
-            shape = SQR;
-            break;
-        case SQR:
-            shape = SH;
-            break;
-        case SH:
-            shape = SIN;
-            break;
-    }
+    shapeIndex = (shapeIndex + 1) % static_cast<int>(shapes.size());
 }
 
 bool LfoManager::isEnabled() const {
@@ -23,5 +13,5 @@ bool LfoManager::isEnabled() const {
 }
 
 LfoShape LfoManager::getShape() const {
-    return shape;
+    return shapes[shapeIndex];
 }

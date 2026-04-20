@@ -7,7 +7,11 @@
 int main(){
     led_driver::MockTLC59711 mockTLC;
     MockPattern testPattern;
-    LedController ledController(mockTLC, testPattern);
+    LedController ledController(mockTLC, testPattern, {
+        {SIN, 0.0f},
+        {SQR, 0.5f},
+        {SH,  1.0f}
+    });
 
     //test 1: default pattern is STATUS, ripple not running;
     assert(testPattern.startCalled == false);

@@ -2,8 +2,9 @@
 #include "ILedDriver.hpp"
 #include <cstdio>
 
-LedController::LedController(led_driver::ILedDriver& tlc, Pattern& ripple)
-    : _tlc(tlc), _ripple(ripple) {}
+LedController::LedController(led_driver::ILedDriver& tlc, Pattern& ripple,
+                             std::unordered_map<LfoShape, float> shapeBrightness)
+    : _tlc(tlc), _ripple(ripple), shapeBrightness(shapeBrightness) {}
 
 void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues){
     (void) mode; 
@@ -29,17 +30,7 @@ void LedController::update(ControlMode mode, bool lfoEnabled, LfoShape shape, st
             c[Led::L_middle] = 1;
         }
         else { c[Led::L_middle] = 0; }
-        switch(shape){
-            case SIN:
-                c[Led::L_ring] = 0;
-                break;
-            case SQR:
-                c[Led::L_ring] = 0.5;
-                break;
-            case SH:
-                c[Led::L_ring] = 1;
-                break;
-        }
+        c[Led::L_ring] = shapeBrightness.at(shape);
 
         // Right hand — flex brightness per finger
         c[Led::R_pinky]  = flexValues[3];
