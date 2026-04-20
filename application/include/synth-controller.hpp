@@ -1,18 +1,18 @@
 #ifndef SynthController_hpp
 #define SynthController_hpp
 
-#include "ModeManager.hpp"
-#include "button-driver.h"
-#include "MessageBuilder.hpp"
-#include "MidiScaler.hpp"
-#include "ChordManager.hpp"
-#include "LedController.hpp"
-#include "flex-sensor.h"
+#include "mode-manager.hpp"
+#include "button-driver.hpp"
+#include "message-builder.hpp"
+#include "midi-scaler.hpp"
+#include "chord-manager.hpp"
+#include "led-controller.hpp"
+#include "flex-sensor.hpp"
 #include "midi-driver.hpp"
-#include "ILedDriver.hpp"
-#include "patterns.h"
-#include "LfoManager.hpp"
-#include "FlexDSP.hpp"
+#include "i-led-driver.hpp"
+#include "patterns.hpp"
+#include "lfo-manager.hpp"
+#include "flex-dsp.hpp"
 #include <memory>
 
 /**

@@ -1,10 +1,10 @@
-#include "SynthController.hpp"
-#include "FlexDSP.hpp"
-#include "ILedDriver.hpp"
-#include "button-driver.h"
-#include "flex-sensor.h"
+#include "synth-controller.hpp"
+#include "flex-dsp.hpp"
+#include "i-led-driver.hpp"
+#include "button-driver.hpp"
+#include "flex-sensor.hpp"
 #include "midi-driver.hpp"
-#include "patterns.h"
+#include "patterns.hpp"
 #include <memory>
 #include <thread>
 #include <chrono>

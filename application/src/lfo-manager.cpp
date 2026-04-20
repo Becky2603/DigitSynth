@@ -1,4 +1,4 @@
-#include "LfoManager.hpp"
+#include "lfo-manager.hpp"
 
 void LfoManager::toggle(){
     enabled = !enabled;

@@ -1,4 +1,4 @@
-#include "patterns.h"
+#include "patterns.hpp"
 #include <cmath>
 #include <stdexcept>
 #include <sys/timerfd.h>

@@ -1,4 +1,4 @@
-#include "voltage-scaler.h"
+#include "voltage-scaler.hpp"
 #include <ads1115rpi.h>
 #include <cassert>
 

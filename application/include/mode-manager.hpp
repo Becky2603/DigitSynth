@@ -1,7 +1,7 @@
 #ifndef ModeManager_hpp
 #define ModeManager_hpp
 
-#include "MidiTypes.hpp"
+#include "midi-types.hpp"
 
 /**
  * Tracks the current control mode of DigitSynth.

@@ -1,4 +1,4 @@
-#include "MidiScaler.hpp"
+#include "midi-scaler.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>

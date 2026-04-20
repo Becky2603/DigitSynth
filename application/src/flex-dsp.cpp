@@ -1,5 +1,5 @@
-#include "FlexDSP.hpp"
-#include "flex-sensor.h"
+#include "flex-dsp.hpp"
+#include "flex-sensor.hpp"
 #include <memory>
 
 FlexDSP::FlexDSP(std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, float sampleRate, float cutoffHz) :

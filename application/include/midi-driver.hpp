@@ -5,7 +5,7 @@
 #include <vector>
 #include <rtmidi/RtMidi.h>
 
-#include "MidiTypes.hpp"
+#include "midi-types.hpp"
 
 namespace midi_driver {
     

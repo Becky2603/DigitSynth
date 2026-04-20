@@ -3,7 +3,7 @@
 
 #include <array>
 #include <functional>
-#include "flex-sensor.h"
+#include "flex-sensor.hpp"
 #include <Iir.h>
 #include <memory>
 

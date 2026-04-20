@@ -1,5 +1,5 @@
 #include <cassert>
-#include "MessageBuilder.hpp"
+#include "message-builder.hpp"
 
 int main() {
     MessageBuilder builder;

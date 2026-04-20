@@ -1,7 +1,7 @@
 #ifndef LfoManager_hpp
 #define LfoManager_hpp
 
-#include "MidiTypes.hpp"
+#include "midi-types.hpp"
 #include <vector>
 
 /**

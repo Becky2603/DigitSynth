@@ -1,4 +1,4 @@
-#include "gpio.h"
+#include "gpio.hpp"
 #include <chrono>
 #include <cstring>
 #include <gpiod.hpp>

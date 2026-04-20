@@ -1,6 +1,6 @@
-#include "LedController.hpp"
-#include "ILedDriver.hpp"
-#include "patterns.h"
+#include "led-controller.hpp"
+#include "i-led-driver.hpp"
+#include "patterns.hpp"
 #include <cstdio>
 
 LedController::LedController(led_driver::ILedDriver& tlc, led_pattern::IPattern& pattern,

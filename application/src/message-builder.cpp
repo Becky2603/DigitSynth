@@ -1,4 +1,4 @@
-#include "MessageBuilder.hpp"
+#include "message-builder.hpp"
 
 std::vector<midi_message> MessageBuilder::buildMessages(int index, uint8_t value) {
     if (index < 0 || index >= static_cast<int>(builders.size())) return {};

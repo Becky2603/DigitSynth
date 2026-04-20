@@ -1,5 +1,5 @@
 
-#include "gpio.h"
+#include "gpio.hpp"
 #include <cassert>
 #include <chrono>
 #include <climits>

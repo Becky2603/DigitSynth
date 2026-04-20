@@ -6,8 +6,8 @@
 #include <optional>
 #include <unordered_map>
 
-#include "adc-driver.h"
-#include "voltage-scaler.h"
+#include "adc-driver.hpp"
+#include "voltage-scaler.hpp"
 
 namespace flex_sensor {
 using ExtensionData = float;      
