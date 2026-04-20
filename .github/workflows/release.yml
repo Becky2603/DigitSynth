@@ -43,7 +43,7 @@ jobs:
     - name: generate-tag
       id: generate-tag
       run: |
-        echo "tag=$(cat ./VERSION)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "tag=$(cat ./application/VERSION)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       shell: bash
     
     - uses: "marvinpinto/action-automatic-releases@latest"
