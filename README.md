@@ -49,7 +49,7 @@ A MIDI-receiving device is required to complete the setup, either a hardware syn
 Our build system is CMake, but we provide a simple top-level Makefile to make things easy. Feel free to run the `cmake` commands manually if you are so inclined. The `install-deps.sh` script will automatically install dependencies required by DigitSynth. 
 
 ## Installing
-A simple install can be performed using the `.deb` package in the latest release. Download `digitsynth-aarch64.deb`, then run ```bash sudo dpkg -i digitsynth-aarch64.deb``` in your terminal after navigating to the directory into which the archive was downloaded. The standalone binary can also be found in the release.  
+A simple install can be performed using the `.deb` package in the latest release. Download `digitsynth-aarch64.deb`, then run ```bash sudo dpkg -i digitsynth-aarch64.deb``` in your terminal after navigating to the directory into which the archive was downloaded. The standalone binary can also be found in the release.  Note that dependencies still need to be installed. 
 
 ## Building
 
@@ -97,7 +97,7 @@ Simply run the `install-deps.sh` script:
 ./install-deps.sh
 ```
 
-### 3. Enable SPI on the Raspberry Pi:
+### 3. Enable SPI and I2C on the Raspberry Pi:
 SPI must be enabled before the project will run:
 
 ```bash
