@@ -62,9 +62,11 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
     this->worker = std::thread([&] () { while (this->running) {
         std::unique_lock lock(this->m);
         this->c.wait(lock);
+        std::cout << "looping\n";
         this->adc->readChannel(this->currentChannel, &this->adsCallback);
         lock.unlock();
-    }});
+        std::cout << "looping\n";
+    } std::cout << "LOOP DONE\n"; });
     
     this->adc->readChannel(this->currentChannel, &this->adsCallback);
 }

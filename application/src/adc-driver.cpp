@@ -14,6 +14,7 @@ Ads1115Driver::~Ads1115Driver() {
 }
 
 void Ads1115Driver::readChannel(ADS1115settings::Input channel, ADS1115rpi::ADSCallbackInterface *callback) {
+    std::cout << "reading\n";
     if (this->ads.getADS1115settings().channel != channel) {
         this->samplesSinceChannelChange = 0;
     } else {
