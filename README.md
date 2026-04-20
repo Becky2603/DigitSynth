@@ -1,17 +1,7 @@
 # DigitSynth
 
-> A real-time wearable audio effects processor built on Raspberry Pi — apply filters and effects to live audio using MIDI control messages with responsive LEDs.
+DigitSynth is a wearable MIDI controller that interacts with the Roland JD-Xi synthesiser. It allows the user to trigger chords and shape the resulting sound in real time using finger movements.
 
----
-##  Features
-
--  Real-time filtering control for a MIDI synthesiser
--  Low-latency digital signal processing on Raspberry Pi
--  Hardware controls for intuitive parameter adjustment
--  MIDI CC output with adjustable filter parameters
--  Responsive LEDs that react in real-time to parameter changes
--  Open source and fully reproducible
----
 ## Hardware Requirements
  
 ### Bill of Materials
