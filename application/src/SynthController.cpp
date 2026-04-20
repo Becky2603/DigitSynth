@@ -11,7 +11,7 @@
 
 SynthController::SynthController(
     led_driver::ILedDriver &tlc,
-    Pattern &pattern,
+    led_pattern::IPattern &pattern,
     std::unique_ptr<button_driver::IButtonDriver> buttonDriver,
     std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, 
     std::unique_ptr<midi_driver::IMidiDriver> midiDriver
@@ -107,8 +107,9 @@ SynthController::SynthController(
                 
             }
         }
-        ledController.update(this->modeManager.getCurrentMode(), this->lfoManager.isEnabled(), this->lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
+        this->ledController.update(this->modeManager.getCurrentMode(), this->lfoManager.isEnabled(), this->lfoManager.getShape(), {values[0], values[1], values[2], values[3]});
     });
+
 }
 
 SynthController::~SynthController() {

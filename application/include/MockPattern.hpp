@@ -4,19 +4,18 @@
 #include "ILedDriver.hpp"
 #include "patterns.h"
 
-class MockPattern : public Pattern {
+class MockPattern : public led_pattern::IPattern {
 public:
-    MockPattern(led_driver::ILedDriver &ledDriver) : Pattern(ledDriver) {}
+    MockPattern(led_driver::ILedDriver &ledDriver) : IPattern(ledDriver) {}
 
-    void start(DoneCallback onDone = nullptr) override {
+    void start(led_pattern::DoneCallback onDone = nullptr) override {
         (void) onDone; 
 	    startCalled = true;
     }
     void stop() override { stopCalled = true; }
+    void run() override {}
     bool startCalled = false;
     bool stopCalled = false;
-protected:
-    void run() override {}
 };
 
 #endif /* MockPattern_hpp */

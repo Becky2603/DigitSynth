@@ -5,6 +5,10 @@
 #include <thread>
 #include "ILedDriver.hpp"
 
+namespace led_pattern {
+
+
+using DoneCallback = std::function<void()>;
 /**
  * Base class for LED patterns.
  *
@@ -16,25 +20,23 @@
  *  - A std::function callback (Ch. 2.2.1) is fired when the pattern completes,
  *    so the caller can chain the next action without polling.
  */
-class Pattern {
+class IPattern {
 public:
-    using DoneCallback = std::function<void()>;
-
-    Pattern(led_driver::ILedDriver &) {};
-    virtual ~Pattern() { stop(); }
+    IPattern(led_driver::ILedDriver &) {};
+    virtual ~IPattern() { stop(); }
 
     /**
      * Start the pattern in a background thread.
      * @param onDone  Called (from the worker thread) when the pattern finishes
      *                naturally.  May be nullptr.
      */
-    virtual  void start(DoneCallback onDone = nullptr);
+    virtual void start(DoneCallback onDone = nullptr);
 
     /**
      * Signal the pattern to stop and block until the thread exits.
      * Safe to call even if the pattern has already finished.
      */
-    virtual  void stop();
+    virtual void stop();
 
 protected:
     std::atomic<bool>  _running{false};
@@ -54,12 +56,14 @@ private:
 /**
  * Ripples a sine wave across all fingers — runs until stop() is called.
  */
-class PatternRipple : public Pattern {
+class PatternRipple : public IPattern {
 public:
-    explicit PatternRipple(led_driver::ILedDriver& tlc) : Pattern(tlc), _tlc(tlc) {}
+    explicit PatternRipple(led_driver::ILedDriver& tlc) : IPattern(tlc), _tlc(tlc) {}
 
 protected:
     void run() override;
 private:
     led_driver::ILedDriver& _tlc;
 };
+
+} // namespace led_pattern
