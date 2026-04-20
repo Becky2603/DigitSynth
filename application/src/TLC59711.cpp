@@ -1,21 +1,25 @@
 #include "TLC59711.h"
-#include "gpio.h"
-#include <gpiod.hpp>
+
+#include <linux/spi/spidev.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <cerrno>
+#include <cstring>
 #include <stdexcept>
-#include <cmath>
 #include <iostream>
 
 using namespace led_driver;
 constexpr int TLC59711::FRAME_TO_GS[TLC59711::NUM_LEDS];
 
-TLC59711::TLC59711(int data_pin, int clk_pin, int num_drivers)
-    : _data_pin(data_pin),
-      _clk_pin(clk_pin),
+TLC59711::TLC59711(std::string spi_device, uint32_t spi_speed_hz, int num_drivers)
+    : _spi_device(std::move(spi_device)),
+      _spi_speed_hz(spi_speed_hz),
       _num_drivers(num_drivers),
       _pwm(num_drivers * CHANNELS_PER_DRIVER, 0)
 {
-    // No GPIO resources to acquire at construction time —
-    // the worker thread opens and owns the line_request for its lifetime.
+    // The spidev device is opened in start() so unit tests that never call
+    // start() can construct a TLC59711 without touching real hardware.
 }
 
 TLC59711::~TLC59711() {
@@ -24,12 +28,37 @@ TLC59711::~TLC59711() {
 
 void TLC59711::start() {
     if (_running) return;
+
+    _spi_fd = ::open(_spi_device.c_str(), O_WRONLY);
+    if (_spi_fd < 0) {
+        throw std::runtime_error("TLC59711: failed to open " + _spi_device +
+                                 ": " + std::strerror(errno));
+    }
+
+    uint8_t  mode  = SPI_MODE_0;   // CPOL=0, CPHA=0 — TLC59711 samples on rising edge
+    uint8_t  bits  = 8;
+    uint32_t speed = _spi_speed_hz;
+
+    if (::ioctl(_spi_fd, SPI_IOC_WR_MODE,          &mode)  < 0 ||
+        ::ioctl(_spi_fd, SPI_IOC_WR_BITS_PER_WORD, &bits)  < 0 ||
+        ::ioctl(_spi_fd, SPI_IOC_WR_MAX_SPEED_HZ,  &speed) < 0)
+    {
+        const int err = errno;
+        ::close(_spi_fd);
+        _spi_fd = -1;
+        throw std::runtime_error(std::string("TLC59711: SPI ioctl config failed: ") +
+                                 std::strerror(err));
+    }
+
     _running = true;
     _thread  = std::thread(&TLC59711::worker, this);
 }
 
 void TLC59711::stop() {
-    if (!_running) return;
+    if (!_running) {
+        if (_spi_fd >= 0) { ::close(_spi_fd); _spi_fd = -1; }
+        return;
+    }
 
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -39,13 +68,17 @@ void TLC59711::stop() {
 
     if (_thread.joinable())
         _thread.join();
+
+    if (_spi_fd >= 0) {
+        ::close(_spi_fd);
+        _spi_fd = -1;
+    }
 }
 
 void TLC59711::update(const Channels& channels) {
-    if (_dirty) { return; }
-    
     {
         std::lock_guard<std::mutex> lock(_mutex);
+        if (_dirty) { return; }   // drop-if-busy, checked under the lock
         _pending = channels;
         _dirty   = true;
     }
@@ -67,6 +100,7 @@ void TLC59711::worker() {
             if (!_running) break;
 
             channels = _pending;
+            _dirty   = false;   // clear while lock is held — new updates can queue during SPI
         }
         // Lock is released here — calling thread is free immediately.
 
@@ -78,12 +112,8 @@ void TLC59711::worker() {
         buf.reserve(static_cast<size_t>(_num_drivers) * 28);
         buildPacket(buf);
         shiftOut(buf);
-        _dirty   = false;
     }
-
-    // Drive both pins low before releasing.
-    gpio::setPin(_data_pin, false);
-    gpio::setPin(_clk_pin,  false);
+    // No GPIO pins to clear — SPI hardware holds the lines idle on its own.
 }
 
 void TLC59711::buildPacket(std::vector<uint8_t>& buf) const {
@@ -118,25 +148,24 @@ void TLC59711::buildPacket(std::vector<uint8_t>& buf) const {
 }
 
 void TLC59711::shiftOut(const std::vector<uint8_t>& buf) const {
-    struct timespec ts{ 0, HALF_PERIOD_NS };
+    if (_spi_fd < 0) return;   // safety — should not happen once start() succeeded
 
-    for (uint8_t byte : buf) {
-        for (int bit = 7; bit >= 0; --bit) {
-            const auto data_val = ((byte >> bit) & 1)
-                ? true
-                : false;
+    struct spi_ioc_transfer xfer{};
+    xfer.tx_buf        = reinterpret_cast<uintptr_t>(buf.data());
+    xfer.rx_buf        = 0;                               // write-only
+    xfer.len           = static_cast<uint32_t>(buf.size());
+    xfer.speed_hz      = _spi_speed_hz;
+    xfer.bits_per_word = 8;
+    xfer.cs_change     = 0;
 
-            gpio::setPin(_data_pin, data_val);
-            nanosleep(&ts, nullptr);
-            gpio::setPin(_clk_pin, true);
-            nanosleep(&ts, nullptr);
-            gpio::setPin(_clk_pin, false);
-        }
+    if (::ioctl(_spi_fd, SPI_IOC_MESSAGE(1), &xfer) < 0) {
+        std::cerr << "TLC59711: SPI transfer failed: "
+                  << std::strerror(errno) << "\n";
     }
-
-    gpio::setPin(_data_pin, false);
-    ts.tv_nsec = HALF_PERIOD_NS * 20;
-    nanosleep(&ts, nullptr);
+    // The TLC59711 latches GS data after the final bit is clocked in because
+    // the command word sets TMGRST=1 and DSPRPT=1. The natural gap between
+    // successive update() calls provides the required clock-idle interval;
+    // no manual hold delay is needed.
 }
 
 uint16_t TLC59711::toGS(Brightness b) {
