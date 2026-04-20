@@ -57,28 +57,23 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
         this->values[prevChannel] = f;  
         
         this->c.notify_all();
-        std::cout << "finished callback\n";
     };    
     
     this->worker = std::thread([&] () { while (this->running) {
         std::unique_lock lock(this->m);
         this->c.wait(lock);
-        std::cout << "got message\n";
         this->adc->readChannel(this->currentChannel, &this->adsCallback);
+        lock.unlock();
     }});
     
     this->adc->readChannel(this->currentChannel, &this->adsCallback);
 }
 
 FlexSensor::~FlexSensor() {
-    std::cout << "destructing...\n";
-    this->adsCallback(0.0);
     this->running = false; 
     std::unique_lock lock(this->m);
-    std::cout << "ending...\n";
     this->c.notify_all();
     lock.unlock();
-    std::cout << "samples: " << this->getNSamples() << std::endl;
     if (worker.joinable()) { worker.join(); }
 }
 
