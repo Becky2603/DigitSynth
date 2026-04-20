@@ -12,13 +12,7 @@ using DoneCallback = std::function<void()>;
 /**
  * Base class for LED patterns.
  *
- * Course guidance applied:
- *  - Each pattern runs in its own thread (Ch. 3) so it never blocks the caller.
- *  - Timing comes from a timerfd blocking read (Ch. 3.4), not sleep_for.
- *  - A std::atomic<bool> running flag lets the caller stop the pattern cleanly,
- *    and join() waits for the thread to finish (Ch. 3.3.2 / 3.3.3).
- *  - A std::function callback (Ch. 2.2.1) is fired when the pattern completes,
- *    so the caller can chain the next action without polling.
+ * Each pattern runs in its own thread, which is started by calling start() and stopped by calling stop().
  */
 class IPattern {
 public:
@@ -28,13 +22,12 @@ public:
     /**
      * Start the pattern in a background thread.
      * @param onDone  Called (from the worker thread) when the pattern finishes
-     *                naturally.  May be nullptr.
+     *                naturally.
      */
     virtual void start(DoneCallback onDone = nullptr);
 
     /**
      * Signal the pattern to stop and block until the thread exits.
-     * Safe to call even if the pattern has already finished.
      */
     virtual void stop();
 
@@ -45,7 +38,6 @@ protected:
     /**
      * Implemented by each derived pattern.
      * Must honour _running: exit as soon as _running becomes false.
-     * Timing must use blocking I/O (timerfd), not sleep_for.
      */
     virtual void run() = 0;
 
