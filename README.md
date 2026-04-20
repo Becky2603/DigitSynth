@@ -34,6 +34,101 @@ A MIDI-receiving device is required to complete the setup, either a hardware syn
 
 ![Wiring diagram](docs/wiring-diagram.jpg)
 
+## Architecture
+
+<details>
+<summary>UML class diagram</summary>
+
+![DigitSynth UML class diagram](docs/digitsynth_uml.svg)
+
+</details>
+
+## Software Requirements
+
+### Toolchain
+Our build system is CMake, but we provide a simple top-level Makefile to make things easy. Feel free to run the `cmake` commands manually if you are so inclined. The `install-deps.sh` script will automatically install dependencies required by DigitSynth. 
+
+## Installing
+A simple install can be performed using the `.deb` package in the latest release. Download `digitsynth-aarch64.deb`, then run ```bash sudo dpkg -i digitsynth-aarch64.deb``` in your terminal after navigating to the directory into which the archive was downloaded. The standalone binary can also be found in the release.  
+
+## Building
+
+### 1.1 Clone the Repository
+ 
+```bash
+git clone https://github.com/RTES-Group/DigitSynth.git
+cd DigitSynth
+```
+
+OR 
+
+### 1.2 Download the release
+Find the latest release on the right-hand side of this page. Download either the `.tar.gz` or `.zip`. After downloading and navigating to the download directory: 
+
+#### `zip`
+```bash 
+unzip DigitSynth-xx.xx.xx.zip
+
+cd DigitSynth-xx.xx.xx
+```
+
+#### `tar.gz`
+```bash 
+tar -xf DigitSynth-xx.xx.xx.tar.gz
+
+cd DigitSynth-xx.xx.xx
+```
+
+
+### 2. Install Dependencies
+
+#### Dependencies
+
+| Library | Purpose | Source |
+|---|---|---|
+| IIR Filter Library | Digital IIR filter design and processing | [berndporr/iir1](https://github.com/berndporr/iir1) |
+| RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
+| ADS1115 API | Flex sensor measurement | [berndporr/rpi_ads1115](github.com/berndporr/rpi_ads1115) |
+| libgpiod | GPIO management | [ligpiod](https://libgpiod.readthedocs.io/en/latest/building.html) | 
+| libasound2-dev | ALSA development headers | [libasound2-dev](https://alsa-project.org/) |
+
+Simply run the `install-deps.sh` script:
+```bash 
+./install-deps.sh
+```
+
+### 3. Enable SPI on the Raspberry Pi:
+SPI must be enabled before the project will run:
+
+```bash
+sudo raspi-config
+# Navigate to: Interface Options → SPI → Enable
+# Navigate to: Interface Options → I2C → Enable
+```
+
+### 4. Build the project:
+
+```bash
+cd application/
+make
+```
+
+### 5. Run:
+```bash
+build/digitsynth
+```
+
+---
+
+## Unit tests
+
+To run unit tests: 
+```bash 
+make test
+```
+
+---
+
 ### Resistor Selection & Voltage Divider Justification
 
 While the flex sensors used in this project have a flat resistance of approximately 12 kΩ (±20%), this value is not universal across all flex sensors. Be sure to check your datasheet before substituting.
@@ -58,66 +153,6 @@ $$R_{source} = R_1 \| R_2 = \left(\frac{1}{10k} + \frac{1}{50k}\right)^{-1} = 8.
 The ADS1115 is a delta-sigma ADC with an input impedance in the range of 10–22 MΩ (depending on PGA gain setting). At 8.33 kΩ, the source impedance is more than three orders of magnitude below this, making its effect on measurement accuracy negligible.
 
 The ADC automatically determines the minimum and maximum voltages, allowing the voltage range to be suitably scaled to the flex sensor.
-
-## Software Requirements
-
-### Toolchain
-Our build system is CMake, but we provide a simple top-level Makefile to make things easy. Feel free to run the `cmake` commands manually if you are so inclined. 
-
-### 1. Clone the Repository
- 
-```bash
-git clone https://github.com/RTES-Group/DigitSynth.git
-cd DigitSynth
-```
-
-### 2. Install Dependencies
-
-#### Dependencies
-
-| Library | Purpose | Source |
-|---|---|---|
-| IIR Filter Library | Digital IIR filter design and processing | [berndporr/iir1](https://github.com/berndporr/iir1) |
-| RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
-| ADS1115 API | Flex sensor measurement | [berndporr/rpi_ads1115](github.com/berndporr/rpi_ads1115) |
-| libgpiod | GPIO management | [ligpiod](https://libgpiod.readthedocs.io/en/latest/building.html) | 
-| libasound2-dev | ALSA development headers | [libasound2-dev](https://alsa-project.org/) |
-
-Simply run the `install-deps.sh` script:
-```bash 
-./install-deps.sh
-```
-
-### 3. Enable SPI on the Raspberry Pi:
-SPI must be enabled before the project will run:
-
-```bash
-sudo raspi-config
-gpio i2cd
-# Navigate to: Interface Options → SPI → Enable
-```
-
-### 4. Build the project:
-
-```bash
-make
-```
-
-### 5. Run:
-```bash
-build/digitsynth
-```
-
----
-
-## Unit tests
-
-To run unit tests: 
-```bash 
-make test
-```
-
----
 
 ## Contributing
 
