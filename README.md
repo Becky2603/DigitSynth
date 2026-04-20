@@ -159,6 +159,12 @@ The ADC automatically determines the minimum and maximum voltages, allowing the 
 See the issues tab for a list of potential contributions. In particular, we would welcome expanding support for other synths. 
 
 ---
+## Demonstration Videos
+
+| Demo 1 | LED Mode Demo | Demo 2 |
+|---|---|---|
+| [![Demo 1](https://img.youtube.com/vi/CaOxxR7UvKo/0.jpg)](https://youtube.com/shorts/CaOxxR7UvKo) | [![Demo 2](https://img.youtube.com/vi/K6ZXAT-Ynss/0.jpg)](https://youtube.com/shorts/K6ZXAT-Ynss) | [![Demo 3](https://img.youtube.com/vi/oUVmrUkGGP4/0.jpg)](https://youtube.com/shorts/oUVmrUkGGP4) |
+
 
 ## Social Media
 
