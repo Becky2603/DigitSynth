@@ -9,8 +9,6 @@
 
 static gpiod::chip *chip;
 
-static std::optional<gpio::GpioCallback> callback = {};
-
 static bool lineRequestsRunning = false; 
 
 void gpio::setupGpio() {
