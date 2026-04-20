@@ -76,6 +76,12 @@ void led_pattern::PatternRipple::run() {
     static constexpr float SPEED     = 1.0f;
     static constexpr long  STEP_MS   = 40;
 
+    // Physical channel indices in left-to-right visual order:
+    //   L_pinky=5, L_ring=0, L_middle=4, L_index=1,
+    //   R_index=2, R_middle=6, R_ring=3, R_pinky=7
+    // Phase offset f=0 leads (leftmost), f=7 lags (rightmost).
+    static constexpr int LEFT_TO_RIGHT[N_FINGERS] = { 5, 0, 4, 1, 2, 6, 3, 7 };
+
     int fd = makeTimerFd(STEP_MS);
 
     const float phase_step = (TWO_PI / 3.0f) / N_FINGERS;
@@ -89,7 +95,7 @@ void led_pattern::PatternRipple::run() {
         led_driver::ILedDriver::Channels channels{};
         for (int f = 0; f < N_FINGERS; ++f) {
             const float raw = std::sin(TWO_PI * SPEED * t_secs + f * phase_step);
-            channels[f] = (raw + 1.0f) / 2.0f;
+            channels[LEFT_TO_RIGHT[f]] = (raw + 1.0f) / 2.0f;
         }
         _tlc.update(channels);
 
