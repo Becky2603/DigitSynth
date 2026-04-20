@@ -28,7 +28,6 @@ namespace flex_sensor {
 class MockFlexSensor : public IFlexSensor {
 public:
     void registerCallback(ExtensionCallback cb) override { this->callback = cb; }
-    void begin() override {}
     void simulateReading(std::array<float, 4> values) { if (this->callback.has_value()) { callback.value()(values); } }
     std::optional<ExtensionCallback> callback;
 };

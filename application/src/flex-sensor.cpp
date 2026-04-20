@@ -4,7 +4,9 @@
 #include "voltage-scaler.h"
 #include <ads1115rpi.h>
 #include <array>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <thread>
 
 using namespace flex_sensor;
@@ -29,6 +31,7 @@ uint64_t FlexSensor::getNSamples() {
 FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::unique_ptr<voltage_scaler::IVoltageScaler> voltageScaler) 
 : adc(std::move(adcDriver)), vs(std::move(voltageScaler)) 
 {
+    
     this->adsCallback = [&] (float f) {
         auto prevChannel = this->currentChannel;
         
@@ -44,7 +47,7 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
             case (ADS1115settings::AIN2):
                 this->currentChannel = ADS1115settings::AIN3;
                 break;
- 
+    
             case (ADS1115settings::AIN3):
                 this->currentChannel = ADS1115settings::AIN0;
                 this->updateIfNeeded();
@@ -52,21 +55,33 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
         }
         
         this->values[prevChannel] = f;  
-        if (!this->running) { return; }
+        
+        this->c.notify_all();
+        std::cout << "finished callback\n";
+    };    
+    
+    this->worker = std::thread([&] () { while (this->running) {
+        std::unique_lock lock(this->m);
+        this->c.wait(lock);
+        std::cout << "got message\n";
         this->adc->readChannel(this->currentChannel, &this->adsCallback);
-    };
+    }});
+    
+    this->adc->readChannel(this->currentChannel, &this->adsCallback);
 }
 
 FlexSensor::~FlexSensor() {
+    std::cout << "destructing...\n";
+    this->adsCallback(0.0);
     this->running = false; 
+    std::unique_lock lock(this->m);
+    std::cout << "ending...\n";
+    this->c.notify_all();
+    lock.unlock();
     std::cout << "samples: " << this->getNSamples() << std::endl;
     if (worker.joinable()) { worker.join(); }
 }
 
 void FlexSensor::registerCallback(ExtensionCallback callback) {
     this->callback = callback;
-}
-
-void FlexSensor::begin() {
-    this->worker = std::thread([&] () {this->adc->readChannel(this->currentChannel, &this->adsCallback);}); 
 }

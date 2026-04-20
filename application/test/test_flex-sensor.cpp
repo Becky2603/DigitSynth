@@ -51,12 +51,15 @@ void testReceiveData() {
     auto callback = [&samples] (std::array<flex_sensor::ExtensionData, 4> f) {
         samples.push_back(f);
     };
+    std::cout << "pre pre sleep\n";
     fs->registerCallback(callback);
-    fs->begin();
     
+    std::cout << "pre sleep\n";
     std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "post sleep\n";
     
     delete fs;
+    std::cout << "deleted\n";
     
     for (auto &f : samples) {
         for (size_t i = 0; i < f.size(); i++) {

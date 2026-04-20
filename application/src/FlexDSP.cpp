@@ -17,7 +17,6 @@ FlexDSP::FlexDSP(std::unique_ptr<flex_sensor::IFlexSensor> flexSensor, float sam
         }
         this->callback.value()(filtered);
     });
-    this->flexSensor->begin();
 }
 
 // config

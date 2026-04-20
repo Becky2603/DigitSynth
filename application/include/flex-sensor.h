@@ -2,7 +2,9 @@
 #define FLEX_SENSOR_H_
 
 #include <ads1115rpi.h>
+#include <condition_variable>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <unordered_map>
 
@@ -18,7 +20,6 @@ public:
     virtual ~IFlexSensor() = default;
     
     virtual void registerCallback(ExtensionCallback) = 0;
-    virtual void begin() = 0;
 };
     
 /**
@@ -32,11 +33,6 @@ public:
     FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::unique_ptr<voltage_scaler::IVoltageScaler> voltageScaler);
     ~FlexSensor();
 
-    /**
-     * Start sampling the sensors.
-     */
-    void begin();
-    
     /**
      * Register the function that will be called when data is ready. 
      * @param callback --- the callback to be registered. 
@@ -67,8 +63,9 @@ private:
     
     ADS1115settings::Input currentChannel = ADS1115settings::AIN0;
     
-    
     std::thread worker;
+    std::mutex m;
+    std::condition_variable c;
     bool running = true;
     
     uint64_t n_samples = 0;
