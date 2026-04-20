@@ -48,6 +48,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6      
     
+    - name: doxygen
+      run: sudo apt install -y doxygen
+    
     - name: docs
       run: | 
         cd application/
