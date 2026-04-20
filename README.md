@@ -57,7 +57,7 @@ cd DigitSynth
 | RtMidi | Real-time MIDI input/output | [thestk/rtmidi](https://github.com/thestk/rtmidi) |
 | ADS1115 API | Flex sensor measurement | [berndporr/rpi_ads1115](github.com/berndporr/rpi_ads1115) |
 | libgpiod | GPIO management | [ligpiod](https://libgpiod.readthedocs.io/en/latest/building.html) | 
-| libasound2 | ALSA shared library | [libasound2](https://github.com/pop-os/libasound2) |
+| libasound2-dev | ALSA development headers | [libasound2-dev](https://alsa-project.org/) |
 
 Simply run the `install-deps.sh` script:
 ```bash 
