@@ -53,12 +53,21 @@ target_sources(digitsynth_static
 link_directories("/usr/local/lib/")
 link_directories("/lib/aarch64-linux-gnu")
 
+find_library(GPIOD gpiod)
+find_library(GPIODCXX gpiodcxx)
+find_library(ADS1115 ads1115rpi)
 find_library(RTMIDI rtmidi)
 find_library(IIR iir)
 find_library(ASOUND asound)
 
-target_link_libraries(digitsynth_static gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
-target_link_libraries(digitsynth        gpiod gpiodcxx ads1115rpi ${RTMIDI} ${IIR} ${ASOUND})
+target_link_libraries(digitsynth_static 
+    ${GPIOD} 
+    ${GPIODCXX} 
+    ${ADS1115} 
+    ${RTMIDI} 
+    ${IIR} 
+    ${ASOUND}
+)
 target_link_libraries(digitsynth digitsynth_static)
 
 add_subdirectory(test)
