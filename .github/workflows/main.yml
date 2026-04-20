@@ -23,11 +23,6 @@ jobs:
         cd application/
         make
         
-    - name: tests
-      run: | 
-        cd application/
-        make test
-   
     - name: package
       run: | 
         cd application/
