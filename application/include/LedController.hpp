@@ -33,7 +33,7 @@ namespace Led {
 
 class LedController {
 public:
-    explicit LedController(led_driver::ILedDriver& tlc, Pattern& pattern, std::unordered_map<LfoShape, float> shapeBrightness);
+    explicit LedController(led_driver::ILedDriver& tlc, led_pattern::IPattern& pattern, std::unordered_map<LfoShape, float> shapeBrightness);
     void update(ControlMode mode, bool lfoEnabled, LfoShape shape, std::array<float, 4> flexValues);
     void togglePattern();
 private:

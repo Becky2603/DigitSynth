@@ -3,7 +3,7 @@
 #include "patterns.h"
 #include <cstdio>
 
-LedController::LedController(led_driver::ILedDriver& tlc, Pattern& pattern,
+LedController::LedController(led_driver::ILedDriver& tlc, led_pattern::IPattern& pattern,
                              std::unordered_map<LfoShape, float> shapeBrightness)
     : _tlc(tlc), _pattern(pattern), shapeBrightness(shapeBrightness) {}
 
