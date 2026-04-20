@@ -12,7 +12,7 @@
 using namespace flex_sensor;
 
 void FlexSensor::updateIfNeeded() {
-    if (!this->callback.has_value()) { return; } 
+    if (!this->callback.has_value() || this->currentChannel != ADS1115settings::AIN0) { return; } 
     
     std::array<ExtensionData, 4> data;
     data[0] = this->vs->scale(this->values[ADS1115settings::AIN0], ADS1115settings::AIN0);
@@ -33,39 +33,33 @@ FlexSensor::FlexSensor(std::unique_ptr<adc_driver::IAdcDriver> adcDriver, std::u
 {
     
     this->adsCallback = [&] (float f) {
-        auto prevChannel = this->currentChannel;
-        
-        switch (this->currentChannel) {
-            case (ADS1115settings::AIN0):
-                this->currentChannel = ADS1115settings::AIN1;
-                break;
-                
-            case (ADS1115settings::AIN1):
-                this->currentChannel = ADS1115settings::AIN2;
-                break;
-
-            case (ADS1115settings::AIN2):
-                this->currentChannel = ADS1115settings::AIN3;
-                break;
-    
-            case (ADS1115settings::AIN3):
-                this->currentChannel = ADS1115settings::AIN0;
-                this->updateIfNeeded();
-                break;               
-        }
-        
-        this->values[prevChannel] = f;  
-        
+        this->values[this->currentChannel] = f;  
         this->c.notify_all();
     };    
     
     this->worker = std::thread([&] () { while (this->running) {
         std::unique_lock lock(this->m);
         this->c.wait(lock);
-        std::cout << "looping\n";
+        
+        switch (this->currentChannel) {
+            case (ADS1115settings::Input::AIN0):
+                this->currentChannel = ADS1115settings::Input::AIN1;
+                break;
+            case (ADS1115settings::Input::AIN1):
+                this->currentChannel = ADS1115settings::Input::AIN2;
+                break;               
+            case (ADS1115settings::Input::AIN2):
+                this->currentChannel = ADS1115settings::Input::AIN3;
+                break;
+            case (ADS1115settings::Input::AIN3):
+                this->currentChannel = ADS1115settings::Input::AIN0;
+                break;
+        }
+        
+        this->updateIfNeeded();
+        
         this->adc->readChannel(this->currentChannel, &this->adsCallback);
         lock.unlock();
-        std::cout << "looping\n";
     } std::cout << "LOOP DONE\n"; });
     
     this->adc->readChannel(this->currentChannel, &this->adsCallback);
@@ -80,5 +74,6 @@ FlexSensor::~FlexSensor() {
 }
 
 void FlexSensor::registerCallback(ExtensionCallback callback) {
+    std::cout << "callback registered\n";
     this->callback = callback;
 }
