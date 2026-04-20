@@ -14,7 +14,7 @@ public:
     virtual ~IMidiDriver() = default;
     
     virtual std::vector<std::string> listOutputPorts() = 0;
-    virtual void openPort(unsigned int) = 0;
+    virtual void openPort(std::string) = 0;
     virtual void sendMessage(const midi_message&) = 0;
 };
 
@@ -26,7 +26,7 @@ public:
     MidiDriver& operator=(const MidiDriver&) = delete;
 
     std::vector<std::string> listOutputPorts() override;
-    void openPort(unsigned int portIndex) override;
+    void openPort(std::string deviceName) override;
 
     void sendMessage(const midi_message& msg) override;
 

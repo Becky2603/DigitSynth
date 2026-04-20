@@ -38,7 +38,7 @@ namespace midi_driver {
 class MockMidiDriver : public IMidiDriver {
 public:
     std::vector<std::string> listOutputPorts() override { return {"MockPort"}; }
-    void openPort(unsigned int) override {}
+    void openPort(std::string) override {}
     void sendMessage(const midi_message& msg) override { 
         sentMessages.push_back(msg); 
     }
